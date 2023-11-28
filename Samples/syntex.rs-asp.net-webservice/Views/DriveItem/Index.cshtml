@@ -1,0 +1,60 @@
+@using Microsoft.Graph
+@{
+    var tenantId = ViewData["TenantId"] as string;
+    var driveItem = ViewData["DriveItem"] as DriveItem;
+    var driveId = ViewData["DriveId"] as string;
+    var folderId = ViewData["FolderId"] as string;
+}
+ 
+<div class="col-sm-8 offset-sm-2">
+    <h3>Drive Item</h3>
+
+
+    <form asp-action="Update" method="post" >
+        <input hidden id="tenantId" name="tenantId" value="@tenantId">
+        <input hidden id="driveId" name="driveId" value="@driveId">
+        <input hidden id="folderId" name="folderId" value="@folderId">
+        <input hidden id="itemId" name="itemId" value="@driveItem.Id">
+
+        @{
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">ID</label>
+                <div class="col-sm-10">
+                    <input readonly class="form-control" name="id" id="id" value="@driveItem.Id" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                    <input class="form-control" name="name" id="name" value="@driveItem.Name" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Location</label>
+                <div class="col-sm-10">
+                    <input readonly class="form-control" name="location" id="location" value="@driveItem.Location" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">WebUrl</label>
+                <div class="col-sm-10">
+                    <input readonly class="form-control" name="webUrl" id="WebUrl" value="@driveItem.WebUrl" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">ODataType</label>
+                <div class="col-sm-10">
+                    <input readonly class="form-control" name="oDataType" id="oDataType" value="@driveItem.ODataType" />
+                </div>
+            </div>
+
+            <a class="btn btn-secondary" asp-area="" asp-controller="Container" asp-action="Index" asp-route-tenantId="@tenantId" asp-route-driveId="@driveId" asp-route-folderId="@folderId">Cancel</a>
+            <button type="submit" class="btn btn-primary">Update</button>
+        }
+    </form>
+
+</div>

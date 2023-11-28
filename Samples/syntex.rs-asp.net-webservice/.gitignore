@@ -1,0 +1,23 @@
+# VS
+*.csproj.user
+.config/**
+.vs/**
+.vscode/**
+
+# build outputs:
+bin/**
+obj/**/*
+**/*.bak
+
+# app settings (ignore while the app is under dev)
+appsettings.Development.json
+appsettings.json
+
+# DB migrations directory
+Migrations/**
+
+# Properties
+Properties/**
+
+# Config items
+*.pfx

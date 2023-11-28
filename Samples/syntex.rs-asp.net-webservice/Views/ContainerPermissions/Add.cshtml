@@ -1,0 +1,40 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    string containerId = ViewData["ContainerId"] as string;
+    string tenantId = ViewData["TenantId"] as string;
+}
+
+<form asp-action="AddPermission" method="post">
+    <input hidden id="tenantId" name="tenantId" value="@tenantId">
+    <input hidden id="containerId" name="containerId" value="@containerId">
+
+    <div class="form-group text-wrap">
+        <label>Grant To:</label>
+        <input type="email" name="email" id="email" placeholder="Enter a valid email address" />
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="role" id="read" value="reader" checked />
+        <label class="form-check-label" for="read">Reader</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="role" id="write" value="writer" />
+        <label class="form-check-label" for="write">Writer</label>
+    </div>
+    <div class="form-check disabled">
+        <input class="form-check-input" type="radio" name="role" id="owner" value="owner" />
+        <label class="form-check-label" for="owner">Owner</label>
+    </div>
+    <div class="form-check disabled">
+        <input class="form-check-input" type="radio" name="role" id="principalOwner" value="principalOwner" />
+        <label class="form-check-label" for="principalOwner">Principal Owner</label>
+    </div>
+
+    <div class="btn-group pt-4">
+        <a class="btn btn-secondary" asp-area="" asp-controller="ContainerPermissions" asp-action="Index" asp-route-containerId="@containerId" asp-route-tenantId="@tenantId">Cancel</a>
+        <button type="submit" class="btn btn-primary">AddPermission</button>
+    </div>
+
+</form>
