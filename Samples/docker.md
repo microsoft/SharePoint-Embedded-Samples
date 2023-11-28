@@ -1,4 +1,4 @@
-# Running the Syntex repository services samples in VSCode docker devcontainers. 
+# Running the SharePoint Embedded samples in VSCode docker devcontainers. 
 
 Requirements: 
 

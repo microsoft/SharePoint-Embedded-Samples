@@ -1,6 +1,6 @@
 # Client Side App Tutorial
 
-Welcome to Syntex repository services! This tutorial aims to walk you through an overview of a boilerplate Sample App and how you may go about building a basic Syntex repository services App from setup to live demo on your own. We will use the Sample App source code in this repository as a reference guide that explain the key points of how to run the app, as well as its main functionality and architecture. 
+Welcome to SharePoint Embedded! This tutorial aims to walk you through an overview of a boilerplate Sample App and how you may go about building a basic SharePoint Embedded App from setup to live demo on your own. We will use the Sample App source code in this repository as a reference guide that explain the key points of how to run the app, as well as its main functionality and architecture. 
 Before proceeding you will need: 
 - An M365 Developer Tenant 
 - Be familiar with using Postman
@@ -17,11 +17,11 @@ Before proceeding you will need:
 - [Clone, configure and start the app](#clone-configure-and-start-the-app)
 - [App Login and Permission Consent](#app-login-and-permission-consent)
 - [Interacting with Storage Containers](#interacting-with-storage-containers)
-- [Syntex repository services Storage Container API Code Snippets](#raas-api-code-snippets)
+- [SharePoint Embedded Storage Container API Code Snippets](#raas-api-code-snippets)
 - [App Auth Model](#app-auth-model)
 
 ## App Overview
-This sample app is built in Javascript using React.js for the UI and Azure Functions as the back-end for hosting endpoints to Syntex repository services APIs. The UI portion as well as the file management logic (utilizing Microsoft Graph APIs) of the app lives in `/packages/client-app` and the Azure Functions live in `/packages/azure-functions`.
+This sample app is built in Javascript using React.js for the UI and Azure Functions as the back-end for hosting endpoints to SharePoint Embedded APIs. The UI portion as well as the file management logic (utilizing Microsoft Graph APIs) of the app lives in `/packages/client-app` and the Azure Functions live in `/packages/azure-functions`.
 
 ## App Quick Start
 The quickest way to get to our sample app running is to: 
@@ -217,7 +217,7 @@ This will render the client application at `localhost:3000`, which you can acces
 
 ## App Login and Permission Consent
 
-In order to interact with Syntex repository services and Graph APIs in our sample application, we first need to be authorized to do so. We will use the credentials from our configuration file (the same credentials that we used to log into our application in AAD via Azure Portal), to login to our application, and consent to the necessary permissions (Graph and Syntex repository services) to be able to interact with storage containers and their contents. The entry point to our sample application is in the `index.js` of our application:
+In order to interact with SharePoint Embedded and Graph APIs in our sample application, we first need to be authorized to do so. We will use the credentials from our configuration file (the same credentials that we used to log into our application in AAD via Azure Portal), to login to our application, and consent to the necessary permissions (Graph and SharePoint Embedded) to be able to interact with storage containers and their contents. The entry point to our sample application is in the `index.js` of our application:
 
 ```js
 Providers.globalProvider = new Msal2Provider({
@@ -258,7 +258,7 @@ Next, we need to consent to the default Microsoft Graph Scopes:
 <img height="600px" width="600px" src="https://user-images.githubusercontent.com/12767206/216275119-867f109e-61ff-4648-ae24-e93d9017fec1.png" alt="Default Consents" />
 </p>
 
-Finally, we will need to consent to using the Syntex repository services file storage container APIs:
+Finally, we will need to consent to using the SharePoint Embedded file storage container APIs:
 
 <p align="center" >
 <img height="600px" width="500px" src="https://user-images.githubusercontent.com/12767206/216198593-af3d726e-97fd-421c-94b8-23cd2c70e31a.png" alt="RaaS Consents" />
@@ -310,11 +310,11 @@ The code sets up the MSAL configuration and specifies the required scopes for ac
 We are now logged and consented in our app and ready to interact with storage containers!
 
 ## Interacting with Storage Containers
-In order to interact with storage containers and their functionality, we will need to create our first container. This can be done simply through the `New Container` UI flow. Once you have created a container, you can upload files, share links to files, and manage the permissions on the container, within the sample app. The functionality provided in the app was to give users an idea of what could be done with Syntex repository services storage containers and their associated APIs. 
+In order to interact with storage containers and their functionality, we will need to create our first container. This can be done simply through the `New Container` UI flow. Once you have created a container, you can upload files, share links to files, and manage the permissions on the container, within the sample app. The functionality provided in the app was to give users an idea of what could be done with SharePoint Embedded storage containers and their associated APIs. 
 
-## Syntex repository services API Code Snippets 
+## SharePoint Embedded API Code Snippets 
 
-Below are snippets of how our sample application is making calls to Syntex repository services storage container endpoints (specifically container creation and permission management). The auth mechanism for token acquisition will be explained in the next section. 
+Below are snippets of how our sample application is making calls to SharePoint Embedded storage container endpoints (specifically container creation and permission management). The auth mechanism for token acquisition will be explained in the next section. 
 
 **Create container** (in `\packages\azure-functions\CreateContainer\index.js`)
 
@@ -408,11 +408,11 @@ Below are snippets of how our sample application is making calls to Syntex repos
 ```
 
 ## App Auth Model 
-The general flow of the auth mechanism that this application uses is important to understand. Keep in mind, the Syntex repository services APIs in this sample app run on a separate server port (`localhost:7071` in our case) than the client UI itself (`localhost:3000)`. All the Syntex repository services APIs under the `/azure-functions` (code above) do the following: 
+The general flow of the auth mechanism that this application uses is important to understand. Keep in mind, the SharePoint Embedded APIs in this sample app run on a separate server port (`localhost:7071` in our case) than the client UI itself (`localhost:3000)`. All the SharePoint Embedded APIs under the `/azure-functions` (code above) do the following: 
 
 1.	Accept an incoming bearer token for the API being requested, from the client running on `localhost:3000`
 2.	Use the #1 above token to exchange it for a Graph token using the on-behalf-of (OBO) flow with the Sites.Read.All and FileStorageContainer.Selected scope
-3.	Call the Syntex repository services storage container endpoint with the #2 Graph token
+3.	Call the SharePoint Embedded storage container endpoint with the #2 Graph token
 
 Below are a few snippets for the general flow:
 

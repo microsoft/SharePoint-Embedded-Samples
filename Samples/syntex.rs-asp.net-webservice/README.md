@@ -3,7 +3,7 @@
 
 Welcome to building a server-side Sample App with C# and .NET.
 
-This application demonstrates the basic flow to work with Syntex repository services containers using 
+This application demonstrates the basic flow to work with SharePoint Embedded containers using 
 [MS Graph](https://developer.microsoft.com/en-us/graph)
 
 > **_NOTE:_** Some endpoints, only exist in Graph Beta and are subject to changes.
