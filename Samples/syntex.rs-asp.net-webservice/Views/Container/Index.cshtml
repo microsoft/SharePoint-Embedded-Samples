@@ -1,0 +1,228 @@
+@using Microsoft.Graph
+@using System.Web
+@{
+    var filesViewModel = ViewData["FilesViewModel"] as FilesViewModel;
+    var items = ViewData["DriveItems"] as ICollection<DriveItem>;
+    var tenantId = ViewData["TenantId"] as string;
+    var searchText = ViewData["SearchText"] as string;
+    var currentFolder = filesViewModel.Path.Last();
+}
+
+@functions {
+    public bool isM365File(string url)
+    {
+        if (url != null)
+        {
+            var isM365File = (url.Contains(".docx") || url.Contains(".vsdx") || url.Contains(".pptx") || url.Contains(".xlsx")) ? true : false;
+            return isM365File;
+        }
+        return false;
+    }
+}
+<div class="container-flex d-flex flex-column h-100">
+    <div class="row">
+        <h3>Drive</h3>
+        <table class="table table-striped table-condensed" style="font-family: monospace" border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <td>@filesViewModel.DriveId</td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+
+
+    @if (searchText != null)
+    {
+        <div class="row alert alert-light" role="alert">Search results for '<strong>@searchText</strong>'</div>
+    }
+    else
+    {
+        <div class="row">
+            <!--- Navigation bar-->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    @{
+                        foreach (var subFolder in filesViewModel.Path.SkipLast(1))
+                        {
+                            <li class="breadcrumb-item">
+                                <a asp-action="Index" asp-route-folderId="@subFolder.Id" asp-route-tenantId="@tenantId">@subFolder.Name</a>
+                            </li>
+                        }
+
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <a asp-action="Index" asp-route-folderId="@currentFolder.Id" asp-route-tenantId="@tenantId">@currentFolder.Name</a>
+                        </li>
+                    }
+                </ol>
+            </nav>
+        </div>
+    }
+    <!-- div class="wrapper flex-column h-100 d-flex flex-grow-1" -->
+    <div class="row ">
+        <div class="col-12">
+            @if (searchText != null)
+            {
+                <a class="btn btn-primary" asp-action="Index" asp-route-tenantId="@tenantId">Close Search</a>
+            }
+            else
+            {
+                <!-- File Create Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
+                    Upload File
+                </button>
+
+                <!-- File Create Modal -->
+                <div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="uploadFilelLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            @model Microsoft.AspNetCore.Http.IFormFile
+                            <form asp-action="UploadFile" enctype="multipart/form-data">
+                                <input hidden id="tenantId" name="tenantId" value="@tenantId" />
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="uploadFileLabel">Upload File</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="file" name="file" required />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#folderCreateModal">
+                    Create Folder
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="folderCreateModal" tabindex="-1" role="dialog" aria-labelledby="createFolderLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <form asp-action="CreateFolder">
+                                <input hidden id="tenantId" name="tenantId" value="@tenantId" />
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createFolderLabel">Create Folder</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="form-group">
+                                        <label>Folder Name</label>
+                                        <input type="text" name="folderName" required />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div style="padding-top: 1em; float:right;">
+                <form asp-action="Search" method="get">
+                    <input hidden type="text" name="driveId" value="@filesViewModel.DriveId" />
+                    <input hidden type="text" name="tenantId" value="@tenantId" />
+                    <div class="form-group text-wrap">
+                        <input type="text" name="searchText" id="searchText" placeholder="Enter string to search" />
+                        <button type="submit" class="btn btn-primary bi bi-search" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Iterate through items -->
+    <div class="row flex-grow-1">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-sm-3 col-md-6 col-lg-4">
+                    <table class="table table-hover" style="max-height:100%">
+                        <tbody>
+                            @{
+                                if (items != null)
+                                {
+                                    foreach (var item in items)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (@item.Folder != null)
+                                                {
+                                                    <a class="btn" asp-action="OpenFolder" asp-route-tenantId="@tenantId" asp-route-folderId="@item.Id" asp-route-folder="@item.Name"><i class="bi bi-folder"></i> <u>@item.Name</u></a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="btn" onclick="preview('@filesViewModel.DriveId','@item.Id')">
+                                                        <i class="bi bi-file-earmark"></i> <u>@item.Name</u>
+
+                                                    </a>
+                                                }
+
+                                                <br />
+
+                                                <a asp-area="" asp-controller="DriveItem" asp-action="Index" asp-route-tenantId="@tenantId" asp-route-driveId="@filesViewModel.DriveId" asp-route-folderId="@currentFolder.Id" asp-route-itemId="@item.Id"
+                                               class="btn btn-light bi bi-info-circle" data-toggle="tooltip" title="Drive Item Attributes"></a>
+                                                <a asp-area="" asp-controller="Permissions" asp-action="Index" asp-route-tenantId="@tenantId" asp-route-driveId="@filesViewModel.DriveId" asp-route-itemId="@item.Id"
+                                               class="btn btn-light bi bi-person-lines-fill" data-toggle="tooltip" title="Permissions"></a>
+                                                <a asp-action="Delete" asp-route-tenantId="@tenantId" asp-route-itemId="@item.Id"
+                                               class="btn btn-light bi bi-trash" data-toggle="tooltip" title="Delete"></a>
+                                                @if (@item.Folder == null)
+                                                {
+                                                    <a asp-action="DownloadFile" asp-route-tenantId="@tenantId" asp-route-driveId="@filesViewModel.DriveId" asp-route-itemId="@item.Id"
+                                                   class="btn btn-light bi bi-download" data-toggle="Download" title="Download"></a>
+                                                    <a asp-action="Duplicate" asp-route-tenantId="@tenantId" asp-route-itemId="@item.Id" asp-route-name="@item.Name"
+                                                   class="btn btn-light bi bi-files" data-toggle="Duplicate" title="Duplicate"></a>
+                                                    <a href="@Url.Action("PreviewItem", new { driveId= filesViewModel.DriveId, itemId=item.Id })"
+                                                       type="submit"
+                                                       title="Preview"
+                                                       target="_blank"
+                                                       class="btn btn-light bi bi-box-arrow-up-right">
+                                                    </a>
+                                                    @if (isM365File(item.WebUrl))
+                                                    {
+                                                        <a class="btn btn-light bi bi-word" href="@item.WebUrl" target="_blank"> M365</a>
+                                                    }
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-9 col-md-6 col-lg-8 h-100">
+                    <iframe class="preview" id="preview" title="preview" src="about:blank" frameborder="0" scrolling="no"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    async function preview(driveId, itemId) {
+        const url = `/Container/GetPreviewItemLink?driveId=${driveId}&itemId=${itemId}`;
+        const response = await fetch(url, {
+            credentials: 'include',
+        }).then(response => response.text());
+
+        document.getElementById('preview').src = response;
+    }
+
+</script>

@@ -1,0 +1,49 @@
+﻿@using Microsoft.Graph;
+@{
+    string tenantId = ViewData["TenantId"] as string;
+    string driveId = ViewData["DriveId"] as string;
+    string itemId = ViewData["ItemId"] as string;
+    Permission permission = ViewData["Permission"] as Permission;
+}
+
+<form asp-action="Update" method="post" >
+  <input hidden id="tenantId" name="tenantId" value="@tenantId">
+  <input hidden id="driveId" name="driveId" value="@driveId">
+  <input hidden id="itemId" name="itemId" value="@itemId">
+  <input hidden id="Id" name="id" value="@permission.Id">
+
+    @{
+        var grantedTo = (permission.GrantedToV2.SiteGroup != null) ? permission.GrantedToV2.SiteGroup.DisplayName : permission.GrantedToV2.SiteUser.DisplayName;
+        <div class="form-group">
+        <strong>Permission Id</strong>
+            @permission.Id
+        </div>
+        <div class="form-group text-wrap">
+            <strong>Granted To:</strong>
+            @grantedTo
+        </div>
+        <div class="form-group">
+        @{
+            string hasRead = permission.Roles.Contains("read")? "checked": "";
+            string hasWrite = permission.Roles.Contains("write") ? "checked" : "";
+            string hasOwner = permission.Roles.Contains("owner") ? "checked" : "";
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="role" id="reader" value="reader" @hasRead>
+                <label class="form-check-label" for="reader">Reader</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="role" id="writer" value="writer" @hasWrite>
+                <label class="form-check-label" for="reader">Writer</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="role" id="owner" value="owner" @hasOwner>
+                <label class="form-check-label" for="reader">Owner</label>
+            </div>
+            }
+        </div>
+
+    <a class="btn btn-secondary" asp-area="" asp-controller="Permissions" asp-action="Index" asp-route-tenantId="@tenantId" asp-route-driveId="@driveId" asp-route-itemId="@itemId">Cancel</a>
+    <button type="submit" class="btn btn-primary">Update</button>
+    }
+</form>

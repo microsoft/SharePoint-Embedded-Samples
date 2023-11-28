@@ -1,0 +1,16 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "start": "npm install && npx lerna run start --parallel"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^6.3.0"
+  },
+  "dependencies": {
+    "@fluentui/react-icons": "^2.0.192"
+  }
+}

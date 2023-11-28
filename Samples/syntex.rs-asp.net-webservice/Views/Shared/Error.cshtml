@@ -1,0 +1,36 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Model Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    string errors = TempData["ErrorMessage"] as string;
+    string[] errorLines = errors.Split("\n");
+    foreach(string errorLine in errorLines)
+    {
+        if (!string.IsNullOrEmpty(errorLine))
+        {
+            string[] errorAndDescription = errorLine.Split(":", 2);
+            if (errorAndDescription.Length > 0)
+            {
+                <strong>@errorAndDescription[0]: </strong>
+                if (errorAndDescription.Length > 1)
+                {
+                    <code>@errorAndDescription[1]</code>
+                }
+            }
+            <br />
+        }
+    }
+}
+

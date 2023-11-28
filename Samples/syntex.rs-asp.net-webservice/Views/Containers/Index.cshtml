@@ -1,0 +1,57 @@
+@using SyntexRSDemo.Models;
+@{
+    var tenantId = ViewData["TenantId"] as string;
+    var containers = ViewData["Containers"] as IEnumerable<ContainerModel>;
+}
+
+<h2>Containers</h2>
+<table class="table table-hover" >
+    <thead>
+        <tr>
+            <th>Container Name </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (containers != null)
+            {
+                foreach (var container in containers)
+                {
+                    <tr>
+                        <td>@container.displayName</td>
+                        <td>
+                            <a asp-controller="Container" asp-action="Index" asp-route-tenantId="@tenantId" asp-route-driveId="@container.id"
+                               class="btn btn-light bi bi-card-list" data-toggle="tooltip" title="Contents"></a>
+                            <a asp-controller="ContainerMetadata" asp-action="index" asp-route-tenantId="@tenantId" asp-route-containerId="@container.id"
+                               class="btn btn-light bi bi-info-circle" data-toggle="tooltip" title="Attributes"></a>
+                            <a asp-controller="ContainerPermissions" asp-action="Index" asp-route-tenantId="@tenantId" asp-route-containerId="@container.id"
+                               class="btn btn-light bi bi-person-lines-fill" data-toggle="tooltip" title="Permissions"></a>
+                            <a asp-action="Delete" asp-route-tenantId="@tenantId" asp-route-containerId="@container.id"
+                               class="btn btn-light bi bi-trash" data-toggle="tooltip" title="Delete"></a>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<form>
+    <input hidden type="text" name="tenantId" value="@tenantId" />
+    <div>
+        <h4>Create new container</h4>
+
+        <div class="form-group text-wrap">
+            <label>Container name:</label>
+            <input type="text" id="alias" name="containerAlias" />
+        </div>
+
+        <br />
+        <button asp-action="Create" method="get" type="submit" class="btn btn-primary">Create user-owned container</button>
+        <!-- In order to use app only containers you need to use certificates. You can use them while testing locally. If you publish
+             it, your Azure subscription must support certificates
+        <button asp-action="CreateAppOnly" method="get" type="submit" class="btn btn-primary">Create tenant-owned container</button>
+        -->
+    </div>
+</form>

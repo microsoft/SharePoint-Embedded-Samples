@@ -1,0 +1,8 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var webUrl = ViewData["WebUrl"] as string;
+}
+
+<iframe src="@webUrl" style="display:block; height:calc(100vh - 160px); width:100%"></iframe>

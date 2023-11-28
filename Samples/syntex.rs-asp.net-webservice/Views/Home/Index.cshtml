@@ -1,0 +1,34 @@
+@{
+    var tenants = ViewData["Tenants"] as IEnumerable<TenantSite>;
+}
+
+<h1>
+    Syntex Repository Services Demo
+</h1>
+<p>
+    The purpose if this sample app is to exercise the Graph API that interact with Containers.
+
+    As such, it presents data that wouldn't be needed for a typical user, especially IDs.
+</p>
+
+
+In order to use use this app:
+<ul>
+    <li>(Only once per new tenant). Onboard your tenant. Requires Admin privileges. This should add your tenant to the list of tenants.</li>
+    <li>Select your tenant from the main screen and provide your credentials</li>
+    <li>Proceed to create containers and interact with them.</li>
+</ul>
+
+
+<h2>Onboarded tenants:</h2>
+<ul>
+
+    @foreach (TenantSite tenant in tenants)
+    {
+        <li><a asp-area="" asp-controller="Containers" asp-action="Index" asp-route-tenantId="@tenant.TenantId">@tenant.Name</a></li>
+    }
+</ul>
+<a class="btn btn-primary" asp-area="" asp-controller="Onboarding" asp-action="SignUp">Sign a tenant</a>
+
+
+

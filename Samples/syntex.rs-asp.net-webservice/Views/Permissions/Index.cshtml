@@ -1,0 +1,55 @@
+﻿@using Microsoft.Graph;
+@{
+    string tenantId = ViewData["TenantId"] as string;
+    var permissions = ViewData["Permissions"] as ICollection<Permission>;
+    string driveId = ViewData["DriveId"] as string;
+    string itemId = ViewData["ItemId"] as string;
+}
+
+
+<h2>Permissions</h2>
+<div class="container">
+<div class="row">
+<div class="col offset-md-1 col-md-10">
+@{
+    foreach (var perm in permissions)
+    {
+        var grantedTo = (perm.GrantedToV2.SiteGroup != null) ? perm.GrantedToV2.SiteGroup.DisplayName : perm.GrantedToV2.SiteUser.DisplayName;
+        <div class="container border rounded permission">
+          <div class="row">
+              <div class="col-md-4">Permission Id:</div>
+              <div class="col-md-8 text-wrap">@perm.Id</div>
+          </div>
+          <div class="row">
+              <div class="col-md-4">Granted to:</div>
+              <div class="col-md-8">@grantedTo</div>
+          </div>
+          <div class="row">
+              <div class="col-md-4">Roles:</div>
+              <div class="col-md-8">
+                  <ul>
+                      @{
+                          foreach (var role in perm.Roles)
+                          {
+                              <li>@role</li>
+                          }
+                      }
+                  </ul>
+              </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <a class="btn btn-danger float-end" asp-area="" asp-controller="Permissions" asp-action="Delete" asp-route-tenantId="@tenantId" asp-route-driveId="@driveId" asp-route-itemId="@itemId" asp-route-id="@perm.Id">Delete</a>
+               <a class="btn btn-primary float-end" asp-area="" asp-controller="Permissions" asp-action="Edit" asp-route-tenantId="@tenantId" asp-route-driveId="@driveId" asp-route-itemId="@itemId" asp-route-id="@perm.Id">Edit</a>
+            </div>
+          </div>
+        </div>
+    }
+}
+    <div >
+      <a class="btn btn-secondary" asp-area="" asp-controller="Container" asp-action="Index" asp-route-tenantId="@tenantId" asp-route-driveId="@driveId" asp-route-itemId="@itemId">Close</a>
+      <a class="btn btn-primary" asp-area="" asp-controller="Permissions" asp-action="Add" asp-route-tenantId="@tenantId" asp-route-driveId="@driveId" asp-route-itemId="@itemId">Add</a>
+    </div>
+    </div>
+  </div>
+</div>

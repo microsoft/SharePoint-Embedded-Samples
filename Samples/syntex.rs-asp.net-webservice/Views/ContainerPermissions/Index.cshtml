@@ -1,0 +1,61 @@
+﻿@{
+    var permissions = ViewData["Permissions"] as IEnumerable<ContainerPermissionModel>;
+    string tenantId = ViewData["TenantId"] as string;
+    string containerId = ViewData["ContainerId"] as string;
+}
+
+
+<h2>Permissions</h2>
+<div class="container">
+    <div class="row">
+        <div class="col offset-md-1 col-md-10">
+            @{
+
+                foreach (var perm in permissions)
+                {
+                    <div class="container border rounded permission">
+                        <div class="row">
+                            <div class="col-md-4">Permission Id:</div>
+                            <div class="col-md-8 text-wrap">@perm.id</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Granted to:</div>
+                            <div class="col-md-8">
+                                @perm.grantedToV2.user.displayName <br />
+                                @perm.grantedToV2.user.email
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Roles:</div>
+                            <div class="col-md-8">
+                                <ul>
+                                    @{
+                                        foreach (var role in perm.roles)
+                                        {
+                                            <li>@role</li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="btn-group float-end" role="group">
+                                    <a class="btn btn-primary " asp-area="" asp-controller="ContainerPermissions" asp-action="Edit"
+                                       asp-route-tenantId="@tenantId" asp-route-containerId="@containerId" asp-route-id="@perm.id" asp-route-email="@perm.grantedToV2.user.email" asp-route-role="@perm.roles.FirstOrDefault()">Edit</a>
+                                    <a class="btn btn-danger" asp-area="" asp-controller="ContainerPermissions" asp-action="Delete"
+                                       asp-route-tenantId="@tenantId" asp-route-containerId="@containerId" asp-route-id="@perm.id">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="btn-group pt-4">
+                <a class="btn btn-secondary" asp-area="" asp-controller="Containers" asp-action="Index" asp-route-tenantId="@tenantId">Close</a>
+                <a class="btn btn-primary" asp-area="" asp-controller="ContainerPermissions" asp-action="Add" asp-route-tenantId="@tenantId" asp-route-containerId="@containerId">Add</a>
+            </div>
+        </div>
+    </div>
+</div>
+
