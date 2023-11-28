@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
-using SyntexRSDemo.Data;
-using SyntexRSDemo.Models;
-using SyntexRSDemo.Services;
+using Demo.Data;
+using Demo.Models;
+using Demo.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SyntexRSDemo.Controllers
+namespace Demo.Controllers
 {
     [Authorize]
     public class ContainerMetadataController : Controller

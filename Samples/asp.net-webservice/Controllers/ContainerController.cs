@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
-using SyntexRSDemo.Models;
-using SyntexRSDemo.Services;
-using SyntexRSDemo.Utils;
+using Demo.Models;
+using Demo.Services;
+using Demo.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 
 
-namespace SyntexRSDemo.Controllers
+namespace Demo.Controllers
 {
     [Authorize]
     public class ContainerController : Controller

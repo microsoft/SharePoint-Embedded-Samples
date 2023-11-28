@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <UserSecretsId>SyntexRSDemo-99C23405-82C0-4B27-8A15-F3B0744E06BE</UserSecretsId>
+    <UserSecretsId>Demo-99C23405-82C0-4B27-8A15-F3B0744E06BE</UserSecretsId>
     <WebProject_DirectoryAccessLevelKey>0</WebProject_DirectoryAccessLevelKey>
-    <RootNamespace>SyntexRSDemo</RootNamespace>
+    <RootNamespace>Demo</RootNamespace>
     </PropertyGroup>
 
   <ItemGroup>

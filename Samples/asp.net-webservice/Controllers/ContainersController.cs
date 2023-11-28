@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
-using SyntexRSDemo.Services;
+using Demo.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SyntexRSDemo.Models;
+using Demo.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace SyntexRSDemo.Controllers
+namespace Demo.Controllers
 {
     [Authorize]
     public class ContainersController : Controller

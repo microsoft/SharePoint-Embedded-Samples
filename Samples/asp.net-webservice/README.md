@@ -25,16 +25,17 @@ This application demonstrates the basic flow to work with SharePoint Embedded co
 * The application client secret, or a client certificate if you want to create application owned containers.
  These can be generated/uploaded in [Azure's Active Directory (AzureAD or AAD) portal](https://portal.azure.com).
 * Visual Studio and/or .Net Framework installed (.NET 6.0 SDK is needed).
-
-> **_NOTE:_** A script to generate most of the information above can be located [here](https://github.com/microsoft/syntex-repository-services/blob/main/quickstart/Initialize-SyntexRaaSApp.ps1).
+* A ContainerType
+* Having the application registered in the consuming tenant (even if the owner of the application is the same as the consuming)
+* Having the containerType registered in the consuming tenant (even if the owner of the CT is the same as the consuming)
 
 # Quick setup
 
 ## 1. Clone the repository
 Clone the repository if you haven't done so and navigate to this application
 ```
-git clone https://github.com/microsoft/syntex-repository-services.git
-cd syntex-repository-services\samples\syntex.rs-asp.net-webservice
+git clone https://github.com/microsoft/SharePoint-Embedded-Samples.git
+cd SharePoint-Embedded-Samples\samples\asp.net-webservice
 ```
 
 ## 2. Configure the application
@@ -51,7 +52,7 @@ This will automatically build the project and start the browser.
 ### From a terminal
 If you use [dotnet command](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet), from the project's directory, type
 ```
-# from the samples\syntex.rs-asp.net-webservice
+# from samples\asp.net-webservice
 dotnet build
 dotnet run
 ```

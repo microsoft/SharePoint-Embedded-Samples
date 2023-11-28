@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SyntexRSDemo.Models
+namespace Demo.Models
 {
     [Serializable]
     public class FilesViewModel

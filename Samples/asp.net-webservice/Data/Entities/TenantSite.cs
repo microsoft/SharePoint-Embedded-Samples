@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SyntexRSDemo.Data.Entities
+namespace Demo.Data.Entities
 {
     public class TenantSite
     {

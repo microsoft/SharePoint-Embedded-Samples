@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SyntexRSDemo.Data.Entities;
+using Demo.Data.Entities;
 
-namespace SyntexRSDemo.Data
+namespace Demo.Data
 {
     public class DemoDbContext : DbContext
     {

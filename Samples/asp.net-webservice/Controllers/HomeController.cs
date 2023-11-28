@@ -25,13 +25,13 @@ SOFTWARE.
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using SyntexRSDemo.Data;
-using SyntexRSDemo.Models;
+using Demo.Data;
+using Demo.Models;
 using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace SyntexRSDemo.Controllers
+namespace Demo.Controllers
 {
     [Authorize]
     public class HomeController : Controller

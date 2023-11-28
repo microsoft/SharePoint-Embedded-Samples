@@ -1,4 +1,4 @@
-﻿namespace SyntexRSDemo.Models
+﻿namespace Demo.Models
 {
     public class ContainerModel
     {

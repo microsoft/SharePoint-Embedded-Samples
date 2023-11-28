@@ -24,7 +24,7 @@ SOFTWARE.
 
 using System;
 
-namespace SyntexRSDemo.Utils
+namespace Demo.Utils
 {
     public class UnauthorizedTenantException : UnauthorizedAccessException
     {

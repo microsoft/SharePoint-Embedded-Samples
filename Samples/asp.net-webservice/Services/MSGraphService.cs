@@ -27,9 +27,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SyntexRSDemo.Controllers;
-using SyntexRSDemo.Exceptions;
-using SyntexRSDemo.Models;
+using Demo.Controllers;
+using Demo.Exceptions;
+using Demo.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,7 +39,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace SyntexRSDemo.Services
+namespace Demo.Services
 {
 
     class PreviewItemResponse
@@ -48,7 +48,7 @@ namespace SyntexRSDemo.Services
     }
 
     /// <summary>Provides helper methods built over MS Graph SDK</summary>
-    /// <seealso cref="SyntexRSDemo.Services.IMSGraphService" />
+    /// <seealso cref="Demo.Services.IMSGraphService" />
     public class MSGraphService : IMSGraphService
     {
         private readonly IConfiguration _configuration;

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
-using SyntexRSDemo.Models;
-using SyntexRSDemo.Services;
+using Demo.Models;
+using Demo.Services;
 using System.Threading.Tasks;
 
 
-namespace SyntexRSDemo.Controllers
+namespace Demo.Controllers
 {
     [AllowAnonymous]
     public class ContainerPermissionsController : Controller

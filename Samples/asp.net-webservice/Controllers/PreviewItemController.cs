@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SyntexRSDemo.Controllers
+namespace Demo.Controllers
 {
     public class PreviewItemController : Controller
     {

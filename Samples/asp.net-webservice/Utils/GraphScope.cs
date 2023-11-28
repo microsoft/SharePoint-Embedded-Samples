@@ -1,4 +1,4 @@
-﻿namespace SyntexRSDemo.Utils
+﻿namespace Demo.Utils
 {
     public static class GraphScope
     {

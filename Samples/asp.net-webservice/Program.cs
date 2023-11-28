@@ -4,7 +4,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace SyntexRSDemo
+namespace Demo
 {
     public class Program
     {

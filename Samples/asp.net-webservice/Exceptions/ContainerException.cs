@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SyntexRSDemo.Exceptions
+namespace Demo.Exceptions
 {
     public class ContainerException : Exception
     {

@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
-using SyntexRSDemo.Services;
-using SyntexRSDemo.Utils;
+using Demo.Services;
+using Demo.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace SyntexRSDemo.Controllers
+namespace Demo.Controllers
 {
     [Authorize]
     public class PermissionsController : Controller

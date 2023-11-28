@@ -16,14 +16,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using SyntexRSDemo.Data;
-using SyntexRSDemo.Services;
-using SyntexRSDemo.Utils;
+using Demo.Data;
+using Demo.Services;
+using Demo.Utils;
 using System;
 
 
 
-namespace SyntexRSDemo
+namespace Demo
 {
     public class Startup
     {

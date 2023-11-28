@@ -27,9 +27,9 @@ using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SyntexRSDemo.Models;
+using Demo.Models;
 
-namespace SyntexRSDemo.Services
+namespace Demo.Services
 {
     public interface IMSGraphService
     {
