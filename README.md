@@ -1,14 +1,10 @@
-# Project
+# SharePoint Embedded Sample Apps
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+Below are two examples of apps with SharePoint Embedded. One is a client-side app using an Azure function and the other is a server-side app using C# and .NET. The source code and a walkthrough are provided for both applications. You are encouraged and recommended to start and build your app developments upon these boilerplate apps.
 
-As the maintainer of this project, please make a few updates:
+Client side app
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+Server side app
 
 ## Contributing
 
