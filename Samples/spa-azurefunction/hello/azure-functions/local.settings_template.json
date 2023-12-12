@@ -1,0 +1,15 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+      "AzureWebJobsStorage": "",
+      "FUNCTIONS_WORKER_RUNTIME": "node",
+      "APP_CLIENT_ID": "",
+      "APP_AUTHORITY": "",
+      "APP_AUDIENCE": "",
+      "APP_CLIENT_SECRET": "",
+      "APP_CONTAINER_TYPE_ID": ""
+    },
+    "Host": {
+      "CORS": "*"
+    }
+  }
