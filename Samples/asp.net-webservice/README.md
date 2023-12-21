@@ -210,7 +210,7 @@ line, you can specify the url like this: `dotnet run --urls "https://localhost:5
 
 - **Q: The redirect URI 'https:xxxxxx' does not match the redirect URI configured for the application**
 - A: The application must have the redirect used by the application configured properly. Go to the Azure Portal
-  and look into the application's redirect, and ensure that you have at least these two redirects. If you changed
+  and look into the application's redirect, and ensure that you have at least these two redirects in the **Web** section. If you changed
   the port or published the app,  verify that the urls match the redirects'.
    - https://localhost:57750/signin-oidc
    - https://localhost:57750/Onboarding/ProcessCode
