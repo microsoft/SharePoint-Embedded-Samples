@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/e740b7f7-abab-4948-9d07-28d243670569/resourceGroups/SPE/providers/Microsoft.Web/sites/spe-sample-acs",
+    "appService.deploySubpath": "."
+}
