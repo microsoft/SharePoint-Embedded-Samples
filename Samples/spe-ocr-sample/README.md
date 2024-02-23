@@ -159,8 +159,8 @@ At this point if you restart the app along with tunneling and subscription, you 
 
 ## Call ACS's Document Intelligence service API
 To use the ACS Document Intelligence APIs, you need to create a Multi-Service or Document Intelligence resource for Azure AI services. Follow the tutorials below to create the resource:
-•	[Quickstart: Create a multi-service resource for Azure AI services](https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal)
-•	[Get started with Document Intelligence](https://learn.microsoft.com/en-gb/azure/ai-services/document-intelligence/quickstarts/get-started-sdks-rest-api?view=doc-intel-3.1.0&viewFallbackFrom=form-recog-3.0.0&preserve-view=true&pivots=programming-language-javascript)
+- [Quickstart: Create a multi-service resource for Azure AI services](https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal)
+- [Get started with Document Intelligence](https://learn.microsoft.com/en-gb/azure/ai-services/document-intelligence/quickstarts/get-started-sdks-rest-api?view=doc-intel-3.1.0&viewFallbackFrom=form-recog-3.0.0&preserve-view=true&pivots=programming-language-javascript)
 
 After this step, you should have an endpoint and a key ready to use.
 
