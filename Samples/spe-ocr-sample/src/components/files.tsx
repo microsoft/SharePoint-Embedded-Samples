@@ -170,14 +170,13 @@ export const Files = (props: IFilesProps) => {
     const driveId = props.container.id;
     
     const extension = item.name? (item.name).slice(((item.name).lastIndexOf(".") - 1 >>> 0) + 2) : '';
-    const linkableFileTypes = new Set(["doc", "docx", "xlsx", "xls", "csv", "pptx", "ppt", "png"]);
+    const linkableFileTypes = new Set(["doc", "docx", "xlsx", "xls", "csv", "pptx", "ppt"]);
+    const resp = await graphClient.api(`/drives/${driveId}/items/${item.id}/preview`).post({ });
 
     linkableFileTypes.has(extension) 
     ?
       window.open(item.webUrl!, '_blank') 
     :
-      console.log(item);
-      const resp = await graphClient.api(`/drives/${driveId}/items/${item.id}/preview`).post({ });
       window.open(resp.getUrl + '&nb=true', '_blank');
   }
 
@@ -245,6 +244,7 @@ export const Files = (props: IFilesProps) => {
               disabled={!selectedRows.has(driveItem.id as string)}
               icon={<SaveRegular />}
               onClick={() => onDownloadItemClick(driveItem.downloadUrl)}>Download</Button>
+
             <Button aria-label="Delete"
               icon={<DeleteRegular />}
               onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
@@ -279,6 +279,7 @@ export const Files = (props: IFilesProps) => {
   return (
     <div>
       <input ref={uploadFileRef} type="file" onChange={onUploadFileSelected} style={{ display: 'none' }} />
+      <a ref={downloadLinkRef} href="" target="_blank" style={{ display: 'none' }} />
 
       <Toolbar>
         <ToolbarButton vertical icon={<AddRegular />} onClick={() => setNewFolderDialogOpen(true)}>New Folder</ToolbarButton>
