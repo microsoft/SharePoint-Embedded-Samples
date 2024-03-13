@@ -1,11 +1,10 @@
 {
 	"info": {
-		"_postman_id": "7eba7cfb-72d1-4b0a-bed2-b1c66b99b136",
+		"_postman_id": "55bc4fc7-1233-43a8-b2f3-22edf1ea0c1f",
 		"name": "SharePoint Embedded",
-		"description": "[Microsoft Graph](https://docs.microsoft.com/graph/overview) is the gateway to data and intelligence in Microsoft 365. It provides a unified programmability model that you can use to access the tremendous amount of data in Microsoft 365, Windows 10, and Enterprise Mobility + Security. Use the wealth of data in Microsoft Graph to build apps for organizations and consumers that interact with millions of users.\n\n## Create Environment File\n\nIn order to use the RaaS Postman collection we've just imported, we will need to create a valid environment file that contains all the variables in the underlying scripts from this collection. Most need initial values, but fields like ContainerID and PermissionID are generated in post script execution, and later re-used as parameters in other requests. Once the environment file has been created, make sure the collection is set up to use it. This can be done by selecting the newly created environment in the drop-down near the top right hand of the application window.\n\n| Field |  |\n|----------|---|\n| ClientID |  |\n| ClientSecret |  |\n| TenantID |  |\n| tid |  |\n| RootSiteUrl |  |\n| ContainerTypeId |  |\n| TenantName |  |\n| ContainerId |  |\n| PermissionId |  |\n| FileId |  |\n\nThis is the environment file set up for our sample app:\n\n<img src=\"https://content.pstmn.io/1dcda27e-020b-42a8-85cd-f2ef52c93db0/UmF3IEVudi5wbmc=\">\n\n## Acquire a delegate Graph token\n\nTo execute Graph APIs on our containers, we will need to first acquire a valid Graph authorization token. This can be done by using the acquire token setup in the Delegated tab. Click on the Delegate tab under the root \"RaaS Postman Collection\" item, and select the Authorization tab. The window should look like this:\n\n<img src=\"https://content.pstmn.io/03cb2159-10a4-485c-ab44-5bbf93522209/ZGVsZWdhdGV0b2tlbi5wbmc=\" width=\"619\" height=\"563\">\n\nThe \"Configure New Token\" workflow pulls the necessary parameters from the environment file and uses them to retrieve a valid token. Pressing the \"Get New Access Token\" may prompt a credentials window if it’s the first time using the collection. The tenants credentials should be entered here for either a regular or admin user. Once complete, you should see the following window appear:\n\n<img src=\"https://content.pstmn.io/d9cd45b9-8591-4b5e-9e41-4010ff07f219/bmV3dG9rZW5nb3QucG5n\" width=\"446\" height=\"295\">\n\nClick \"Proceed\" and you'll be a presented with the newly created access token. Name your token appropriately, and then select \"Use Token\" for it to be including in any further issued Graph request.\n\n<img src=\"https://content.pstmn.io/031fdd54-e4c9-423b-86c7-af4e9839f37b/RGVsZWdhdGUgLSBVc2UgVG9rZW4ucG5n\">\n\n## Acquire a delegate Vroom token\n\nTo execute storageContainer API requests, we need to follow the similar approach we did for Graph tokens, except now we will use the \"Containers\" Authorization tab to do so.\n\n<img src=\"https://content.pstmn.io/ea4cbae5-3bcd-4270-bea5-f8935c0d7a6f/RGVsZWdhdGUgLSAybmQgVG9rZW4ucG5n\">\n\nWe follow the \"Get New Access Token\" flow, entering tenant credentials if prompted, and select \"Use Token\" to terminate the flow. We are now ready to use both Graph container specific calls and Vroom storageContainer endpoints.\n\n## Creating your first storage container\n\nIn order to begin experimenting with the RaaS Postman collection, we will first need a container to interact with. We can create one using the POST request labelled \"Create Container\".\n\n<img src=\"https://content.pstmn.io/e846726c-0f02-49b5-bec6-02e2baa4cbf0/RGVsZWdhdGUgLSBDcmVhdGUgQ29udGFpbmVyLnBuZw==\">\n\nYou can specify the containers display name and description in the \"Body\" tab of the request shown above. When you're ready to create your container, press \"Send\" and await response confirmation that your container was created successfully. You should see a response that returns a list of fields, including the ID of the container as well as the container create time.\n\n<img src=\"https://content.pstmn.io/e95e6033-0d9a-46e6-aaeb-188f714bf4bf/Y29udGFpbmVyZGV0YWlscy5wbmc=\">\n\nThe ID of the container is now stored in your environment file and will be the subject of an further container operations, both Graph or Vroom requests.\n\n## Interacting with storage containers\n\nNow that the Container ID field has been set in our environment file, we can proceed to use the remaining delegate requests in the collection, such as getting a storage containers drive items, or creating permissions on the container. The specifics of how to use these requests can be found in the rest of the documentation below.\n\n<img src=\"https://content.pstmn.io/d52f800d-bb46-4313-a5e6-39ce7b86c64d/QWxsIFBvc3RtYW4gRnVuY3Rpb25hbGl0eS5wbmc=\">",
+		"description": "[Microsoft Graph](https://docs.microsoft.com/graph/overview) is the gateway to data and intelligence in Microsoft 365. It provides a unified programmability model that you can use to access the tremendous amount of data in Microsoft 365, Windows 10, and Enterprise Mobility + Security. Use the wealth of data in Microsoft Graph to build apps for organizations and consumers that interact with millions of users.\n\n## Create Environment File\n\nIn order to use the RaaS Postman collection we've just imported, we will need to create a valid environment file that contains all the variables in the underlying scripts from this collection. Most need initial values, but fields like ContainerID and PermissionID are generated in post script execution, and later re-used as parameters in other requests. Once the environment file has been created, make sure the collection is set up to use it. This can be done by selecting the newly created environment in the drop-down near the top right hand of the application window.\n\n| Field |  |\n| --- | --- |\n| ClientID |  |\n| ClientSecret |  |\n| TenantID |  |\n| tid |  |\n| RootSiteUrl |  |\n| ContainerTypeId |  |\n| TenantName |  |\n| ContainerId |  |\n| PermissionId |  |\n| FileId |  |\n\nThis is the environment file set up for our sample app:\n\n<img src=\"https://content.pstmn.io/1dcda27e-020b-42a8-85cd-f2ef52c93db0/UmF3IEVudi5wbmc=\">\n\n## Acquire a delegate Graph token\n\nTo execute Graph APIs on our containers, we will need to first acquire a valid Graph authorization token. This can be done by using the acquire token setup in the Delegated tab. Click on the Delegate tab under the root \"RaaS Postman Collection\" item, and select the Authorization tab. The window should look like this:\n\n<img src=\"https://content.pstmn.io/03cb2159-10a4-485c-ab44-5bbf93522209/ZGVsZWdhdGV0b2tlbi5wbmc=\" width=\"619\" height=\"563\">\n\nThe \"Configure New Token\" workflow pulls the necessary parameters from the environment file and uses them to retrieve a valid token. Pressing the \"Get New Access Token\" may prompt a credentials window if it’s the first time using the collection. The tenants credentials should be entered here for either a regular or admin user. Once complete, you should see the following window appear:\n\n<img src=\"https://content.pstmn.io/d9cd45b9-8591-4b5e-9e41-4010ff07f219/bmV3dG9rZW5nb3QucG5n\" width=\"446\" height=\"295\">\n\nClick \"Proceed\" and you'll be a presented with the newly created access token. Name your token appropriately, and then select \"Use Token\" for it to be including in any further issued Graph request.\n\n<img src=\"https://content.pstmn.io/031fdd54-e4c9-423b-86c7-af4e9839f37b/RGVsZWdhdGUgLSBVc2UgVG9rZW4ucG5n\">\n\n## Acquire a delegate Vroom token\n\nTo execute storageContainer API requests, we need to follow the similar approach we did for Graph tokens, except now we will use the \"Containers\" Authorization tab to do so.\n\n<img src=\"https://content.pstmn.io/ea4cbae5-3bcd-4270-bea5-f8935c0d7a6f/RGVsZWdhdGUgLSAybmQgVG9rZW4ucG5n\">\n\nWe follow the \"Get New Access Token\" flow, entering tenant credentials if prompted, and select \"Use Token\" to terminate the flow. We are now ready to use both Graph container specific calls and Vroom storageContainer endpoints.\n\n## Creating your first storage container\n\nIn order to begin experimenting with the RaaS Postman collection, we will first need a container to interact with. We can create one using the POST request labelled \"Create Container\".\n\n<img src=\"https://content.pstmn.io/e846726c-0f02-49b5-bec6-02e2baa4cbf0/RGVsZWdhdGUgLSBDcmVhdGUgQ29udGFpbmVyLnBuZw==\">\n\nYou can specify the containers display name and description in the \"Body\" tab of the request shown above. When you're ready to create your container, press \"Send\" and await response confirmation that your container was created successfully. You should see a response that returns a list of fields, including the ID of the container as well as the container create time.\n\n<img src=\"https://content.pstmn.io/e95e6033-0d9a-46e6-aaeb-188f714bf4bf/Y29udGFpbmVyZGV0YWlscy5wbmc=\">\n\nThe ID of the container is now stored in your environment file and will be the subject of an further container operations, both Graph or Vroom requests.\n\n## Interacting with storage containers\n\nNow that the Container ID field has been set in our environment file, we can proceed to use the remaining delegate requests in the collection, such as getting a storage containers drive items, or creating permissions on the container. The specifics of how to use these requests can be found in the rest of the documentation below.\n\n<img src=\"https://content.pstmn.io/d52f800d-bb46-4313-a5e6-39ce7b86c64d/QWxsIFBvc3RtYW4gRnVuY3Rpb25hbGl0eS5wbmc=\">",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24424581",
-		"_collection_link": "https://restless-desert-827624.postman.co/workspace/RaaS-Team-Workspace~5fc557f3-e781-4d71-a131-ad9949217f5f/collection/24424581-7eba7cfb-72d1-4b0a-bed2-b1c66b99b136?action=share&source=collection_link&creator=24424581"
+		"_exporter_id": "7048081"
 	},
 	"item": [
 		{
@@ -15,129 +14,7 @@
 					"name": "Containers",
 					"item": [
 						{
-							"name": "Create Container",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"\r",
-											"if (pm.response.code === 201) {\r",
-											"    var json = pm.response.json();\r",
-											"    postman.setEnvironmentVariable(\"ContainerId\", json.id);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"displayName\": \"Sample App Container 1\",\r\n    \"description\": \"First container description.\",\r\n    \"containerTypeId\": \"{{ContainerTypeId}}\"\r\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"storage",
-										"fileStorage",
-										"containers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Activate Container",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"storage",
-										"fileStorage",
-										"containers",
-										"{{ContainerId}}",
-										"activate"
-									]
-								},
-								"description": "This API will let callers explicitly activate a fileStorageContainer. It is idempotent, so calling it multiple time will yield the same response and will not create any side effects. Upon successfull activation the container's `status` will be set to \"active\"."
-							},
-							"response": []
-						},
-						{
-							"name": "Get Container",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}?$select=id,displayName,containerTypeId,status,description,customProperties&$expand=permissions",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"storage",
-										"fileStorage",
-										"containers",
-										"{{ContainerId}}"
-									],
-									"query": [
-										{
-											"key": "$select",
-											"value": "id,displayName,containerTypeId,status,description,customProperties"
-										},
-										{
-											"key": "$expand",
-											"value": "permissions"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "List Containers",
+							"name": "List containers",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -166,7 +43,164 @@
 							"response": []
 						},
 						{
-							"name": "Get Permissions",
+							"name": "Create container",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"if (pm.response.code === 201) {\r",
+											"    var json = pm.response.json();\r",
+											"    postman.setEnvironmentVariable(\"ContainerId\", json.id);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"displayName\": \"My Container\",\r\n    \"description\": \"My container description.\",\r\n    \"containerTypeId\": \"{{ContainerTypeId}}\"\r\n}"
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get container",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}?$select=id,displayName,containerTypeId,status,description,customProperties,itemMajorVersionLimit,isItemVersioningEnabled&$expand=permissions",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}"
+									],
+									"query": [
+										{
+											"key": "$select",
+											"value": "id,displayName,containerTypeId,status,description,customProperties,itemMajorVersionLimit,isItemVersioningEnabled"
+										},
+										{
+											"key": "$expand",
+											"value": "permissions"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update container",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"displayName\": \"My Updated Container\",\r\n    \"description\": \"My updated container description.\",\r\n    \"itemMajorVersionLimit\": 50,\r\n    \"isItemVersioningEnabled\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}"
+									]
+								},
+								"description": "This API will let callers explicitly activate a fileStorageContainer. It is idempotent, so calling it multiple time will yield the same response and will not create any side effects. Upon successfull activation the container's `status` will be set to \"active\"."
+							},
+							"response": []
+						},
+						{
+							"name": "Activate container",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"activate"
+									]
+								},
+								"description": "This API will let callers explicitly activate a fileStorageContainer. It is idempotent, so calling it multiple time will yield the same response and will not create any side effects. Upon successfull activation the container's `status` will be set to \"active\"."
+							},
+							"response": []
+						},
+						{
+							"name": "List container permissions",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -204,7 +238,7 @@
 							"response": []
 						},
 						{
-							"name": "Create User Permission",
+							"name": "Create container permission",
 							"event": [
 								{
 									"listen": "test",
@@ -217,7 +251,8 @@
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -226,7 +261,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"roles\": [\"reader\"],\r\n  \"grantedToV2\": {\r\n    \"user\": {\r\n      \"userPrincipalName\": \"{{UserAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n    }\r\n  }\r\n}",
+									"raw": "{\r\n  \"roles\": [\"reader\"],// \"writer\", \"manager\", \"owner\"\r\n  \"grantedToV2\": {\r\n    \"user\": {\r\n      \"userPrincipalName\": \"{{UserAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n      //\"userPrincipalName\": \"{{GroupAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n    }\r\n  }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -254,7 +289,7 @@
 							"response": []
 						},
 						{
-							"name": "Update User Permission",
+							"name": "Update container permission",
 							"request": {
 								"method": "PATCH",
 								"header": [],
@@ -289,37 +324,27 @@
 							"response": []
 						},
 						{
-							"name": "Create Group Permissions",
+							"name": "Delete container permission",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"\r",
-											"if (pm.response.code === 201) {\r",
-											"    var json = pm.response.json();\r",
-											"    postman.setEnvironmentVariable(\"PermissionId\", json.id);\r",
+											"if (pm.response.code === 204) {\r",
+											"    pm.environment.unset(\"PermissionId\");\r",
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "DELETE",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"roles\": [\"reader\"],\r\n  \"grantedToV2\": {\r\n    \"user\": {\r\n      \"userPrincipalName\": \"{{GroupAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n    }\r\n  }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -332,14 +357,180 @@
 										"fileStorage",
 										"containers",
 										"{{ContainerId}}",
-										"permissions"
+										"permissions",
+										"{{PermissionId}}"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get Container Custom Properties",
+							"name": "List container columns",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"columns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create container column",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"if (pm.response.code === 201) {\r",
+											"    var json = pm.response.json();\r",
+											"    postman.setEnvironmentVariable(\"ColumnId\", json.id);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    // https://learn.microsoft.com/en-us/graph/api/resources/columndefinition?view=graph-rest-1.0\r\n    \"name\": \"MyColumn\",\r\n    \"displayName\": \"My Column\",\r\n    \"description\": \"My column description\",\r\n    \"enforceUniqueValues\": false, // Must be false (true not supported with Containers)\r\n    \"hidden\": false,\r\n    \"indexed\": true, // Set to true to be able to search files based on this column\r\n    \"text\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/textcolumn?view=graph-rest-1.0\r\n        \"allowMultipleLines\": false,\r\n        \"appendChangesToExistingText\": false,\r\n        \"linesForEditing\": 0,\r\n        \"maxLength\": 255\r\n    }\r\n    /*\r\n    // Other supported column types with SharePoint Embedded -- replace the text: {..} property above with one of these:\r\n    // If a column type is not listed here, it's NOT supported with SharePoint Embedded right now. \r\n\r\n    \"boolean\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/booleancolumn?view=graph-rest-1.0\r\n    }\r\n    \"dateTime\": {\r\n        \"displayAs\": \"default | friendly | standard\",\r\n        \"format\": \"dateOnly | dateTime\"\r\n    }\r\n    \"currency\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/currencycolumn?view=graph-rest-1.0\r\n        \"locale\": \"en-us\"\r\n    }\r\n    \"choice\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/choicecolumn?view=graph-rest-1.0\r\n        \"allowTextEntry\": true,\r\n        \"choices\": [\"red\", \"blue\", \"green\"],\r\n        \"displayAs\": \"checkBoxes | dropDownMenu | radioButtons\"\r\n    }\r\n    \"hyperlinkOrPicture\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/hyperlinkorpicturecolumn?view=graph-rest-1.0\r\n        \"isPicture\": false\r\n    }\r\n    \"number\": {\r\n        https://learn.microsoft.com/en-us/graph/api/resources/numbercolumn?view=graph-rest-1.0\r\n        \"decimalPlaces\": \"automatic | none | one | two | three | four | five\",\r\n        \"displayAs\": \"number | percentage\",\r\n        \"maximum\": 10.551,\r\n        \"minimum\": 99.993\r\n    }\r\n    \"personOrGroup\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/personorgroupcolumn?view=graph-rest-1.0\r\n        \"allowMultipleSelection\": true,\r\n        \"displayAs\": \"account | contentType | created | department | ...\",\r\n        \"chooseFromType\": \"peopleAndGroups | peopleOnly\"\r\n    }\r\n    */\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"columns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get container column",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns/{{ColumnId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"columns",
+										"{{ColumnId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete container column",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 204) {\r",
+											"    pm.environment.unset(\"ColumnId\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns/{{ColumnId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"columns",
+										"{{ColumnId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get container properties",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -364,13 +555,13 @@
 							"response": []
 						},
 						{
-							"name": "Set Container Custom Properties",
+							"name": "Set container properties",
 							"request": {
 								"method": "PATCH",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"urlPath\": {  \r\n        \"value\": \"northwind\",   \r\n        \"isSearchable\": false  \r\n    },\r\n    \"tags\": {\r\n        \"value\": \"northwind traders nwt nw\",\r\n        \"isSearchable\": true\r\n    },\r\n    \"department\": { \r\n        \"value\": \"finance\",   \r\n        \"isSearchable\": true \r\n    }\r\n}",
+									"raw": "{\r\n    /*\r\n    Format\r\n    \"{custom_name}\": {\r\n        \"value\": \"{property_value}\",\r\n        \"isSearchable\": true | false //Whether or not the property can be used with search queries\r\n    }\r\n    */\r\n    \"urlPath\": {  \r\n        \"value\": \"northwind\",   \r\n        \"isSearchable\": false  \r\n    },\r\n    \"tags\": {\r\n        \"value\": \"northwind traders nwt nw\",\r\n        \"isSearchable\": true\r\n    },\r\n    \"department\": { \r\n        \"value\": \"finance\",   \r\n        \"isSearchable\": true \r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -398,18 +589,12 @@
 							"response": []
 						},
 						{
-							"name": "Soft Delete Container by ID",
+							"name": "Delete container",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"\r",
-											"if (pm.response.code === 204) {\r",
-											"    pm.environment.set(\"DeletedContainerId\", pm.environment.get(\"ContainerId\"));\r",
-											"    pm.environment.unset(\"ContainerId\");\r",
-											"    pm.environment.unset(\"PermissionId\");\r",
-											"}\r",
 											""
 										],
 										"type": "text/javascript"
@@ -448,7 +633,7 @@
 							"response": []
 						},
 						{
-							"name": "List Soft Deleted Containers",
+							"name": "List deleted containers",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -477,19 +662,19 @@
 							"response": []
 						},
 						{
-							"name": "Hard Delete Container by ID",
+							"name": "Permanently delete container",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"\r",
 											"if (pm.response.code === 204) {\r",
-											"    pm.environment.unset(\"SoftDeletedContainerId\");\r",
+											"    pm.environment.unset(\"ContainerId\");\r",
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -506,7 +691,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/deletedContainers/{{ContainerId}}",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -518,7 +703,7 @@
 										"storage",
 										"fileStorage",
 										"deletedContainers",
-										"{{SoftDeletedContainerId}}"
+										"{{ContainerId}}"
 									]
 								}
 							},
@@ -553,218 +738,16 @@
 							"name": "Sharing",
 							"item": [
 								{
-									"name": "Send a sharing invitation",
+									"name": "List file permissions",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
 												"exec": [
-													"try {\r",
-													"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-													"    {\r",
-													"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-													"    }\r",
-													"    else\r",
-													"    {\r",
-													"        if (pm.response.status === \"Forbidden\")\r",
-													"        {\r",
-													"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-													"        }\r",
-													"        var json = JSON.parse(responseBody);\r",
-													"        postman.setEnvironmentVariable(\"PermissionId\", json.value[0].id);\r",
-													"    }\r",
-													"}\r",
-													"catch (e) {\r",
-													"    console.log(e);\r",
-													"}\r",
 													""
 												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"requireSignIn\": true,\r\n    \"sendInvitation\": false,\r\n    \"roles\": [\"read\"],\r\n    \"recipients\": [{\r\n            \"email\": \"{{SharingTenantUser}}\"\r\n        }\r\n    ],\r\n    \"message\": null\r\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
-											"protocol": "https",
-											"host": [
-												"graph",
-												"microsoft",
-												"com"
-											],
-											"path": [
-												"v1.0",
-												"drives",
-												"{{ContainerId}}",
-												"items",
-												"{{FileId}}",
-												"invite"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Send a sharing invitation (Unknown Guest)",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"try {\r",
-													"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-													"    {\r",
-													"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-													"    }\r",
-													"    else\r",
-													"    {\r",
-													"        if (pm.response.status === \"Forbidden\")\r",
-													"        {\r",
-													"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-													"        }\r",
-													"    }\r",
-													"}\r",
-													"catch (e) {\r",
-													"    console.log(e);\r",
-													"}\r",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"type\": \"view\",\r\n    \"scope\": \"organization\"\r\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
-											"protocol": "https",
-											"host": [
-												"graph",
-												"microsoft",
-												"com"
-											],
-											"path": [
-												"v1.0",
-												"drives",
-												"{{ContainerId}}",
-												"items",
-												"{{FileId}}",
-												"createLink"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Send a sharing invitation (Guest)",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"try {\r",
-													"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-													"    {\r",
-													"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-													"    }\r",
-													"    else\r",
-													"    {\r",
-													"        if (pm.response.status === \"Forbidden\")\r",
-													"        {\r",
-													"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-													"        }\r",
-													"        var json = JSON.parse(responseBody);\r",
-													"        postman.setEnvironmentVariable(\"PermissionId\", json.value[0].id);\r",
-													"    }\r",
-													"}\r",
-													"catch (e) {\r",
-													"    console.log(e);\r",
-													"}\r",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"requireSignIn\": true,\r\n    \"sendInvitation\": false,\r\n    \"roles\": [\"read\"],\r\n    \"recipients\": [{\r\n            \"email\": \"{{SharingGuestUser}}\"\r\n        }\r\n    ],\r\n    \"message\": null\r\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
-											"protocol": "https",
-											"host": [
-												"graph",
-												"microsoft",
-												"com"
-											],
-											"path": [
-												"v1.0",
-												"drives",
-												"{{ContainerId}}",
-												"items",
-												"{{FileId}}",
-												"invite"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "List sharing permissions",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"try {\r",
-													"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-													"    {\r",
-													"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-													"    }\r",
-													"    else\r",
-													"    {\r",
-													"        if (pm.response.status === \"Forbidden\")\r",
-													"        {\r",
-													"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-													"        }\r",
-													"    }\r",
-													"}\r",
-													"catch (e) {\r",
-													"    console.log(e);\r",
-													"}\r",
-													""
-												],
-												"type": "text/javascript"
+												"type": "text/javascript",
+												"packages": {}
 											}
 										}
 									],
@@ -798,7 +781,109 @@
 									"response": []
 								},
 								{
-									"name": "Get sharing permission",
+									"name": "Create file invite",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"if (pm.response.code === 200) {\r",
+													"    var json = pm.response.json();\r",
+													"    postman.setEnvironmentVariable(\"PermissionId\", json.value[0].id);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"requireSignIn\": true,\r\n    \"sendInvitation\": false,\r\n    \"roles\": [\"write\"],\r\n    \"recipients\": [{\r\n            \"email\": \"{{UserAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n        }\r\n    ],\r\n    \"message\": \"Here is my sharing message!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
+											"protocol": "https",
+											"host": [
+												"graph",
+												"microsoft",
+												"com"
+											],
+											"path": [
+												"v1.0",
+												"drives",
+												"{{ContainerId}}",
+												"items",
+												"{{FileId}}",
+												"invite"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create file link",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"if (pm.response.code === 201) {\r",
+													"    var json = pm.response.json();\r",
+													"    postman.setEnvironmentVariable(\"PermissionId\", json.id);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"type\": \"view\", //or \"edit\"\r\n    \"scope\": \"organization\" //or \"anonymous\" or \"users\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+											"protocol": "https",
+											"host": [
+												"graph",
+												"microsoft",
+												"com"
+											],
+											"path": [
+												"v1.0",
+												"drives",
+												"{{ContainerId}}",
+												"items",
+												"{{FileId}}",
+												"createLink"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get file permission",
 									"event": [
 										{
 											"listen": "test",
@@ -857,31 +942,19 @@
 									"response": []
 								},
 								{
-									"name": "Delete sharing permission",
+									"name": "Delete file permission",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
 												"exec": [
-													"try {\r",
-													"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-													"    {\r",
-													"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-													"    }\r",
-													"    else\r",
-													"    {\r",
-													"        if (pm.response.status === \"Forbidden\")\r",
-													"        {\r",
-													"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-													"        }\r",
-													"    }\r",
-													"}\r",
-													"catch (e) {\r",
-													"    console.log(e);\r",
+													"if (pm.response.code === 204) {\r",
+													"    pm.environment.unset(\"PermissionId\");\r",
 													"}\r",
 													""
 												],
-												"type": "text/javascript"
+												"type": "text/javascript",
+												"packages": {}
 											}
 										}
 									],
@@ -918,7 +991,7 @@
 							]
 						},
 						{
-							"name": "Get Drive",
+							"name": "Get drive",
 							"event": [
 								{
 									"listen": "test",
@@ -973,7 +1046,77 @@
 							"response": []
 						},
 						{
-							"name": "Get DriveItems",
+							"name": "List items",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
+											"    {\r",
+											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
+											"    }\r",
+											"    else\r",
+											"    {\r",
+											"        if (pm.response.status === \"Forbidden\")\r",
+											"        {\r",
+											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
+											"        }\r",
+											"    }\r",
+											"}\r",
+											"catch (e) {\r",
+											"    console.log(e);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/root/children?$expand=listitem($expand=fields)",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"root",
+										"children"
+									],
+									"query": [
+										{
+											"key": "$filter",
+											"value": "startswith(listitem/fields/MyColumn, 'My Value')",
+											"disabled": true
+										},
+										{
+											"key": "$expand",
+											"value": "listitem($expand=fields)"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List items with field filter",
 							"event": [
 								{
 									"listen": "test",
@@ -1011,7 +1154,7 @@
 									}
 								],
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/root/children",
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items?$filter=startswith(listitem/fields/MyColumn, 'My Value')&$expand=listitem($expand=fields)",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -1022,42 +1165,38 @@
 										"v1.0",
 										"drives",
 										"{{ContainerId}}",
-										"items",
-										"root",
-										"children"
+										"items"
+									],
+									"query": [
+										{
+											"key": "$filter",
+											"value": "startswith(listitem/fields/MyColumn, 'My Value')"
+										},
+										{
+											"key": "$expand",
+											"value": "listitem($expand=fields)"
+										}
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Upload a File",
+							"name": "Upload file",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"        var json = JSON.parse(responseBody);\r",
-											"        postman.setEnvironmentVariable(\"FileId\", json.id);\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
+											"\r",
+											"if (pm.response.code === 201) {\r",
+											"    var json = pm.response.json();\r",
+											"    postman.setEnvironmentVariable(\"FileId\", json.id);\r",
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1071,7 +1210,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root:/{{file_name_with_extension}}:/content",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -1083,7 +1222,7 @@
 										"drives",
 										"{{ContainerId}}",
 										"root:",
-										"Ad Slogans.docx:",
+										"{{file_name_with_extension}}:",
 										"content"
 									]
 								}
@@ -1091,31 +1230,16 @@
 							"response": []
 						},
 						{
-							"name": "Get File",
+							"name": "Get file",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1142,213 +1266,16 @@
 							"response": []
 						},
 						{
-							"name": "Create Folder",
+							"name": "Update file",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
 											""
 										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\": \"New Folder\",\n  \"folder\": {}\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root/children",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}",
-										"root",
-										"children"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get Files in Folder",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}",
-										"items",
-										"{{ItemId}}",
-										"children"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get container SharePointIds",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}"
-									],
-									"query": [
-										{
-											"key": "$select",
-											"value": "SharePointIds"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Rename a file",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"        var json = JSON.parse(responseBody);\r",
-											"        postman.setEnvironmentVariable(\"FileId\", json.id);\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1384,31 +1311,116 @@
 							"response": []
 						},
 						{
-							"name": "Get file thumbnails",
+							"name": "Delete file",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
+											"if (pm.response.code === 204) {\r",
+											"    pm.environment.unset(\"FileId\");\r",
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List file fields",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/listitem/fields",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}",
+										"listitem",
+										"fields"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set file field",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"MyColumn\": \"My Value\" // null will clear the field value\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/listitem/fields",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}",
+										"listitem",
+										"fields"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List file thumbnails",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1436,31 +1448,16 @@
 							"response": []
 						},
 						{
-							"name": "Get file versions",
+							"name": "List file versions",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1488,186 +1485,7 @@
 							"response": []
 						},
 						{
-							"name": "Search DriveItems in Drive",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root/search(q='{contoso}')",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}",
-										"root",
-										"search(q='{contoso}')"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create view share link",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"type\": \"view\",\r\n    \"scope\": \"organization\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}",
-										"items",
-										"{{FileId}}",
-										"createLink"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create edit share link",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"type\": \"edit\",\r\n    \"scope\": \"organization\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}",
-										"items",
-										"{{FileId}}",
-										"createLink"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create preview link",
+							"name": "Create file preview",
 							"event": [
 								{
 									"listen": "test",
@@ -1710,6 +1528,262 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Create folder",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"if (pm.response.code === 201) {\r",
+											"    var json = pm.response.json();\r",
+											"    postman.setEnvironmentVariable(\"FolderId\", json.id);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"New Folder\",\n  \"folder\": {}\n}"
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root/children",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"root",
+										"children"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get folder",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FolderId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FolderId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update folder",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"New Folder Updated\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FolderId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FolderId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List folder items",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FolderId}}/children",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FolderId}}",
+										"children"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete folder",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 204) {\r",
+											"    pm.environment.unset(\"FolderId\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FolderId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FolderId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search drive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root/search(q='{contoso}')",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"root",
+										"search(q='{contoso}')"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -1717,7 +1791,7 @@
 					"name": "Search",
 					"item": [
 						{
-							"name": "Search containers within CT Copy",
+							"name": "Search containers",
 							"request": {
 								"method": "POST",
 								"header": [
@@ -1730,7 +1804,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerTypeId:{{ContainerTypeId}}\"\n            }\n        }\n    ]\n}"
+									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerTypeId:{{ContainerTypeId}}\"\n                //\"queryString\": \"Title:'My Container'\" //Title matches container.displayName\n                //\"queryString\": \"Description:'description'\" //Description matches container.description\n                //\"queryString\": \"department:'finance'\" //Matches container.customProperty named 'department' with isSearchable===true\n            }\n        }\n    ]\n}"
 								},
 								"url": {
 									"raw": "https://graph.microsoft.com/beta/search/query",
@@ -1750,139 +1824,7 @@
 							"response": []
 						},
 						{
-							"name": "Search containers by Title Copy",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"Title:'mango'\"\n            }\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search containers by Description Copy",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"Description:'pineapple'\"\n            }\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search containers by Custom Property Copy",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"department:'marketing'\"\n            }\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search containers by Title+Description+CT Copy",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"Title:'mango' AND Description:'project' AND ContainerTypeId:{{ContainerTypeId}}\"\n            }\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search by Title in Container Copy",
+							"name": "Search container items",
 							"request": {
 								"method": "POST",
 								"header": [
@@ -1895,643 +1837,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"Title:'improvements' AND ContainerId:{{ContainerId}}\"\n            }\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search by File Type in Container Copy",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"FileType:docx AND ContainerId:{{ContainerId}}\"\n            }\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search content in Container Copy",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"'awesome' AND ContainerId:{{ContainerId}}\"\n            }\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Page search results",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"from\": 0,\n            \"size\": 15\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Sort search results",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"sortProperties\": [\n                {\n                    \"name\": \"lastModifiedDateTime\",\n                    \"isDescending\": \"true\" // default is false\n                }\n            ]\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Request spelling correction",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									},
-									{
-										"key": "SdkVersion",
-										"type": "text",
-										"value": "postman-graph/v2.0"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"requests\": [\n    {\n      \"entityTypes\": [\n        \"driveItem\"\n      ],\n      \"query\": {\n        \"queryString\": \"informatino\"\n      },\n      \"from\": 0,\n      \"size\": 5\n    }\n  ],\n  \"queryAlterationOptions\": {\n    \"enableSuggestion\": true,\n    \"enableModification\": true\n  }\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Refine results with string aggregations",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregations\": [\n                {\n                    \"field\": \"FileType\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"count\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                },\n                {\n                    \"field\": \"contentclass\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsString\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                }\n            ]\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Refine results with numeric aggregations",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"Requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregations\": [\n                {\n                    \"field\": \"Size\",\n                    \"size\": 15,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsNumber\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0,\n                        \"ranges\": [\n                            {\n                                \"to\": \"100\"\n                            },\n                            {\n                                \"from\": \"100\",\n                                \"to\": \"1000\"\n                            },\n                            {\n                                \"from\": \"1000\"\n                            }\n                        ]\n                    }\n                }\n            ]\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Apply refined query passing the aggregationToken",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"Requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregationFilters\": [\n                \"contentclass:\\\"ǂǂ5354535f4c6973744974656d5f446f63756d656e744c696272617279\\\"\",\n                \"FileType:\\\"ǂǂ646f6378\\\"\"                \n            ],\n            \"aggregations\": [\n                {\n                    \"field\": \"FileType\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"count\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                },\n                {\n                    \"field\": \"contentclass\",\n                    \"size\": 15,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsString\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                }\n            ]\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Trim duplicated SharePoint search results",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read.All, Sites.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"trimDuplicate\": true\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search with queryTemplate",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read.All, Sites.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\",\n                \"queryTemplate\": \"({searchTerms})\"\n            }\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search with basic collapse",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"requests\": [\r\n        {\r\n            \"entityTypes\": [\r\n                \"listItem\"\r\n            ],\r\n            \"query\": {\r\n                \"queryString\": \"test\"\r\n            },\r\n            \"fields\": [\r\n                \"title\"\r\n            ],\r\n            \"collapseProperties\": [\r\n                {\r\n                    \"fields\": [\r\n                        \"title\"\r\n                    ],\r\n                    \"limit\": 3\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search with compound collapse",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"requests\": [\r\n        {\r\n            \"entityTypes\": [\r\n                \"listItem\"\r\n            ],\r\n            \"query\": {\r\n                \"queryString\": \"cat\"\r\n            },\r\n            \"fields\": [\r\n                \"title\",\r\n                \"createdBy\"\r\n            ],\r\n            \"collapseProperties\": [\r\n                {\r\n                    \"fields\": [\r\n                        \"title\",\r\n                        \"createdBy\"\r\n                    ],\r\n                    \"limit\": 3\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/search/query",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"search",
-										"query"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search with multi-level collapse",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"requests\": [\r\n        {\r\n            \"entityTypes\": [\r\n                \"listItem\"\r\n            ],\r\n            \"query\": {\r\n                \"queryString\": \"cat\"\r\n            },\r\n            \"fields\": [\r\n                \"title\",\r\n                \"createdBy\"\r\n            ],\r\n            \"collapseProperties\": [\r\n                {\r\n                    \"fields\": [\r\n                        \"title\"\r\n                    ],\r\n                    \"limit\": 3\r\n                },\r\n                {\r\n                    \"fields\": [\r\n                        \"createdBy\"\r\n                    ],\r\n                    \"limit\": 2\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
+									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerId:{{ContainerId}}\"\n                //\"queryString\": \"'project' AND ContainerId:{{ContainerId}}\" //Full-text search on file content\n                //\"queryString\": \"ContainerId:{{ContainerId}} AND MyColumn:'My Value'\" //Use field value on custom metadata\n                //\"queryString\": \"ContainerId:{{ContainerId}} AND Title:'{{filename}}'\"\n                //\"queryString\": \"ContainerId:{{ContainerId}} AND FileType:docx\"\n            }\n            /*\n            ,\n            \"from\": 0,\n            \"size\": 15,\n            \"sortProperties\": [\n                {\n                    \"name\": \"lastModifiedDateTime\",\n                    \"isDescending\": \"true\" // default is false\n                }\n            ]\n            */\n        }\n    ]\n    /*\n    ,\"queryAlterationOptions\": {\n        \"enableSuggestion\": true,\n        \"enableModification\": true\n    }\n    */\n}"
 								},
 								"url": {
 									"raw": "https://graph.microsoft.com/beta/search/query",
@@ -4220,7 +3526,7 @@
 				"oauth2": [
 					{
 						"key": "scope",
-						"value": "FileStorageContainer.Selected Files.Read.All",
+						"value": "FileStorageContainer.Selected Files.Read.All offline_access",
 						"type": "string"
 					},
 					{
@@ -4325,125 +3631,23 @@
 									"script": {
 										"exec": [
 											"\r",
-											"async function ensureAccessToken () {\r",
-											"    var validToken = false;\r",
-											"    var token = pm.environment.get('AppOnlyCertSPOToken');\r",
-											"    if (token) {\r",
-											"        console.log('checking stored token');\r",
-											"        try {\r",
-											"            var tokenObj = KJUR.jws.JWS.parse(token);\r",
-											"            var nbf = tokenObj.payloadObj.nbf;\r",
-											"            var exp = tokenObj.payloadObj.exp;\r",
-											"            var now = getTimeInSec();\r",
-											"            if (nbf <= now && now < exp) {\r",
-											"                validToken = true;\r",
-											"            } else {\r",
-											"                console.log(\"Stored access token is expired\");\r",
-											"            }\r",
-											"        } catch (e) {\r",
-											"            console.log(\"Unable to parse stored access token\");\r",
-											"        }\r",
-											"        \r",
-											"    } else {\r",
-											"        console.log(\"No access token found\");\r",
-											"    }\r",
-											"    if (!validToken) {\r",
-											"        acquireAccessToken();\r",
-											"    }\r",
+											"utils.checkRequiredVariables();\r",
+											"if (!utils.getRootSiteUrl()) {\r",
+											"    throw new Error(\"RootSiteUrl not set in selected Postman environment\");\r",
 											"}\r",
+											"eval(utils.getRsaLibraryForEval());\r",
 											"\r",
-											"function acquireAccessToken() {\r",
-											"    console.log(\"Acquiring a new access token\");\r",
-											"    var jwt = getRequestJwt();\r",
-											"    console.log(jwt);\r",
-											"    var tid = pm.environment.get('ConsumingTenantId');\r",
-											"\r",
-											"    const tokenRequest = {\r",
-											"        url: `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`,\r",
-											"        method: 'POST',\r",
-											"        header: {\r",
-											"            'Content-Type': 'application/x-www-form-urlencoded'\r",
-											"        },\r",
-											"        body: {\r",
-											"            mode: 'urlencoded',\r",
-											"            urlencoded: [\r",
-											"                { key: 'client_assertion_type', value: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' },\r",
-											"                { key: 'client_assertion', value: jwt },\r",
-											"                { key: 'client_id', value: pm.environment.get('ClientID') },\r",
-											"                { key: 'scope', value: pm.environment.get('RootSiteUrl') + '/.default' },\r",
-											"                { key: 'grant_type', value: 'client_credentials' }\r",
-											"            ]\r",
-											"        }\r",
-											"    };\r",
-											"    pm.sendRequest(tokenRequest, (error, response) => {\r",
-											"        if (error) {\r",
-											"            console.log('Unable to acquire token: ' + error);\r",
-											"        } else {\r",
-											"            var responseJson = response.json();\r",
-											"            var token = responseJson.access_token;\r",
-											"            pm.environment.set('AppOnlyCertSPOToken', token);\r",
-											"        }\r",
-											"    });\r",
-											"}\r",
-											"\r",
-											"function getRequestJwt () {\r",
-											"    var header = {\r",
-											"        'alg': 'RS256',\r",
-											"        'typ': 'JWT',\r",
-											"        'x5t': safeBase64EncodedThumbprint(pm.environment.get('CertThumbprint'))\r",
-											"    };\r",
-											"\r",
-											"    var now = getTimeInSec();\r",
-											"    var tid = pm.environment.get('ConsumingTenantId');\r",
-											"    var payload = {\r",
-											"        'aud': `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`,\r",
-											"        'exp': now + 60 * 60,\r",
-											"        'iss': pm.environment.get('ClientID'),\r",
-											"        'jti': pm.variables.replaceIn('{{$guid}}'),\r",
-											"        'nbf': now,\r",
-											"        'sub': pm.environment.get('ClientID'),\r",
-											"        'iat': now\r",
-											"    };\r",
-											"\r",
-											"    var encryptedPk = pm.environment.get('CertPrivateKey');\r",
-											"    var decryptedPk = encryptedPk;\r",
-											"    if (pm.environment.has('CertPassword') && pm.environment.get('CertPassword') !== '') {\r",
-											"        decryptedPk = KEYUTIL.getKey(encryptedPk, pm.environment.get('CertPassword'));\r",
-											"    }\r",
-											"    var sHeader = JSON.stringify(header);\r",
-											"    var sPayload = JSON.stringify(payload);\r",
-											"    return KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, decryptedPk);\r",
-											"}\r",
-											"\r",
-											"function getTimeInSec() {\r",
-											"    return Math.floor(Date.now() / 1000);\r",
-											"}\r",
-											"\r",
-											"function safeBase64EncodedThumbprint (thumbprint) {\r",
-											"  var numCharIn128BitHexString = 128/8*2;\r",
-											"  var numCharIn160BitHexString = 160/8*2;\r",
-											"  var thumbprintSizes  = {};\r",
-											"  thumbprintSizes[numCharIn128BitHexString] = true;\r",
-											"  thumbprintSizes[numCharIn160BitHexString] = true;\r",
-											"  var thumbprintRegExp = /^[a-f\\d]*$/;\r",
-											"\r",
-											"  var hexString = thumbprint.toLowerCase().replace(/:/g, '').replace(/ /g, '');\r",
-											"\r",
-											"  if (!thumbprintSizes[hexString.length] || !thumbprintRegExp.test(hexString)) {\r",
-											"    throw 'The thumbprint does not match a known format';\r",
-											"  }\r",
-											"  \r",
-											"  var base64 = (Buffer.from(hexString, 'hex')).toString('base64');\r",
-											"  return base64.replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=/g, '');\r",
-											"}\r",
-											"\r",
-											"var navigator = {}; // fake a navigator object for the lib\r",
-											"var window = {}; // fake a window object for the lib\r",
-											"eval(pm.globals.get('jsrsasign-js'));\r",
-											"ensureAccessToken();\r",
+											"pm.environment.unset(\"AppOnlyCertSPOToken\");\r",
+											"const assertionJwt = utils.getAssertionJwt(KJUR, KEYUTIL);\r",
+											"const scope = utils.getRootSiteUrl() + \".default\";\r",
+											"const tokenRequest = utils.getTokenRequest(assertionJwt, scope);\r",
+											"utils.getToken(pm.sendRequest, tokenRequest, (token) => {\r",
+											"    pm.environment.set(\"AppOnlyCertSPOToken\", token);\r",
+											"});\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -4462,7 +3666,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"value\": [\r\n    {\r\n      \"appId\": \"{{ClientID}}\",\r\n      \"delegated\": [\"full\"],\r\n      \"appOnly\": [\"full\"]\r\n    }\r\n  ]\r\n}",
+									"raw": "{\r\n    \"value\": [\r\n        {\r\n            \"appId\": \"{{ClientID}}\",\r\n            \"delegated\": [\"full\"],\r\n            \"appOnly\": [\"full\"]\r\n        },\r\n        {\r\n            /*\r\n                This adds the Graph Explorer AppId to your Container Type with full permmissions\r\n                on delegated access. Note that you cannot create Containers with Graph Explore as\r\n                those calls must be made with a confidential client, and Graph Explorer only creates\r\n                public client tokens. But other APIs, include the Drive and DriveItem related calls,\r\n                should work. \r\n            */\r\n            \"appId\": \"de8bc8b5-d9f9-48b1-a8ad-b748da725064\", // Graph Explorer AppId\r\n            \"delegated\": [\"full\"],\r\n            \"appOnly\": [\"none\"] //Graph Explorer only supports delegated auth\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4486,259 +3690,7 @@
 							"response": []
 						},
 						{
-							"name": "Register ContainerType with Graph Explorer access",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"\r",
-											"async function ensureAccessToken () {\r",
-											"    var validToken = false;\r",
-											"    var token = pm.environment.get('AppOnlyCertSPOToken');\r",
-											"    if (token) {\r",
-											"        console.log('checking stored token');\r",
-											"        try {\r",
-											"            var tokenObj = KJUR.jws.JWS.parse(token);\r",
-											"            var nbf = tokenObj.payloadObj.nbf;\r",
-											"            var exp = tokenObj.payloadObj.exp;\r",
-											"            var now = getTimeInSec();\r",
-											"            if (nbf <= now && now < exp) {\r",
-											"                validToken = true;\r",
-											"            } else {\r",
-											"                console.log(\"Stored access token is expired\");\r",
-											"            }\r",
-											"        } catch (e) {\r",
-											"            console.log(\"Unable to parse stored access token\");\r",
-											"        }\r",
-											"        \r",
-											"    } else {\r",
-											"        console.log(\"No access token found\");\r",
-											"    }\r",
-											"    if (!validToken) {\r",
-											"        acquireAccessToken();\r",
-											"    }\r",
-											"}\r",
-											"\r",
-											"function acquireAccessToken() {\r",
-											"    console.log(\"Acquiring a new access token\");\r",
-											"    var jwt = getRequestJwt();\r",
-											"    console.log(jwt);\r",
-											"    var tid = pm.environment.get('ConsumingTenantId');\r",
-											"\r",
-											"    const tokenRequest = {\r",
-											"        url: `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`,\r",
-											"        method: 'POST',\r",
-											"        header: {\r",
-											"            'Content-Type': 'application/x-www-form-urlencoded'\r",
-											"        },\r",
-											"        body: {\r",
-											"            mode: 'urlencoded',\r",
-											"            urlencoded: [\r",
-											"                { key: 'client_assertion_type', value: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' },\r",
-											"                { key: 'client_assertion', value: jwt },\r",
-											"                { key: 'client_id', value: pm.environment.get('ClientID') },\r",
-											"                { key: 'scope', value: pm.environment.get('RootSiteUrl') + '/.default' },\r",
-											"                { key: 'grant_type', value: 'client_credentials' }\r",
-											"            ]\r",
-											"        }\r",
-											"    };\r",
-											"    pm.sendRequest(tokenRequest, (error, response) => {\r",
-											"        if (error) {\r",
-											"            console.log('Unable to acquire token: ' + error);\r",
-											"        } else {\r",
-											"            var responseJson = response.json();\r",
-											"            var token = responseJson.access_token;\r",
-											"            pm.environment.set('AppOnlyCertSPOToken', token);\r",
-											"        }\r",
-											"    });\r",
-											"}\r",
-											"\r",
-											"function getRequestJwt () {\r",
-											"    var header = {\r",
-											"        'alg': 'RS256',\r",
-											"        'typ': 'JWT',\r",
-											"        'x5t': safeBase64EncodedThumbprint(pm.environment.get('CertThumbprint'))\r",
-											"    };\r",
-											"\r",
-											"    var now = getTimeInSec();\r",
-											"    var tid = pm.environment.get('ConsumingTenantId');\r",
-											"    var payload = {\r",
-											"        'aud': `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`,\r",
-											"        'exp': now + 60 * 60,\r",
-											"        'iss': pm.environment.get('ClientID'),\r",
-											"        'jti': pm.variables.replaceIn('{{$guid}}'),\r",
-											"        'nbf': now,\r",
-											"        'sub': pm.environment.get('ClientID'),\r",
-											"        'iat': now\r",
-											"    };\r",
-											"\r",
-											"    var encryptedPk = pm.environment.get('CertPrivateKey');\r",
-											"    var decryptedPk = encryptedPk;\r",
-											"    if (pm.environment.has('CertPassword') && pm.environment.get('CertPassword') !== '') {\r",
-											"        decryptedPk = KEYUTIL.getKey(encryptedPk, pm.environment.get('CertPassword'));\r",
-											"    }\r",
-											"    var sHeader = JSON.stringify(header);\r",
-											"    var sPayload = JSON.stringify(payload);\r",
-											"    return KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, decryptedPk);\r",
-											"}\r",
-											"\r",
-											"function getTimeInSec() {\r",
-											"    return Math.floor(Date.now() / 1000);\r",
-											"}\r",
-											"\r",
-											"function safeBase64EncodedThumbprint (thumbprint) {\r",
-											"  var numCharIn128BitHexString = 128/8*2;\r",
-											"  var numCharIn160BitHexString = 160/8*2;\r",
-											"  var thumbprintSizes  = {};\r",
-											"  thumbprintSizes[numCharIn128BitHexString] = true;\r",
-											"  thumbprintSizes[numCharIn160BitHexString] = true;\r",
-											"  var thumbprintRegExp = /^[a-f\\d]*$/;\r",
-											"\r",
-											"  var hexString = thumbprint.toLowerCase().replace(/:/g, '').replace(/ /g, '');\r",
-											"\r",
-											"  if (!thumbprintSizes[hexString.length] || !thumbprintRegExp.test(hexString)) {\r",
-											"    throw 'The thumbprint does not match a known format';\r",
-											"  }\r",
-											"  \r",
-											"  var base64 = (Buffer.from(hexString, 'hex')).toString('base64');\r",
-											"  return base64.replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=/g, '');\r",
-											"}\r",
-											"\r",
-											"var navigator = {}; // fake a navigator object for the lib\r",
-											"var window = {}; // fake a window object for the lib\r",
-											"eval(pm.globals.get('jsrsasign-js'));\r",
-											"ensureAccessToken();\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{AppOnlyCertSPOToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"value\": [\r\n    {\r\n      \"appId\": \"{{ClientID}}\",\r\n      \"delegated\": [\"full\"],\r\n      \"appOnly\": [\"full\"]\r\n    },\r\n    {\r\n        /*\r\n            This adds the Graph Explorer AppId to your Container Type with full permmissions\r\n            on delegated access. Note that you cannot create Containers with Graph Explore as\r\n            those calls must be made with a confidential client, and Graph Explorer only creates\r\n            public client tokens. But other APIs, include the Drive and DriveItem related calls,\r\n            should work. \r\n        */\r\n        \"appId\": \"de8bc8b5-d9f9-48b1-a8ad-b748da725064\", // Graph Explorer AppId\r\n        \"delegated\": [\"full\"],\r\n        \"appOnly\": [\"none\"] //Graph Explorer only supports delegated auth\r\n    }\r\n  ]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{RootSiteUrl}}/_api/v2.1/storageContainerTypes/{{ContainerTypeId}}/applicationPermissions",
-									"host": [
-										"{{RootSiteUrl}}"
-									],
-									"path": [
-										"_api",
-										"v2.1",
-										"storageContainerTypes",
-										"{{ContainerTypeId}}",
-										"applicationPermissions"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Container",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"\r",
-											"if (pm.response.code === 201) {\r",
-											"    var json = pm.response.json();\r",
-											"    pm.environment.set(\"ContainerId\", json.id);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"displayName\": \"Container Created with App-Only Auth\",\r\n    \"description\": \"Great description\",\r\n    \"containerTypeId\": \"{{ContainerTypeId}}\"\r\n}"
-								},
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"storage",
-										"fileStorage",
-										"containers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Activate Container",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"beta",
-										"storage",
-										"fileStorage",
-										"containers",
-										"{{ContainerId}}",
-										"activate"
-									]
-								},
-								"description": "This API will let callers explicitly activate a fileStorageContainer. It is idempotent, so calling it multiple time will yield the same response and will not create any side effects. Upon successfull activation the container's `status` will be set to \"active\"."
-							},
-							"response": []
-						},
-						{
-							"name": "List Containers",
+							"name": "List containers",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -4767,7 +3719,60 @@
 							"response": []
 						},
 						{
-							"name": "Get Container",
+							"name": "Create container",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"if (pm.response.code === 201) {\r",
+											"    var json = pm.response.json();\r",
+											"    postman.setEnvironmentVariable(\"ContainerId\", json.id);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"displayName\": \"My Container\",\r\n    \"description\": \"My container description.\",\r\n    \"containerTypeId\": \"{{ContainerTypeId}}\"\r\n}"
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get container",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
 								"method": "GET",
 								"header": [
@@ -4777,6 +3782,53 @@
 										"type": "text"
 									}
 								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}?$select=id,displayName,containerTypeId,status,description,customProperties,itemMajorVersionLimit,isItemVersioningEnabled&$expand=permissions",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}"
+									],
+									"query": [
+										{
+											"key": "$select",
+											"value": "id,displayName,containerTypeId,status,description,customProperties,itemMajorVersionLimit,isItemVersioningEnabled"
+										},
+										{
+											"key": "$expand",
+											"value": "permissions"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update container",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"displayName\": \"My Updated Container\",\r\n    \"description\": \"My updated container description.\",\r\n    \"itemMajorVersionLimit\": 50,\r\n    \"isItemVersioningEnabled\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}",
 									"protocol": "https",
@@ -4792,12 +3844,39 @@
 										"containers",
 										"{{ContainerId}}"
 									]
-								}
+								},
+								"description": "This API will let callers explicitly activate a fileStorageContainer. It is idempotent, so calling it multiple time will yield the same response and will not create any side effects. Upon successfull activation the container's `status` will be set to \"active\"."
 							},
 							"response": []
 						},
 						{
-							"name": "Get Permissions",
+							"name": "Activate container",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"activate"
+									]
+								},
+								"description": "This API will let callers explicitly activate a fileStorageContainer. It is idempotent, so calling it multiple time will yield the same response and will not create any side effects. Upon successfull activation the container's `status` will be set to \"active\"."
+							},
+							"response": []
+						},
+						{
+							"name": "List container permissions",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -4835,7 +3914,7 @@
 							"response": []
 						},
 						{
-							"name": "Create User Permission",
+							"name": "Create container permission",
 							"event": [
 								{
 									"listen": "test",
@@ -4848,7 +3927,8 @@
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -4857,7 +3937,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"roles\": [\"reader\"],\r\n  \"grantedToV2\": {\r\n    \"user\": {\r\n      \"userPrincipalName\": \"{{UserAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n    }\r\n  }\r\n}",
+									"raw": "{\r\n  \"roles\": [\"reader\"],// \"writer\", \"manager\", \"owner\"\r\n  \"grantedToV2\": {\r\n    \"user\": {\r\n      \"userPrincipalName\": \"{{UserAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n      //\"userPrincipalName\": \"{{GroupAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n    }\r\n  }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4885,7 +3965,7 @@
 							"response": []
 						},
 						{
-							"name": "Update User Permission",
+							"name": "Update container permission",
 							"request": {
 								"method": "PATCH",
 								"header": [],
@@ -4920,37 +4000,27 @@
 							"response": []
 						},
 						{
-							"name": "Create Group Permissions",
+							"name": "Delete container permission",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"\r",
-											"if (pm.response.code === 201) {\r",
-											"    var json = pm.response.json();\r",
-											"    postman.setEnvironmentVariable(\"PermissionId\", json.id);\r",
+											"if (pm.response.code === 204) {\r",
+											"    pm.environment.unset(\"PermissionId\");\r",
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "DELETE",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"roles\": [\"reader\"],\r\n  \"grantedToV2\": {\r\n    \"user\": {\r\n      \"userPrincipalName\": \"{{GroupAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n    }\r\n  }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -4963,14 +4033,180 @@
 										"fileStorage",
 										"containers",
 										"{{ContainerId}}",
-										"permissions"
+										"permissions",
+										"{{PermissionId}}"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get Container Custom Properties",
+							"name": "List container columns",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"columns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create container column",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"if (pm.response.code === 201) {\r",
+											"    var json = pm.response.json();\r",
+											"    postman.setEnvironmentVariable(\"ColumnId\", json.id);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    // https://learn.microsoft.com/en-us/graph/api/resources/columndefinition?view=graph-rest-1.0\r\n    \"name\": \"MyColumn\",\r\n    \"displayName\": \"My Column\",\r\n    \"description\": \"My column description\",\r\n    \"enforceUniqueValues\": false, // Must be false (true not supported with Containers)\r\n    \"hidden\": false,\r\n    \"indexed\": true, // Set to true to be able to search files based on this column\r\n    \"text\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/textcolumn?view=graph-rest-1.0\r\n        \"allowMultipleLines\": false,\r\n        \"appendChangesToExistingText\": false,\r\n        \"linesForEditing\": 0,\r\n        \"maxLength\": 255\r\n    }\r\n    /*\r\n    // Other supported column types with SharePoint Embedded -- replace the text: {..} property above with one of these:\r\n    // If a column type is not listed here, it's NOT supported with SharePoint Embedded right now. \r\n\r\n    \"boolean\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/booleancolumn?view=graph-rest-1.0\r\n    }\r\n    \"dateTime\": {\r\n        \"displayAs\": \"default | friendly | standard\",\r\n        \"format\": \"dateOnly | dateTime\"\r\n    }\r\n    \"currency\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/currencycolumn?view=graph-rest-1.0\r\n        \"locale\": \"en-us\"\r\n    }\r\n    \"choice\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/choicecolumn?view=graph-rest-1.0\r\n        \"allowTextEntry\": true,\r\n        \"choices\": [\"red\", \"blue\", \"green\"],\r\n        \"displayAs\": \"checkBoxes | dropDownMenu | radioButtons\"\r\n    }\r\n    \"hyperlinkOrPicture\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/hyperlinkorpicturecolumn?view=graph-rest-1.0\r\n        \"isPicture\": false\r\n    }\r\n    \"number\": {\r\n        https://learn.microsoft.com/en-us/graph/api/resources/numbercolumn?view=graph-rest-1.0\r\n        \"decimalPlaces\": \"automatic | none | one | two | three | four | five\",\r\n        \"displayAs\": \"number | percentage\",\r\n        \"maximum\": 10.551,\r\n        \"minimum\": 99.993\r\n    }\r\n    \"personOrGroup\": {\r\n        // https://learn.microsoft.com/en-us/graph/api/resources/personorgroupcolumn?view=graph-rest-1.0\r\n        \"allowMultipleSelection\": true,\r\n        \"displayAs\": \"account | contentType | created | department | ...\",\r\n        \"chooseFromType\": \"peopleAndGroups | peopleOnly\"\r\n    }\r\n    */\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"columns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get container column",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns/{{ColumnId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"columns",
+										"{{ColumnId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete container column",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 204) {\r",
+											"    pm.environment.unset(\"ColumnId\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns/{{ColumnId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"beta",
+										"storage",
+										"fileStorage",
+										"containers",
+										"{{ContainerId}}",
+										"columns",
+										"{{ColumnId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get container properties",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -4995,13 +4231,13 @@
 							"response": []
 						},
 						{
-							"name": "Set Container Custom Properties",
+							"name": "Set container properties",
 							"request": {
 								"method": "PATCH",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"urlPath\": {  \r\n        \"value\": \"northwind\",   \r\n        \"isSearchable\": true  \r\n    },   \r\n    \"foo\": { \r\n        \"value\": \"bar\",   \r\n        \"isSearchable\": false  \r\n    }\r\n}",
+									"raw": "{\r\n    /*\r\n    Format\r\n    \"{custom_name}\": {\r\n        \"value\": \"{property_value}\",\r\n        \"isSearchable\": true | false //Whether or not the property can be used with search queries\r\n    }\r\n    */\r\n    \"urlPath\": {  \r\n        \"value\": \"northwind\",   \r\n        \"isSearchable\": false  \r\n    },\r\n    \"tags\": {\r\n        \"value\": \"northwind traders nwt nw\",\r\n        \"isSearchable\": true\r\n    },\r\n    \"department\": { \r\n        \"value\": \"finance\",   \r\n        \"isSearchable\": true \r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -5029,18 +4265,12 @@
 							"response": []
 						},
 						{
-							"name": "Soft Delete Container by ID",
+							"name": "Delete container",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"\r",
-											"if (pm.response.code === 204) {\r",
-											"    pm.environment.set(\"DeletedContainerId\", pm.environment.get(\"ContainerId\"));\r",
-											"    pm.environment.unset(\"ContainerId\");\r",
-											"    pm.environment.unset(\"PermissionId\");\r",
-											"}\r",
 											""
 										],
 										"type": "text/javascript"
@@ -5079,7 +4309,7 @@
 							"response": []
 						},
 						{
-							"name": "List Soft Deleted Containers",
+							"name": "List deleted containers",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -5108,19 +4338,19 @@
 							"response": []
 						},
 						{
-							"name": "Hard Delete Container by ID",
+							"name": "Permanently delete container",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"\r",
 											"if (pm.response.code === 204) {\r",
-											"    pm.environment.unset(\"SoftDeletedContainerId\");\r",
+											"    pm.environment.unset(\"ContainerId\");\r",
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -5137,7 +4367,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
+									"raw": "https://graph.microsoft.com/beta/storage/fileStorage/deletedContainers/{{ContainerId}}",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -5149,7 +4379,7 @@
 										"storage",
 										"fileStorage",
 										"deletedContainers",
-										"{{SoftDeletedContainerId}}"
+										"{{ContainerId}}"
 									]
 								}
 							},
@@ -5162,125 +4392,16 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"",
-									"async function ensureAccessToken () {",
-									"    var validToken = false;",
-									"    var token = pm.environment.get('AppOnlyCertGraphToken');",
-									"    if (token) {",
-									"        console.log('checking stored token');",
-									"        try {",
-									"            var tokenObj = KJUR.jws.JWS.parse(token);",
-									"            var nbf = tokenObj.payloadObj.nbf;",
-									"            var exp = tokenObj.payloadObj.exp;",
-									"            var now = getTimeInSec();",
-									"            if (nbf <= now && now < exp) {",
-									"                validToken = true;",
-									"            } else {",
-									"                console.log(\"Stored access token is expired\");",
-									"            }",
-									"        } catch (e) {",
-									"            console.log(\"Unable to parse stored access token\");",
-									"        }",
-									"        ",
-									"    } else {",
-									"        console.log(\"No access token found\");",
-									"    }",
-									"    if (!validToken) {",
-									"        acquireAccessToken();",
-									"    }",
-									"}",
-									"",
-									"function acquireAccessToken() {",
-									"    console.log(\"Acquiring a new access token\");",
-									"    var jwt = getRequestJwt();",
-									"    console.log(jwt);",
-									"    var tid = pm.environment.get('ConsumingTenantId');",
-									"",
-									"    const tokenRequest = {",
-									"        url: `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`,",
-									"        method: 'POST',",
-									"        header: {",
-									"            'Content-Type': 'application/x-www-form-urlencoded'",
-									"        },",
-									"        body: {",
-									"            mode: 'urlencoded',",
-									"            urlencoded: [",
-									"                { key: 'client_assertion_type', value: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' },",
-									"                { key: 'client_assertion', value: jwt },",
-									"                { key: 'client_id', value: pm.environment.get('ClientID') },",
-									"                { key: 'scope', value: 'https://graph.microsoft.com/.default' },",
-									"                { key: 'grant_type', value: 'client_credentials' }",
-									"            ]",
-									"        }",
-									"    };",
-									"    pm.sendRequest(tokenRequest, (error, response) => {",
-									"        if (error) {",
-									"            console.log('Unable to acquire token: ' + error);",
-									"        } else {",
-									"            var responseJson = response.json();",
-									"            var token = responseJson.access_token;",
-									"            if (!token)",
-									"                throw Error(\"Invalid or no access token received\");",
-									"            pm.environment.set('AppOnlyCertGraphToken', token);",
-									"        }",
-									"    });",
-									"}",
-									"",
-									"function getRequestJwt () {",
-									"    var header = {",
-									"        'alg': 'RS256',",
-									"        'typ': 'JWT',",
-									"        'x5t': safeBase64EncodedThumbprint(pm.environment.get('CertThumbprint'))",
-									"    };",
-									"",
-									"    var now = getTimeInSec();",
-									"    var tid = pm.environment.get('ConsumingTenantId');",
-									"    var payload = {",
-									"        'aud': `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`,",
-									"        'exp': now + 60 * 60,",
-									"        'iss': pm.environment.get('ClientID'),",
-									"        'jti': pm.variables.replaceIn('{{$guid}}'),",
-									"        'nbf': now,",
-									"        'sub': pm.environment.get('ClientID'),",
-									"        'iat': now",
-									"    };",
-									"",
-									"    var encryptedPk = pm.environment.get('CertPrivateKey');",
-									"    var decryptedPk = encryptedPk;",
-									"    if (pm.environment.has('CertPassword') && pm.environment.get('CertPassword') !== '') {",
-									"        decryptedPk = KEYUTIL.getKey(encryptedPk, pm.environment.get('CertPassword'));",
-									"    }",
-									"    var sHeader = JSON.stringify(header);",
-									"    var sPayload = JSON.stringify(payload);",
-									"    return KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, decryptedPk);",
-									"}",
-									"",
-									"function getTimeInSec() {",
-									"    return Math.floor(Date.now() / 1000);",
-									"}",
-									"",
-									"function safeBase64EncodedThumbprint (thumbprint) {",
-									"  var numCharIn128BitHexString = 128/8*2;",
-									"  var numCharIn160BitHexString = 160/8*2;",
-									"  var thumbprintSizes  = {};",
-									"  thumbprintSizes[numCharIn128BitHexString] = true;",
-									"  thumbprintSizes[numCharIn160BitHexString] = true;",
-									"  var thumbprintRegExp = /^[a-f\\d]*$/;",
-									"",
-									"  var hexString = thumbprint.toLowerCase().replace(/:/g, '').replace(/ /g, '');",
-									"",
-									"  if (!thumbprintSizes[hexString.length] || !thumbprintRegExp.test(hexString)) {",
-									"    throw 'The thumbprint does not match a known format';",
-									"  }",
-									"  ",
-									"  var base64 = (Buffer.from(hexString, 'hex')).toString('base64');",
-									"  return base64.replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=/g, '');",
-									"}",
-									"",
-									"var navigator = {}; // fake a navigator object for the lib",
-									"var window = {}; // fake a window object for the lib",
-									"eval(pm.globals.get('jsrsasign-js'));",
-									"ensureAccessToken();",
+									"\r",
+									"utils.checkRequiredVariables();\r",
+									"eval(utils.getRsaLibraryForEval());\r",
+									"\r",
+									"pm.environment.unset(\"AppOnlyCertGraphToken\");\r",
+									"const assertionJwt = utils.getAssertionJwt(KJUR, KEYUTIL);\r",
+									"const tokenRequest = utils.getTokenRequest(assertionJwt);\r",
+									"utils.getToken(pm.sendRequest, tokenRequest, (token) => {\r",
+									"    pm.environment.set(\"AppOnlyCertGraphToken\", token);\r",
+									"});\r",
 									""
 								]
 							}
@@ -5300,34 +4421,19 @@
 					"name": "Files",
 					"item": [
 						{
-							"name": "Additive Permissions",
+							"name": "Sharing",
 							"item": [
 								{
-									"name": "List sharing permissions",
+									"name": "List file permissions",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
 												"exec": [
-													"try {\r",
-													"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-													"    {\r",
-													"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-													"    }\r",
-													"    else\r",
-													"    {\r",
-													"        if (pm.response.status === \"Forbidden\")\r",
-													"        {\r",
-													"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-													"        }\r",
-													"    }\r",
-													"}\r",
-													"catch (e) {\r",
-													"    console.log(e);\r",
-													"}\r",
 													""
 												],
-												"type": "text/javascript"
+												"type": "text/javascript",
+												"packages": {}
 											}
 										}
 									],
@@ -5361,7 +4467,109 @@
 									"response": []
 								},
 								{
-									"name": "Get sharing permission",
+									"name": "Create file invite",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"if (pm.response.code === 200) {\r",
+													"    var json = pm.response.json();\r",
+													"    postman.setEnvironmentVariable(\"PermissionId\", json.value[0].id);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"requireSignIn\": true,\r\n    \"sendInvitation\": false,\r\n    \"roles\": [\"write\"],\r\n    \"recipients\": [{\r\n            \"email\": \"{{UserAlias}}@{{TenantName}}.onmicrosoft.com\"\r\n        }\r\n    ],\r\n    \"message\": \"Here is my sharing message!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
+											"protocol": "https",
+											"host": [
+												"graph",
+												"microsoft",
+												"com"
+											],
+											"path": [
+												"v1.0",
+												"drives",
+												"{{ContainerId}}",
+												"items",
+												"{{FileId}}",
+												"invite"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create file link",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"if (pm.response.code === 201) {\r",
+													"    var json = pm.response.json();\r",
+													"    postman.setEnvironmentVariable(\"PermissionId\", json.id);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"type\": \"view\", //or \"edit\"\r\n    \"scope\": \"organization\" //or \"anonymous\" or \"users\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+											"protocol": "https",
+											"host": [
+												"graph",
+												"microsoft",
+												"com"
+											],
+											"path": [
+												"v1.0",
+												"drives",
+												"{{ContainerId}}",
+												"items",
+												"{{FileId}}",
+												"createLink"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get file permission",
 									"event": [
 										{
 											"listen": "test",
@@ -5420,31 +4628,19 @@
 									"response": []
 								},
 								{
-									"name": "Delete sharing permission",
+									"name": "Delete file permission",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
 												"exec": [
-													"try {\r",
-													"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-													"    {\r",
-													"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-													"    }\r",
-													"    else\r",
-													"    {\r",
-													"        if (pm.response.status === \"Forbidden\")\r",
-													"        {\r",
-													"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-													"        }\r",
-													"    }\r",
-													"}\r",
-													"catch (e) {\r",
-													"    console.log(e);\r",
+													"if (pm.response.code === 204) {\r",
+													"    pm.environment.unset(\"PermissionId\");\r",
 													"}\r",
 													""
 												],
-												"type": "text/javascript"
+												"type": "text/javascript",
+												"packages": {}
 											}
 										}
 									],
@@ -5481,7 +4677,7 @@
 							]
 						},
 						{
-							"name": "Get Drive",
+							"name": "Get drive",
 							"event": [
 								{
 									"listen": "test",
@@ -5536,7 +4732,77 @@
 							"response": []
 						},
 						{
-							"name": "Get DriveItems",
+							"name": "List items",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
+											"    {\r",
+											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
+											"    }\r",
+											"    else\r",
+											"    {\r",
+											"        if (pm.response.status === \"Forbidden\")\r",
+											"        {\r",
+											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
+											"        }\r",
+											"    }\r",
+											"}\r",
+											"catch (e) {\r",
+											"    console.log(e);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/root/children?$expand=listitem($expand=fields)",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"root",
+										"children"
+									],
+									"query": [
+										{
+											"key": "$filter",
+											"value": "startswith(listitem/fields/MyColumn, 'My Value')",
+											"disabled": true
+										},
+										{
+											"key": "$expand",
+											"value": "listitem($expand=fields)"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List items with field filter",
 							"event": [
 								{
 									"listen": "test",
@@ -5574,7 +4840,7 @@
 									}
 								],
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/root/children",
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items?$filter=startswith(listitem/fields/MyColumn, 'My Value')&$expand=listitem($expand=fields)",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -5585,42 +4851,38 @@
 										"v1.0",
 										"drives",
 										"{{ContainerId}}",
-										"items",
-										"root",
-										"children"
+										"items"
+									],
+									"query": [
+										{
+											"key": "$filter",
+											"value": "startswith(listitem/fields/MyColumn, 'My Value')"
+										},
+										{
+											"key": "$expand",
+											"value": "listitem($expand=fields)"
+										}
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Upload a File",
+							"name": "Upload file",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"        var json = JSON.parse(responseBody);\r",
-											"        postman.setEnvironmentVariable(\"FileId\", json.id);\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
+											"\r",
+											"if (pm.response.code === 201) {\r",
+											"    var json = pm.response.json();\r",
+											"    postman.setEnvironmentVariable(\"FileId\", json.id);\r",
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -5634,7 +4896,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root:/{{file_name_with_extension}}:/content",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -5646,7 +4908,7 @@
 										"drives",
 										"{{ContainerId}}",
 										"root:",
-										"Ad Slogans.docx:",
+										"{{file_name_with_extension}}:",
 										"content"
 									]
 								}
@@ -5654,31 +4916,16 @@
 							"response": []
 						},
 						{
-							"name": "Get File",
+							"name": "Get file",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -5705,31 +4952,285 @@
 							"response": []
 						},
 						{
-							"name": "Create Folder",
+							"name": "Update file",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Northwind Proposal Updated.docx\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete file",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 204) {\r",
+											"    pm.environment.unset(\"FileId\");\r",
 											"}\r",
 											""
 										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List file fields",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/listitem/fields",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}",
+										"listitem",
+										"fields"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set file field",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"MyColumn\": \"My Value\" // null will clear the field value\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/listitem/fields",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}",
+										"listitem",
+										"fields"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List file thumbnails",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}",
+										"thumbnails"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List file versions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}",
+										"versions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create file preview",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
 										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/preview",
+									"protocol": "https",
+									"host": [
+										"graph",
+										"microsoft",
+										"com"
+									],
+									"path": [
+										"v1.0",
+										"drives",
+										"{{ContainerId}}",
+										"items",
+										"{{FileId}}",
+										"preview"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create folder",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"if (pm.response.code === 201) {\r",
+											"    var json = pm.response.json();\r",
+											"    postman.setEnvironmentVariable(\"FolderId\", json.id);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -5766,45 +5267,24 @@
 							"response": []
 						},
 						{
-							"name": "Get Files in Folder",
+							"name": "Get folder",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FolderId}}",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -5816,102 +5296,23 @@
 										"drives",
 										"{{ContainerId}}",
 										"items",
-										"{{ItemId}}",
-										"children"
+										"{{FolderId}}"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get container SharePointIds",
+							"name": "Update folder",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
 											""
 										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
-									"protocol": "https",
-									"host": [
-										"graph",
-										"microsoft",
-										"com"
-									],
-									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}"
-									],
-									"query": [
-										{
-											"key": "$select",
-											"value": "SharePointIds"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Rename a file",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"        var json = JSON.parse(responseBody);\r",
-											"        postman.setEnvironmentVariable(\"FileId\", json.id);\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -5920,7 +5321,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Northwind Proposal Updated.docx\"\r\n}",
+									"raw": "{\r\n    \"name\": \"New Folder Updated\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -5928,7 +5329,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FolderId}}",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -5940,46 +5341,37 @@
 										"drives",
 										"{{ContainerId}}",
 										"items",
-										"{{FileId}}"
+										"{{FolderId}}"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get file thumbnails",
+							"name": "List folder items",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FolderId}}/children",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -5991,47 +5383,35 @@
 										"drives",
 										"{{ContainerId}}",
 										"items",
-										"{{FileId}}",
-										"thumbnails"
+										"{{FolderId}}",
+										"children"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get file versions",
+							"name": "Delete folder",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
+											"if (pm.response.code === 204) {\r",
+											"    pm.environment.unset(\"FolderId\");\r",
 											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
 							"request": {
-								"method": "GET",
+								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
+									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FolderId}}",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -6043,39 +5423,23 @@
 										"drives",
 										"{{ContainerId}}",
 										"items",
-										"{{FileId}}",
-										"versions"
+										"{{FolderId}}"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Search DriveItems in Drive",
+							"name": "Search drive",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -6106,50 +5470,30 @@
 								}
 							},
 							"response": []
-						},
+						}
+					]
+				},
+				{
+					"name": "Search",
+					"item": [
 						{
-							"name": "Create view share link",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
+							"name": "Search containers",
 							"request": {
 								"method": "POST",
-								"header": [],
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"type\": \"view\",\r\n    \"scope\": \"organization\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
+									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerTypeId:{{ContainerTypeId}}\"\n                //\"queryString\": \"Title:'My Container'\" //Title matches container.displayName\n                //\"queryString\": \"Description:'description'\" //Description matches container.description\n                //\"queryString\": \"department:'finance'\" //Matches container.customProperty named 'department' with isSearchable===true\n            }\n        }\n    ]\n}"
 								},
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+									"raw": "https://graph.microsoft.com/beta/search/query",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -6157,60 +5501,32 @@
 										"com"
 									],
 									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}",
-										"items",
-										"{{FileId}}",
-										"createLink"
+										"beta",
+										"search",
+										"query"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Create edit share link",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
-											"    {\r",
-											"        console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\r",
-											"    }\r",
-											"    else\r",
-											"    {\r",
-											"        if (pm.response.status === \"Forbidden\")\r",
-											"        {\r",
-											"            console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\r",
-											"        }\r",
-											"    }\r",
-											"}\r",
-											"catch (e) {\r",
-											"    console.log(e);\r",
-											"}\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
+							"name": "Search container items",
 							"request": {
 								"method": "POST",
-								"header": [],
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"type\": \"edit\",\r\n    \"scope\": \"organization\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
+									"raw": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerId:{{ContainerId}}\"\n                //\"queryString\": \"'project' AND ContainerId:{{ContainerId}}\" //Full-text search on file content\n                //\"queryString\": \"ContainerId:{{ContainerId}} AND MyColumn:'My Value'\" //Use field value on custom metadata\n                //\"queryString\": \"ContainerId:{{ContainerId}} AND Title:'{{filename}}'\"\n                //\"queryString\": \"ContainerId:{{ContainerId}} AND FileType:docx\"\n            }\n            /*\n            ,\n            \"from\": 0,\n            \"size\": 15,\n            \"sortProperties\": [\n                {\n                    \"name\": \"lastModifiedDateTime\",\n                    \"isDescending\": \"true\" // default is false\n                }\n            ]\n            */\n        }\n    ]\n    /*\n    ,\"queryAlterationOptions\": {\n        \"enableSuggestion\": true,\n        \"enableModification\": true\n    }\n    */\n}"
 								},
 								"url": {
-									"raw": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+									"raw": "https://graph.microsoft.com/beta/search/query",
 									"protocol": "https",
 									"host": [
 										"graph",
@@ -6218,12 +5534,9 @@
 										"com"
 									],
 									"path": [
-										"v1.0",
-										"drives",
-										"{{ContainerId}}",
-										"items",
-										"{{FileId}}",
-										"createLink"
+										"beta",
+										"search",
+										"query"
 									]
 								}
 							},
@@ -6249,13 +5562,159 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
+							"",
+							"//Setting the utils direction without any let/const/var assignment makes it available as a global in Postman scripts",
+							"utils = {",
+							"",
+							"    getRsaLibrary: function () {",
+							"        return pm.globals.get('jsrsasign-js');",
+							"    },",
+							"",
+							"    getClientId: function () {",
+							"        return pm.environment.get('ClientID');",
+							"    },",
+							"",
+							"    getConsumingTenantId: function () {",
+							"        return pm.environment.get('ConsumingTenantId');",
+							"    },",
+							"",
+							"    getCertThumbprint: function () {",
+							"        return pm.environment.get('CertThumbprint');",
+							"    },",
+							"",
+							"    getCertPrivateKey: function () {",
+							"        return pm.environment.get('CertPrivateKey');",
+							"    },",
+							"",
+							"    getCertPassword: function () {",
+							"        return pm.environment.get('CertPassword');",
+							"    },",
+							"",
+							"    getRootSiteUrl: function () {",
+							"        return pm.environment.get('RootSiteUrl');",
+							"    },",
+							"",
+							"    checkRequiredVariables: function () {",
+							"        if (!utils.getRsaLibrary()) {",
+							"            throw new Error(\"jsrsasign-js script not set in globals\");",
+							"        }",
+							"        if (!utils.getClientId()) {",
+							"            throw new Error(\"ClientID not set in selected Postman environment\");",
+							"        }",
+							"        if (!utils.getConsumingTenantId()) {",
+							"            throw new Error(\"ConsumingTenantId not set in selected Postman environment\");",
+							"        }",
+							"        if (!utils.getCertThumbprint()) {",
+							"            throw new Error(\"CertThumbprint not set in selected Postman environment\");",
+							"        }",
+							"        if (!utils.getCertPrivateKey()) {",
+							"            throw new Error(\"CertPrivateKey not set in selected Postman environment\");",
+							"        }",
+							"    },",
+							"",
+							"    getRsaLibraryForEval: function () {",
+							"        return \"var navigator = {}; var window = {}; \" + utils.getRsaLibrary();",
+							"    },",
+							"",
+							"    getTokenRequest: function (assertionJwt, scope = \"https://graph.microsoft.com/.default\") {",
+							"        return {",
+							"            url: utils.getTokenUrl(),",
+							"            method: 'POST',",
+							"            header: {",
+							"                'Content-Type': 'application/x-www-form-urlencoded'",
+							"            },",
+							"            body: {",
+							"                mode: 'urlencoded',",
+							"                urlencoded: [",
+							"                    { key: 'client_assertion_type', value: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' },",
+							"                    { key: 'client_assertion', value: assertionJwt },",
+							"                    { key: 'client_id', value: utils.getClientId() },",
+							"                    { key: 'scope', value: scope },",
+							"                    { key: 'grant_type', value: 'client_credentials' }",
+							"                ]",
+							"            }",
+							"        };",
+							"    },",
+							"",
+							"    getToken: function (sendRequest, tokenRequest, onSuccess) {",
+							"        sendRequest(tokenRequest, (error, response) => {",
+							"            if (error) {",
+							"                throw new Error('Unable to acquire access token: ' + error);",
+							"            } else {",
+							"                const responseJson = response.json();",
+							"                const token = responseJson.access_token;",
+							"                if (!token) {",
+							"                    throw Error(\"Invalid or no access token received\");",
+							"                }",
+							"                onSuccess(token);",
+							"            }",
+							"        });",
+							"    },",
+							"",
+							"    getAssertionJwt: function (KJUR, KEYUTIL) {",
+							"        const header = {",
+							"            'alg': 'RS256',",
+							"            'typ': 'JWT',",
+							"            'x5t': utils.safeBase64EncodedThumbprint(utils.getCertThumbprint())",
+							"        };",
+							"",
+							"        const now = utils.getTimeInSec();",
+							"        const payload = {",
+							"            'aud': utils.getTokenUrl(),",
+							"            'exp': now + 60 * 60,",
+							"            'iss': utils.getClientId(),",
+							"            'jti': pm.variables.replaceIn('{{$guid}}'),",
+							"            'nbf': now,",
+							"            'sub': utils.getClientId(),",
+							"            'iat': now",
+							"        };",
+							"",
+							"        const encryptedPk = utils.getCertPrivateKey();",
+							"        let decryptedPk = encryptedPk;",
+							"        if (utils.getCertPassword()) {",
+							"            decryptedPk = KEYUTIL.getKey(encryptedPk, utils.getCertPassword());",
+							"        }",
+							"        const sHeader = JSON.stringify(header);",
+							"        const sPayload = JSON.stringify(payload);",
+							"        return KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, decryptedPk);",
+							"    },",
+							"",
+							"    getTimeInSec: function () {",
+							"        return Math.floor(Date.now() / 1000);",
+							"    },",
+							"",
+							"    getTokenUrl: function () {",
+							"        const tid = utils.getConsumingTenantId();",
+							"        return `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`;",
+							"    },",
+							"",
+							"    safeBase64EncodedThumbprint: function (thumbprint) {",
+							"        const numCharIn128BitHexString = 128/8*2;",
+							"        const numCharIn160BitHexString = 160/8*2;",
+							"        const thumbprintSizes  = {};",
+							"        thumbprintSizes[numCharIn128BitHexString] = true;",
+							"        thumbprintSizes[numCharIn160BitHexString] = true;",
+							"        const thumbprintRegExp = /^[a-f\\d]*$/;",
+							"",
+							"        const hexString = thumbprint.toLowerCase().replace(/:/g, '').replace(/ /g, '');",
+							"",
+							"        if (!thumbprintSizes[hexString.length] || !thumbprintRegExp.test(hexString)) {",
+							"            throw new Error(\"CertThumbprint in selected Postman environment does not match a known format\");",
+							"        }",
+							"",
+							"        const base64 = (Buffer.from(hexString, 'hex')).toString('base64');",
+							"        return base64.replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=/g, '');",
+							"    },",
+							"",
+							"};",
+							"",
 							"// download jsrsasign library and save it to a global variable",
 							"if (!pm.globals.has('jsrsasign-js')) {",
 							"    pm.sendRequest(",
 							"        'https://kjur.github.io/jsrsasign/jsrsasign-all-min.js',",
 							"        function (err, res) {",
 							"            if (err) {",
-							"                throw new Error(err);",
+							"                throw new Error(\"Unable to download required RSA library: \" + err);",
 							"            } else {",
 							"                console.log('Downloaded RSA library');",
 							"                pm.globals.set('jsrsasign-js', res.text());",
@@ -6271,64 +5730,11 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"// if status 4xx",
-							"// remove 'AppOnlyCertSPOToken' from environment "
+							""
 						]
 					}
 				}
 			]
-		},
-		{
-			"name": "v1.0 $metadata",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json;odata.metadata=full"
-					}
-				],
-				"url": {
-					"raw": "https://graph.microsoft.com/v1.0/$metadata",
-					"protocol": "https",
-					"host": [
-						"graph",
-						"microsoft",
-						"com"
-					],
-					"path": [
-						"v1.0",
-						"$metadata"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "beta $metadata",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json;odata.metadata=full"
-					}
-				],
-				"url": {
-					"raw": "https://graph.microsoft.com/beta/$metadata",
-					"protocol": "https",
-					"host": [
-						"graph",
-						"microsoft",
-						"com"
-					],
-					"path": [
-						"beta",
-						"$metadata"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"event": [
