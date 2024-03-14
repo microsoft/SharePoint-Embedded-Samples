@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "55bc4fc7-1233-43a8-b2f3-22edf1ea0c1f",
+		"_postman_id": "e7fccaaf-b832-418b-82f4-5f76f89177e1",
 		"name": "SharePoint Embedded",
 		"description": "[Microsoft Graph](https://docs.microsoft.com/graph/overview) is the gateway to data and intelligence in Microsoft 365. It provides a unified programmability model that you can use to access the tremendous amount of data in Microsoft 365, Windows 10, and Enterprise Mobility + Security. Use the wealth of data in Microsoft Graph to build apps for organizations and consumers that interact with millions of users.\n\n## Create Environment File\n\nIn order to use the RaaS Postman collection we've just imported, we will need to create a valid environment file that contains all the variables in the underlying scripts from this collection. Most need initial values, but fields like ContainerID and PermissionID are generated in post script execution, and later re-used as parameters in other requests. Once the environment file has been created, make sure the collection is set up to use it. This can be done by selecting the newly created environment in the drop-down near the top right hand of the application window.\n\n| Field |  |\n| --- | --- |\n| ClientID |  |\n| ClientSecret |  |\n| TenantID |  |\n| tid |  |\n| RootSiteUrl |  |\n| ContainerTypeId |  |\n| TenantName |  |\n| ContainerId |  |\n| PermissionId |  |\n| FileId |  |\n\nThis is the environment file set up for our sample app:\n\n<img src=\"https://content.pstmn.io/1dcda27e-020b-42a8-85cd-f2ef52c93db0/UmF3IEVudi5wbmc=\">\n\n## Acquire a delegate Graph token\n\nTo execute Graph APIs on our containers, we will need to first acquire a valid Graph authorization token. This can be done by using the acquire token setup in the Delegated tab. Click on the Delegate tab under the root \"RaaS Postman Collection\" item, and select the Authorization tab. The window should look like this:\n\n<img src=\"https://content.pstmn.io/03cb2159-10a4-485c-ab44-5bbf93522209/ZGVsZWdhdGV0b2tlbi5wbmc=\" width=\"619\" height=\"563\">\n\nThe \"Configure New Token\" workflow pulls the necessary parameters from the environment file and uses them to retrieve a valid token. Pressing the \"Get New Access Token\" may prompt a credentials window if it’s the first time using the collection. The tenants credentials should be entered here for either a regular or admin user. Once complete, you should see the following window appear:\n\n<img src=\"https://content.pstmn.io/d9cd45b9-8591-4b5e-9e41-4010ff07f219/bmV3dG9rZW5nb3QucG5n\" width=\"446\" height=\"295\">\n\nClick \"Proceed\" and you'll be a presented with the newly created access token. Name your token appropriately, and then select \"Use Token\" for it to be including in any further issued Graph request.\n\n<img src=\"https://content.pstmn.io/031fdd54-e4c9-423b-86c7-af4e9839f37b/RGVsZWdhdGUgLSBVc2UgVG9rZW4ucG5n\">\n\n## Acquire a delegate Vroom token\n\nTo execute storageContainer API requests, we need to follow the similar approach we did for Graph tokens, except now we will use the \"Containers\" Authorization tab to do so.\n\n<img src=\"https://content.pstmn.io/ea4cbae5-3bcd-4270-bea5-f8935c0d7a6f/RGVsZWdhdGUgLSAybmQgVG9rZW4ucG5n\">\n\nWe follow the \"Get New Access Token\" flow, entering tenant credentials if prompted, and select \"Use Token\" to terminate the flow. We are now ready to use both Graph container specific calls and Vroom storageContainer endpoints.\n\n## Creating your first storage container\n\nIn order to begin experimenting with the RaaS Postman collection, we will first need a container to interact with. We can create one using the POST request labelled \"Create Container\".\n\n<img src=\"https://content.pstmn.io/e846726c-0f02-49b5-bec6-02e2baa4cbf0/RGVsZWdhdGUgLSBDcmVhdGUgQ29udGFpbmVyLnBuZw==\">\n\nYou can specify the containers display name and description in the \"Body\" tab of the request shown above. When you're ready to create your container, press \"Send\" and await response confirmation that your container was created successfully. You should see a response that returns a list of fields, including the ID of the container as well as the container create time.\n\n<img src=\"https://content.pstmn.io/e95e6033-0d9a-46e6-aaeb-188f714bf4bf/Y29udGFpbmVyZGV0YWlscy5wbmc=\">\n\nThe ID of the container is now stored in your environment file and will be the subject of an further container operations, both Graph or Vroom requests.\n\n## Interacting with storage containers\n\nNow that the Container ID field has been set in our environment file, we can proceed to use the remaining delegate requests in the collection, such as getting a storage containers drive items, or creating permissions on the container. The specifics of how to use these requests can be found in the rest of the documentation below.\n\n<img src=\"https://content.pstmn.io/d52f800d-bb46-4313-a5e6-39ce7b86c64d/QWxsIFBvc3RtYW4gRnVuY3Rpb25hbGl0eS5wbmc=\">",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -3525,6 +3525,21 @@
 				"type": "oauth2",
 				"oauth2": [
 					{
+						"key": "useBrowser",
+						"value": false,
+						"type": "boolean"
+					},
+					{
+						"key": "accessTokenUrl",
+						"value": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/token",
+						"type": "string"
+					},
+					{
+						"key": "authUrl",
+						"value": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/authorize",
+						"type": "string"
+					},
+					{
 						"key": "scope",
 						"value": "FileStorageContainer.Selected Files.Read.All offline_access",
 						"type": "string"
@@ -3545,16 +3560,6 @@
 						"type": "string"
 					},
 					{
-						"key": "accessTokenUrl",
-						"value": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-						"type": "string"
-					},
-					{
-						"key": "authUrl",
-						"value": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-						"type": "string"
-					},
-					{
 						"key": "tokenName",
 						"value": "Graph Delegated Token",
 						"type": "string"
@@ -3563,11 +3568,6 @@
 						"key": "redirect_uri",
 						"value": "https://oauth.pstmn.io/v1/browser-callback",
 						"type": "string"
-					},
-					{
-						"key": "useBrowser",
-						"value": false,
-						"type": "boolean"
 					},
 					{
 						"key": "tokenType",
