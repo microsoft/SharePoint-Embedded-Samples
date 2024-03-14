@@ -120,7 +120,7 @@ export default class Files extends React.Component {
     this.fileUploadRef = React.createRef();
     this.downloadLinkRef = React.createRef();
 
-    const linkableFileTypes = new Set(["doc", "docx", "xlsx", "xls", "csv", "pptx", "ppt", "png"]);
+    const linkableFileTypes = new Set(["doc", "docx", "xlsx", "xls", "csv", "pptx", "ppt"]);
     const columns = [
       {
         key: 'column1',
