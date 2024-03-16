@@ -53,13 +53,11 @@ The quickest way to get to our sample app running is to:
   ```
  and rename the file to `local.settings.json` from `local.settings_template.json`. **Again, failure to rename the file will prevent the app from functioning correctly.**
  
-- Run `npm install` in the `\Samples\raas-spa-azurefunction` folder. Make sure that you are using the latest version of [node](https://nodejs.org/en/download/) and npm. 
+- Make sure that you are using the latest version of [node](https://nodejs.org/en/download/) and npm. 
 - Make sure the Azure Function Workspace is [initialized](#initialize-azure-functions-workspace)
-<!-- - `Run > Start Debugging` from the top toolbar on VS Code to start the Azure Function locally. Install `Azure Functions Core Tools` if prompted -->
-- Run `func host start` in the `\Samples\raas-spa-azurefunction\packages\azure-functions` folder to run the Azure Functions
-  _(If the endpoints are running on a different port than the default `localhost:7071`, you'll need to make updates to `\packages\client-app\src\services\raas.js` file. See the [Clone, configure and start the app](#clone-configure-and-start-the-app) section for details)_
-
-- Open a new terminal or command prompt and run `npm run start-app` in the `\Samples\raas-spa-azurefunction` folder to run the client app
+- Open a new terminal or command prompt and run `npm run start` in the `\Samples\raas-spa-azurefunction` folder to run the client app
+  
+  _(If the Azure Function endpoints are running on a different port than the default `localhost:7071`, you'll need to make updates to `\packages\client-app\src\services\raas.js` file. See the [Clone, configure and start the app](#clone-configure-and-start-the-app) section for details)_
 - Open `localhost:3000` from a browser to see your app
 - Login with your provided admin username and credentials, and grant permissions to each consent prompt, ensuring the "Consent on behalf of your organization" option is checked. You will need to make sure pop-ups are allowed in your browser of choice, otherwise the consent windows will be blocked
 - Go and explore the app! 
