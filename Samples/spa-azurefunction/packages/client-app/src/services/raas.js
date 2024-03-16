@@ -1,5 +1,6 @@
 import { Providers, ProviderState } from '@microsoft/mgt-element';
-import { InteractionRequiredAuthError } from '@azure/msal-browser'
+import { InteractionRequiredAuthError } from '@azure/msal-browser';
+import { remoteFunctionHost, localFunctionHost } from '../utils/constants';
 const msal = require('@azure/msal-browser');
 
 
@@ -10,7 +11,7 @@ export default class RaaS {
   It also uses an API access token for authentication and returns the container object if the request is successful. 
   */
   async createContainer(displayName, description) {
-    const apiUrl = 'http://localhost:7071/api/CreateContainer';
+    const apiUrl = `${localFunctionHost}/api/CreateContainer`;
     if (Providers.globalProvider.state === ProviderState.SignedIn) {
       const token = await this.getApiAccessToken();
       const containerRequestHeaders = {
@@ -39,7 +40,7 @@ export default class RaaS {
   }
 
   async listContainers() {
-    const apiUrl = 'http://localhost:7071/api/ListContainers';
+    const apiUrl = `${localFunctionHost}/api/ListContainers`;
     if (Providers.globalProvider.state === ProviderState.SignedIn) {
       const token = await this.getApiAccessToken();
       const containerRequestHeaders = {
@@ -67,7 +68,7 @@ export default class RaaS {
   It also uses an API access token for authentication and returns the permissions object if the request is successful. 
   */
   async listContainerPermissions(container) {
-    const apiUrl = 'http://localhost:7071/api/GetContainerPermissions';
+    const apiUrl = `${localFunctionHost}/api/GetContainerPermissions`;
     if (Providers.globalProvider.state === ProviderState.SignedIn) {
       const token = await this.getApiAccessToken();
       const containerRequestHeaders = {
@@ -95,7 +96,7 @@ export default class RaaS {
   It also uses an API access token for authentication and returns the permissions object if the request is successful. 
   */
   async deleteContainerPermissionById(container, permissionId) {
-    const apiUrl = 'http://localhost:7071/api/DeleteContainerPermissionById';
+    const apiUrl = `${localFunctionHost}/api/DeleteContainerPermissionById`;
     if (Providers.globalProvider.state === ProviderState.SignedIn) {
       const token = await this.getApiAccessToken();
       const containerRequestHeaders = {
@@ -123,7 +124,7 @@ export default class RaaS {
   It also uses an API access token for authentication and returns the permissions object if the request is successful. 
   */
   async addContainerPermission(container, userPrincipalName, role) {
-    const apiUrl = 'http://localhost:7071/api/AddContainerPermission';
+    const apiUrl = `${localFunctionHost}/api/AddContainerPermission`;
     if (Providers.globalProvider.state === ProviderState.SignedIn) {
       const token = await this.getApiAccessToken();
       const containerRequestHeaders = {
