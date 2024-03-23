@@ -59,7 +59,8 @@ export const createContainerProperty = async (req: Request, res: Response) => {
       }
     }`);
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`).patch(requestBody)
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`)
+                                           .patch(requestBody)
 
     res.send(200, graphResponse);
     return;

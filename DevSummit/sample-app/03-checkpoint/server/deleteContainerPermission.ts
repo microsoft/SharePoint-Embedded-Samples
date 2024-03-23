@@ -43,7 +43,8 @@ export const deleteContainerPermission = async (req: Request, res: Response) => 
       defaultVersion: 'beta'
     });
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions/${req.body.permissionId}`).delete();
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions/${req.body.permissionId}`)
+                                           .delete();
 
     res.send(200, graphResponse);
     return;

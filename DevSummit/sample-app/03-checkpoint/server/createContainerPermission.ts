@@ -56,7 +56,8 @@ export const createContainerPermission = async (req: Request, res: Response) => 
       }
     };
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions`).post(requestBody);
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions`)
+                                           .post(requestBody);
 
     res.send(200, graphResponse);
     return;

@@ -119,7 +119,8 @@ export const Container = (props: IContainerProps) => {
       "folder": {},
       "@microsoft.graph.conflictBehavior": "rename"
     };
-    await graphClient.api(`/drives/${props.container.id}/items/${currentFolderId}/children`).post(requestBody);
+    await graphClient.api(`/drives/${props.container.id}/items/${currentFolderId}/children`)
+                     .post(requestBody);
 
     await loadItems(currentFolderId);
 

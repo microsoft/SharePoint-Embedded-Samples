@@ -39,7 +39,8 @@ export const listContainerPermissions = async (req: Request, res: Response) => {
       defaultVersion: 'beta'
     });
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions`).get();
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions`)
+                                           .get();
 
     res.send(200, graphResponse);
     return;

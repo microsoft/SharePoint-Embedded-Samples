@@ -273,11 +273,12 @@ const onDeleteItemClick = async () => {
   setIsDeleting(true);
 
   const graphClient = Providers.globalProvider.graph.client;
-  await graphClient.api(`/drives/${props.container.id}/items/${selectedRows.entries().next().value[0]}`).delete();
+  await graphClient.api(`/drives/${props.container.id}/items/${selectedRows.entries().next().value[0]}`)
+                   .delete();
 
   await loadItems(folderId || 'root');
   setDeleteDialogOpen(false);
-  setIsDeleting(false);
+  setIsDeleting(false); // <<< add this line
 };
 ```
 

@@ -46,7 +46,8 @@ export const createContainer = async (req: Request, res: Response) => {
       containerTypeId: process.env["CONTAINER_TYPE_ID"]
     };
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers`).post(containerRequestData);
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers`)
+                                           .post(containerRequestData);
 
     res.send(200, graphResponse);
     return;

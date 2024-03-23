@@ -482,7 +482,8 @@ try {
     defaultVersion: 'beta'
   });
 
-  const graphResponse = await graphClient.api(`storage/fileStorage/containers?$filter=containerTypeId eq ${process.env["CONTAINER_TYPE_ID"]}`).get();
+  const graphResponse = await graphClient.api(`storage/fileStorage/containers?$filter=containerTypeId eq ${process.env["CONTAINER_TYPE_ID"]}`)
+                                         .get();
 
   res.send(200, graphResponse);
   return;
@@ -744,7 +745,8 @@ try {
     containerTypeId: process.env["CONTAINER_TYPE_ID"]
   };
 
-  const graphResponse = await graphClient.api(`storage/fileStorage/containers`).post(containerRequestData);
+  const graphResponse = await graphClient.api(`storage/fileStorage/containers`)
+                                         .post(containerRequestData);
 
   res.send(200, graphResponse);
   return;
@@ -920,7 +922,8 @@ export const listContainerPermissions = async (req: Request, res: Response) => {
       defaultVersion: 'beta'
     });
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions`).get();
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions`)
+                                           .get();
 
     res.send(200, graphResponse);
     return;
@@ -992,7 +995,8 @@ export const createContainerPermission = async (req: Request, res: Response) => 
       }
     };
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions`).post(requestBody);
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions`)
+                                           .post(requestBody);
 
     res.send(200, graphResponse);
     return;
@@ -1051,7 +1055,8 @@ export const deleteContainerPermission = async (req: Request, res: Response) => 
       defaultVersion: 'beta'
     });
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions/${req.body.permissionId}`).delete();
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/permissions/${req.body.permissionId}`)
+                                           .delete();
 
     res.send(200, graphResponse);
     return;
@@ -1402,7 +1407,8 @@ export const listContainerProperties = async (req: Request, res: Response) => {
       defaultVersion: 'beta'
     });
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`).get();
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`)
+                                           .get();
 
     res.send(200, graphResponse);
     return;
@@ -1477,7 +1483,8 @@ export const createContainerProperty = async (req: Request, res: Response) => {
       }
     }`);
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`).patch(requestBody)
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`)
+                                           .patch(requestBody)
 
     res.send(200, graphResponse);
     return;
@@ -1724,7 +1731,8 @@ const requestBody = {
   "folder": {},
   "@microsoft.graph.conflictBehavior": "rename"
 };
-await graphClient.api(`/drives/${props.container.id}/items/${currentFolderId}/children`).post(requestBody);
+await graphClient.api(`/drives/${props.container.id}/items/${currentFolderId}/children`)
+                 .post(requestBody);
 
 await loadItems(currentFolderId);
 ```

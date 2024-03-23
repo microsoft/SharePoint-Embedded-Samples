@@ -36,7 +36,8 @@ export const listContainers = async (req: Request, res: Response) => {
       defaultVersion: 'beta'
     });
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers?$filter=containerTypeId eq ${process.env["CONTAINER_TYPE_ID"]}`).get();
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers?$filter=containerTypeId eq ${process.env["CONTAINER_TYPE_ID"]}`)
+                                           .get();
 
     res.send(200, graphResponse);
     return;

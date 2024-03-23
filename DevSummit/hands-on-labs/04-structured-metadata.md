@@ -107,8 +107,8 @@ Now add a method `loadColumns()` that will retrieve all the Container's columns 
 const loadColumns = async () => {
   const graphClient = Providers.globalProvider.graph.client;
   const graphResponse = await graphClient.api(`/storage/fileStorage/containers/${props.containerId}/columns`)
-  .version('beta')
-  .get();
+                                         .version('beta')
+                                         .get();
 
   const SystemColumns = new Set(['ID', 'Created', 'Author', 'Modified', 'Editor', '_CopySource', 'FileLeafRef', 'FileSizeDisplay', 'Title', '_ExtendedDescription']);
   const containerColumns: ColumnDefinition[] = graphResponse.value.filter((column: ColumnDefinition) => !SystemColumns.has(column.name!));
@@ -549,9 +549,9 @@ Next, add the following `loadColumns()` method that retrieves all the columns in
 const loadColumns = async () => {
   const graphClient = Providers.globalProvider.graph.client;
   const graphResponse = await graphClient.api(`/storage/fileStorage/containers/${props.containerId}/columns`)
-    .version('beta')
-    .filter('isSealed eq false AND readOnly eq false')
-    .get();
+                                         .version('beta')
+                                         .filter('isSealed eq false AND readOnly eq false')
+                                         .get();
 
   const containerColumns: ColumnDefinition[] = graphResponse.value;
   setContainerUserColumns(containerColumns || []);
@@ -563,7 +563,8 @@ Now add the following `loadFileFields()` method to get the fields (aka: columns)
 ```typescript
 const loadFileFields = async () => {
   const graphClient = Providers.globalProvider.graph.client;
-  const graphResponse = await graphClient.api(`/drives/${props.containerId}/items/${props.fileId}/listItem/fields`).get();
+  const graphResponse = await graphClient.api(`/drives/${props.containerId}/items/${props.fileId}/listItem/fields`)
+                                         .get();
 
   setFileFieldData(graphResponse);
 };
@@ -762,7 +763,7 @@ const onSaveClick = async () => {
   };
 
   await graphClient.api(`/drives/${props.containerId}/items/${props.fileId}/listItem/fields`)
-                    .patch(requestBody);
+                   .patch(requestBody);
   await loadFileFields();
 
   setIsSaving(false);

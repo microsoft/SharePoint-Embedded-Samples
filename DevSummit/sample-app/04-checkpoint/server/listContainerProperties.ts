@@ -39,7 +39,8 @@ export const listContainerProperties = async (req: Request, res: Response) => {
       defaultVersion: 'beta'
     });
 
-    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`).get();
+    const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`)
+                                           .get();
 
     res.send(200, graphResponse);
     return;
