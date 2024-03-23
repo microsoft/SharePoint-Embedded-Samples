@@ -578,6 +578,31 @@ const onSelectedDropdownChange = (event: SelectionEvents, data: OptionOnSelectDa
 };
 ```
 
+Add a side effect that fires whenever the component's container, file, or the dialog's open state changes to loads the Container's columns and fields from the file:
+
+```typescript
+useEffect(() => {
+  (async () => {
+    if (props.containerId && props.fileId && props.isOpen) {
+      await loadColumns();
+      await loadFileFields();
+    }
+  })();
+}, [props.containerId, props.fileId, props.isOpen]);
+```
+
+Add another side effect that fires when the selected field state variable changes to update another state variable we're using to store and bind the field's value in the UX:
+
+```typescript
+useEffect(() => {
+  if (selectedColumn) {
+    (Object.keys(fileFieldData).includes(selectedColumn.name!))
+      ? setColumnValue(fileFieldData[selectedColumn.name!])
+      : setColumnValue('');
+  }
+}, [selectedColumn]);
+```
+
 Finally, add the following to the component just before the `const styles = useStyles();` line to dynamically create an icon for the **Save** button.
 
 ```tsx

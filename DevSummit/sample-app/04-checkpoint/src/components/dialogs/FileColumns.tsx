@@ -43,6 +43,23 @@ export const DialogFileColumns = (props: IFileColumnsProps) => {
     resetForm();
   }, [props.isOpen]);
 
+  useEffect(() => {
+    (async () => {
+      if (props.containerId && props.fileId && props.isOpen) {
+        await loadColumns();
+        await loadFileFields();
+      }
+    })();
+  }, [props.containerId, props.fileId, props.isOpen]);
+
+  useEffect(() => {
+    if (selectedColumn) {
+      (Object.keys(fileFieldData).includes(selectedColumn.name!))
+        ? setColumnValue(fileFieldData[selectedColumn.name!])
+        : setColumnValue('');
+    }
+  }, [selectedColumn]);
+
   const resetForm = () => {
     setSelectedColumn(undefined);
     setColumnValue('');
@@ -132,4 +149,5 @@ export const DialogFileColumns = (props: IFileColumnsProps) => {
       </DialogSurface>
     </Dialog>
   );
+
 }
