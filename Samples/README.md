@@ -7,9 +7,3 @@ Below are two examples of apps with SharePoint Embedded. One is a client-side ap
 ## [Server-side app](./syntex.rs-asp.net-webservice/)
 
 
-## Using Docker
-Running these example apps in Docker DevContainers can make setup lots easier
-[Docker Setup Intructions](./docker.md)
-
-
-Instructions for importing these files correctly are provided in each of the respective sections tutorial. 
