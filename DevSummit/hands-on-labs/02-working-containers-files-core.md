@@ -13,7 +13,7 @@ In this hands-on lab, you'll start adding some core functionality to your first 
 > [!IMPORTANT]
 > This lab assumes you are working with the existing server-side API & React SPA projects found in the [sample-app/01-starter](../sample-app/01-starter/) folder. This sample app implements all functionality in the React SPA using fake data. Throughout this lab, you will replace all fake data with code that will read and write to the SPE partition in your Microsoft 365 tenant.
 >
-> **If you elect to start from the checkpoint instead of using the project you were updating in th e previous lab, remember to first install all the project's dependencies by running the `npm install` command in the root of the project.**
+> **If you elect to start from the checkpoint instead of using the project you were updating in th e previous lab, remember to first install all the project's dependencies by running the `npm install` command in the root of the project.** *[Pay close attention to the caution alert from lab 1](01-getting-started-with-spe.md#initialize-the-starter-app).*
 >
 > At the end of this lab, your project should mirror the functionality in the projects found in the [sample-app/02-checkpoint](../sample-app/02-checkpoint/) folder. If you have trouble along the way, refer to that project for the working sample.
 

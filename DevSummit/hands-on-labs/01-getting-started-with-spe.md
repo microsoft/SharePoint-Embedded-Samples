@@ -203,19 +203,42 @@ At this point, you can retry the request to create a new SPE Container.
 
 ## Initialize the starter app
 
-The labs in this workshop are intended to help you learn how to work with SPE. Thi sis done by creating a sample solution that consists of two applications:
+The labs in this workshop are intended to help you learn how to work with SPE. This is done by creating a sample solution that consists of two applications:
 
 - **Client-side React-based single-page app (SPA)** - This is the user experience that your customers will use to interact with your SPE containers. Most SPE-related tasks can be accomplished with client-side calls to Microsoft Graph REST APIs. However, some tasks require additional permissions (ie: app-only) that must be performed server-side.
 - **Server-side API server** - This is a REST API Node.js-based web server that the SPA will utilize to perform certain tasks.
 
 Before moving on, let's get the apps setup.
 
-1. Ensure you have a local copy, either by downloading the content in this repository or cloning the repository locally to your developer environment.
-1. From the console, change to the root folder of the [sample-app/00-starter](../sample-app/00-starter) project and install it's dependencies by executing the following command:
+1. Ensure you have a local copy, either by downloading the content in this repository or [cloning the repository locally to your developer environment](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository):
+1. From the console, change to the root folder of the [sample-app/01-starter](../sample-app/01-starter) project and install it's dependencies by executing the following command:
 
     ```console
     npm install
     ```
+
+    > [!CAUTION]
+    > New to Node.js? When running `npm install`, you'll likely see a lot of messages about deprecations, warnings, and possibly errors. Unless NPM fails installing the dependency tree, you can ignore these messages. **These are messages emitted from individual packages by their owners & can safely be ignored for the purpose of the exercises in this repo.**
+    >
+    > Further, you'll likely see a message about fixing results from running an audit, such as the following:
+    >
+    > ```console
+    > added 1762 packages, and audited 1763 packages in 34s
+    >
+    > 264 packages are looking for funding
+    >   run `npm fund` for details
+    >
+    > 12 vulnerabilities (5 moderate, 7 high)
+    >
+    > To address issues that do not require attention, run:
+    >   npm audit fix
+    > ```
+    >
+    > **DO NOT RUN `npm audit fix`.** This will update packages to newer versions, but the packages that depend on them have not likely been tested against the newer versions.
+    >
+    > If you accidentally run `npm audit fix`, you can fix this (1) deleting the `node_modules` folder & the `package-lock.json` file, then (2) rerun `npm install`.
+    >
+    > Learn more about the deprecation, warning, and error messages emitted from running `npm install` and `npm audit` in this article: [Don't freak out by vulnerabilities after running npm install](https://www.voitanos.io/blog/don-t-be-alarmed-by-vulnerabilities-after-running-npm-install/).
 
 1. Next, start the app by executing the following command:
 

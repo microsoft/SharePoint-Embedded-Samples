@@ -5,7 +5,7 @@ In this hands-on lab, you'll continue building out the React app by adding addit
 > [!IMPORTANT]
 > This lab assumes you are working with the existing server-side API & React SPA projects found in the [sample-app/02-checkpoint](../sample-app/02-checkpoint/) folder. This is the final project from completing lab 02.
 >
-> **If you elect to start from the checkpoint instead of using the project you were updating in th e previous lab, remember to first install all the project's dependencies by running the `npm install` command in the root of the project. You'll also need to update the following files in the project with the relevant IDs and secrets for your specific SharePoint Embedded & Microsoft Entra application:**
+> **If you elect to start from the checkpoint instead of using the project you were updating in th e previous lab, remember to first install all the project's dependencies by running the `npm install` command in the root of the project. You'll also need to update the following files in the project with the relevant IDs and secrets for your specific SharePoint Embedded & Microsoft Entra application:** *[Pay close attention to the caution alert from lab 1](01-getting-started-with-spe.md#initialize-the-starter-app).*
 >
 > - ./.env
 > - ./server/common/config.ts
