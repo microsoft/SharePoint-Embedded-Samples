@@ -51,16 +51,8 @@ export const createContainerProperty = async (req: Request, res: Response) => {
       defaultVersion: 'beta'
     });
 
-    // payload
-    const requestBody = JSON.parse(`{
-      "${req.body!.propertyName}": {
-        "value": "${req.body!.propertyValue}",
-        "isSearchable": ${req.body!.isSearchable}
-      }
-    }`);
-
     const graphResponse = await graphClient.api(`storage/fileStorage/containers/${req.params.id}/customProperties`)
-                                           .patch(requestBody)
+                                           .patch(req.body)
 
     res.send(200, graphResponse);
     return;
