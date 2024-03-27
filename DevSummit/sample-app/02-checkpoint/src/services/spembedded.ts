@@ -251,7 +251,12 @@ export default class SpEmbedded {
         'Content-Type': 'application/json'
       };
 
-      const requestData = { propertyName, propertyValue, isSearchable };
+      const requestData = {
+          [propertyName]: {
+              value: propertyValue,
+              isSearchable: true === isSearchable
+          }
+      };
       const requestOptions = {
         method: 'POST',
         headers: requestHeaders,
