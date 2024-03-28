@@ -30,6 +30,7 @@ The quickest way to get to our sample app running is to:
 - Update the provided `.env_template` file in `\Samples\raas-spa-azurefunction\packages\client-app` folder, updating the following fields to match your own application details: 
   ```js
   REACT_APP_CLIENT_ID = 'Insert client ID from provided config here'
+  REACT_APP_TENANT_ID = 'Insert tenant id from provided config here'
   ```
   and rename the file to `.env` from `.env_template`. **Failure to rename the file will prevent the app from functioning correctly.**
   
@@ -41,7 +42,7 @@ The quickest way to get to our sample app running is to:
         "AzureWebJobsStorage": "",
         "FUNCTIONS_WORKER_RUNTIME": "node",
         "APP_CLIENT_ID": "",
-        "APP_AUTHORITY": "https://login.microsoftonline.com/common",
+        "APP_AUTHORITY": "https://login.microsoftonline.com/<TENANT-ID>",
         "APP_AUDIENCE": "api/<APP-CLIENT-ID>",
         "APP_CLIENT_SECRET": "",
         "APP_CONTAINER_TYPE_ID": ""
@@ -155,7 +156,7 @@ Next, update the values in the `local.settings_template.json` file located in `\
 Populate the following fields with their approriate values (as strings) 
 ```js
 "APP_CLIENT_ID": "",
-"APP_AUTHORITY": "https://login.microsoftonline.com/common",
+"APP_AUTHORITY": "https://login.microsoftonline.com/<TENANT-ID>",
 "APP_AUDIENCE": "api/<APP-CLIENT-ID>",
 "APP_CLIENT_SECRET": "",
 "APP_CONTAINER_TYPE_ID": ""
@@ -270,7 +271,7 @@ async function promptForContainerConsent(event) {
     const msalConfig = {
       auth: {
         clientId: process.env.REACT_APP_CLIENT_ID,
-        authority: 'https://login.microsoftonline.com/common/',
+        authority: 'https://login.microsoftonline.com/<tenant-id>/',
       },
       cache: {
         cacheLocation: 'localStorage',
@@ -422,7 +423,7 @@ in `\packages\client-app\src\services\raas.js`
     const msalConfig = {
       auth: {
         clientId: process.env.REACT_APP_CLIENT_ID,
-        authority: 'https://login.microsoftonline.com/common/'
+        authority: 'https://login.microsoftonline.com/<tenant-id>/'
       },
       cache: {
         cacheLocation: "localStorage", // This configures where cache will be stored
