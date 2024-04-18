@@ -23,6 +23,9 @@ Before proceeding you will need:
 ## App Overview
 This sample app is built in Javascript using React.js for the UI and Azure Functions as the back-end for hosting endpoints to SharePoint Embedded APIs. The UI portion as well as the file management logic (utilizing Microsoft Graph APIs) of the app lives in `/packages/client-app` and the Azure Functions live in `/packages/azure-functions`.
 
+> [!IMPORTANT]
+> You'll need to install [Azure functions core tools](https://www.npmjs.com/package/azure-functions-core-tools) in order to run Azure Functions
+
 ## App Quick Start
 The quickest way to get to our sample app running is to: 
 - `git clone` this repository and open the `\Samples\raas-spa-azurefunction` folder in Visual Studio Code 
