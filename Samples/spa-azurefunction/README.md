@@ -27,6 +27,7 @@ This sample app is built in Javascript using React.js for the UI and Azure Funct
 The quickest way to get to our sample app running is to: 
 - `git clone` this repository and open the `\Samples\raas-spa-azurefunction` folder in Visual Studio Code 
 - Install the Azure Functions Extension in [Visual Studio code](#adding-azure-functions-extension-to-visual-studio-code)
+- Install [Azure functions core tools](https://www.npmjs.com/package/azure-functions-core-tools). This is necessary in order to run Azure Functions locally.
 - Update the provided `.env_template` file in `\Samples\raas-spa-azurefunction\packages\client-app` folder, updating the following fields to match your own application details: 
   ```js
   REACT_APP_CLIENT_ID = 'Insert client ID from provided config here'
