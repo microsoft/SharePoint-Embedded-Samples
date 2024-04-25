@@ -23,8 +23,6 @@ Before proceeding you will need:
 ## App Overview
 This sample app is built in Javascript using React.js for the UI and Azure Functions as the back-end for hosting endpoints to SharePoint Embedded APIs. The UI portion as well as the file management logic (utilizing Microsoft Graph APIs) of the app lives in `/packages/client-app` and the Azure Functions live in `/packages/azure-functions`.
 
-> [!IMPORTANT]
-> You'll need to install [Azure functions core tools](https://www.npmjs.com/package/azure-functions-core-tools) in order to run Azure Functions
 
 ## App Quick Start
 The quickest way to get to our sample app running is to: 
@@ -84,6 +82,9 @@ For further details of getting the sample app running, and for a more in-depth l
 6. You should now see Azure Functions listed in the Extensions panel and be able to create and manage Azure Functions projects within Visual Studio Code.
 
 You should now see Azure Functions listed in the Extensions panel and be able to create and manage Azure Functions projects within Visual Studio Code.
+
+> [!IMPORTANT]
+> You may need to install [Azure functions core tools](https://www.npmjs.com/package/azure-functions-core-tools) in order to run Azure Functions from a command prompt.
 
 ## Initialize Azure Functions Workspace
 In order to be able to run and debug Azure Functions within VS Code, you may need to initialize the workspace if it isn't done by default. Click the 'A' icon on the VS Code sidebar to see if the workspace is initialized already. If it isn't, there will be an option to choose the language, select `JavaScript`. Afterwards, the workspace should look like:
