@@ -2,7 +2,7 @@
 
 This SDK provides a React component that allows you to add copilot experience to your SharePoint Embedded React application.
 
-_Caveat:_ This is private preview code. It is unmaintained and unsupported. Do not use for production workloads.
+_Caveat:_ This SDK and the custom copilot chat experience is in private preview. It is unmaintained and unsupported. Do not use for production workloads.
 
 ## Prerequisites
 1. A Copilot license
