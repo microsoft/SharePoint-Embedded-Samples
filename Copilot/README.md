@@ -5,21 +5,28 @@ This SDK provides a React component that allows you to add copilot experience to
 _Caveat:_ This SDK and the custom copilot chat experience is in private preview. It is unmaintained and unsupported. Do not use for production workloads.
 
 ## Prerequisites
-1. A Copilot license
+1. A Copilot license enabled for your user in your tenant
 2. A working React SharePoint Embedded application, written in TypeScript.
     - If you are not using TypeScript, please see the Appendix below for steps to take to get this running in your app.
+    - To get started with SharePoint Embedded, visit https://aka.ms/start-spe
+    - Then, if you want get started with a sample React SPE app, visit [spe-azurefunction](https://github.com/microsoft/SharePoint-Embedded-Samples/tree/main/Samples/spa-azurefunction)
 3. Your Container Type configuration for `DiscoverabilityDisabled` must be set to `false`
+    - Visit [Configuring Container Types](https://learn.microsoft.com/en-us/sharepoint/dev/embedded/concepts/app-concepts/containertypes#configuring-container-types) to learn how to set this configuration
 
 ## Getting Started
 
-### 1. Unzip this SDK into your React repo
+### 1. Clone this repository and copy SDK files into your React repo
+
+```
+git clone -b feature/copilot https://github.com/microsoft/SharePoint-Embedded-Samples
+```
 
 Folder structure should look like:
 
 - your project
   - package.json (you likely have this file)
   - src/ (your application code likely lives into this folder)
-    - sdk/
+    - **sdk/**
       - ChatEmbedded.tsx
       - ChatEmbeddedAPI.ts
       - README.md
