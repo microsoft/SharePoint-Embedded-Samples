@@ -113,6 +113,7 @@ class ChatEmbeddedAPI {
         url.pathname = this._path;
         // url.searchParams.append("disableFeatures", "61170");
         url.searchParams.append("chatodsp", JSON.stringify(this._baseConfig));
+        url.searchParams.append("app", "sharepointembedded");
         return url.toString();
     }
 
