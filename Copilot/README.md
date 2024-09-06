@@ -6,7 +6,7 @@ _Caveat:_ This SDK and the custom copilot chat experience is in private preview.
 
 ## Summary
 
-The chat control once embedded in your application can customized to:
+The chat control once embedded in your application can be customized to:
 - Reason over documents in Sharepoint Embedded containers and user-accessible content in Sharepoint Online.
 - Developer can configure the application code to limit the search scope to file, folder, and containers.
 - Develoeprs can customize and configure chat control including starter prompts, suggested prompts, colors and more.
