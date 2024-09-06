@@ -4,13 +4,21 @@ This SDK provides a React component that allows you to add copilot experience to
 
 _Caveat:_ This SDK and the custom copilot chat experience is in private preview. It is unmaintained and unsupported. Do not use for production workloads.
 
+## Summary
+
+The chat control once embedded in your application can customized to:
+- Reason over documents in Sharepoint Embedded containers and user-accessible content in Sharepoint Online.
+- Developer can configure the application code to limit the search scope to file, folder, and containers.
+- Develoeprs can customize and configure chat control including starter prompts, suggested prompts, colors and more.
+
 ## Prerequisites
 1. A Copilot license enabled for your user in your tenant
-2. A working React SharePoint Embedded application, written in TypeScript.
+2. Contact us at SPECopilotTeam@microsoft.com so that we can enable private preview for your tenant.
+3. A working React SharePoint Embedded application, written in TypeScript.
     - If you are not using TypeScript, please see the Appendix below for steps to take to get this running in your app.
     - To get started with SharePoint Embedded, visit https://aka.ms/start-spe
     - Then, if you want get started with a sample React SPE app, visit [spe-azurefunction](https://github.com/microsoft/SharePoint-Embedded-Samples/tree/main/Samples/spa-azurefunction)
-3. Your Container Type configuration for `DiscoverabilityDisabled` must be set to `false`
+4. Your Container Type configuration for `DiscoverabilityDisabled` must be set to `false`
     - Visit [Configuring Container Types](https://learn.microsoft.com/en-us/sharepoint/dev/embedded/concepts/app-concepts/containertypes#configuring-container-types) to learn how to set this configuration
 
 ## Getting Started
