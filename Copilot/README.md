@@ -6,6 +6,8 @@ _Caveat:_ This SDK and the custom copilot chat experience is in private preview.
 
 ## Summary
 
+[Feature Overview Adding Copilot to your custom SharePoint Embedded app](https://www.youtube.com/watch?v=30i7q09EtQo)
+
 The chat control once embedded in your application can be customized to:
 - Reason over documents in Sharepoint Embedded containers and user-accessible content in Sharepoint Online.
 - Developer can configure the application code to limit the search scope to file, folder, and containers.
