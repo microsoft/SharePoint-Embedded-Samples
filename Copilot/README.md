@@ -2,7 +2,7 @@
 
 This SDK provides a React component that allows you to add copilot experience to your SharePoint Embedded React application.
 
-_Caveat:_ This SDK and the custom copilot chat experience is in private preview with limited support. Please consult us at ContactSPECopilot@microsoft.com before deploying this feature to production environment.
+_Caveat:_ This SDK and the custom copilot chat experience is in private preview with limited support. Please consult us at ContactSPECopilot@microsoft.com before deploying this feature to a production environment.
 
 ## SPE Custom Copilot Overview
 
