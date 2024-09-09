@@ -2,16 +2,17 @@
 
 This SDK provides a React component that allows you to add copilot experience to your SharePoint Embedded React application.
 
-_Caveat:_ This SDK and the custom copilot chat experience is in private preview. It is unmaintained and unsupported. Do not use for production workloads.
+_Caveat:_ This SDK and the custom copilot chat experience is in private preview with limited support. Please consult us at     ContactSPECopilot@microsoft.com before deploying this feature to production environment.
 
-## Summary
+## SPE Custom Copilot Overview
 
-[Feature Overview Adding Copilot to your custom SharePoint Embedded app](https://www.youtube.com/watch?v=30i7q09EtQo)
-
-The chat control once embedded in your application can be customized to:
+This copilot chat control offers the following features:
 - Reason over documents in Sharepoint Embedded containers and user-accessible content in Sharepoint Online.
 - Developer can configure the application code to limit the search scope to file, folder, and containers.
-- Develoeprs can customize and configure chat control including starter prompts, suggested prompts, colors and more.
+- Developers can customize and configure chat control including starter prompts, suggested prompts, colors and more.
+
+Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more about how to configure this functionality. 
+
 
 ## Prerequisites
 1. A Copilot license enabled for your user in your tenant
