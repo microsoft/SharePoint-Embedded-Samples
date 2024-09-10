@@ -29,6 +29,7 @@ interface ChatEmbeddedProps {
     onApiReady: (api: ChatEmbeddedAPI) => void;
     onNotification?: (data: any) => void;
     onChatClose?: (data: any) => void;
+    style?: React.CSSProperties;
 }
 
 export type { IChatEmbeddedApiAuthProvider, ChatLaunchConfig};
@@ -37,7 +38,7 @@ export { ChatEmbeddedAPI };
 export default function ChatEmbedded(props: ChatEmbeddedProps) {
     const [chatApi, setChatApi] = React.useState<ChatEmbeddedAPI | undefined>();
 
-    const {authProvider, onApiReady, onNotification} = props;
+    const {authProvider, onApiReady, onNotification, style} = props;
 
     const onIFrameRef = React.useCallback((iframeElement: any) => {
         if (iframeElement && iframeElement.contentWindow) {
@@ -54,6 +55,6 @@ export default function ChatEmbedded(props: ChatEmbeddedProps) {
     }, [authProvider, onApiReady, onNotification, chatApi]);
 
     return (
-        <iframe title="copilot" style={{ width: 'calc(100% - 4px)', height: 'calc(100vh - 8px)' }} ref={onIFrameRef} />
+        <iframe title="sharepoint-embedded-chat" id="sharepoint-embedded-chat" style={style} ref={onIFrameRef} />
     );
 }
