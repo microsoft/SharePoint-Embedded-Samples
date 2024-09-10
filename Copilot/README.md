@@ -11,7 +11,7 @@ This copilot chat control offers the following features:
 - Developer can configure the application code to limit the search scope to file, folder, and containers.
 - Developers can customize and configure chat control including starter prompts, suggested prompts, colors and more.
 
-Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more about how to configure this functionality. 
+Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more about how to configure this functionality.
 
 
 ## Prerequisites
@@ -169,6 +169,7 @@ function App() {
     <ChatEmbedded
       onApiReady={setChatApi}
       authProvider={authProvider}
+      style={{ width: 'calc(100% - 4px)', height: 'calc(100vh - 8px)' }}
     />
     //...
   );
@@ -236,6 +237,7 @@ function App() {
     <ChatEmbedded
       onApiReady={(api) => setChatApi(api)}
       authProvider={authProvider}
+      style={{ width: 'calc(100% - 4px)', height: 'calc(100vh - 8px)' }}
     />
     //...
   );
