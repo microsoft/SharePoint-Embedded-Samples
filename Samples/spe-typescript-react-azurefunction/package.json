@@ -1,0 +1,15 @@
+{
+    "name": "spe-typescript-react-azurefunction",
+    "private": true,
+    "scripts": {
+      "start": "npm install && npx lerna run start --parallel"
+    },
+    "workspaces": [
+      "function-api",
+      "react-client"
+    ],
+    "devDependencies": {
+      "lerna": "^6.3.0"
+    }
+  }
+  

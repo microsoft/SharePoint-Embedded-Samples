@@ -1,0 +1,21 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+
+    "AZURE_SPA_CLIENT_ID": "{{clientId}}",
+    "AZURE_CLIENT_ID": "{{clientId}}",
+    "SPE_CONTAINER_TYPE_ID": "{{containerTypeId}}",
+
+    "AZURE_CLIENT_SECRET": "{{clientSecret}}",
+
+    "AZURE_AI_ENDPOINT": "{{azureAiEndpoint}}",
+    "AZURE_AI_API_KEY": "{{azureAiApiKey}}"
+  },
+  "Host": {
+    "LocalHttpPort": 7072,
+    "CORS": "*"
+  }
+}
