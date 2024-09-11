@@ -38,7 +38,7 @@ import { ContainerSelector } from '../components/ContainerSelector';
 import { IContainer } from '../../../common/schemas/ContainerSchemas';
 import { CreateContainerButton } from '../components/CreateContainerButton';
 import { Outlet } from 'react-router-dom';
-//import { ChatSidebar } from '../components/ChatSidebar';
+import { ChatSidebar } from '../components/ChatSidebar';
 
 
 const useIsSignedIn = () => {
@@ -186,7 +186,7 @@ function App() {
             <div className="sidebar-resizer" ref={sidebarResizerRef} onMouseDown={onResizerMouseDown} />
             <div className="sidebar-content">
               <div className="spe-embedded-chat">
-                {/*<ChatSidebar />*/}
+                <ChatSidebar />
               </div>
             </div>
           </div>
