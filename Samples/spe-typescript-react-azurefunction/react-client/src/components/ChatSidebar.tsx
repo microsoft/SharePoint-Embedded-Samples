@@ -11,28 +11,6 @@ export const ChatSidebar: React.FunctionComponent = () => {
     </>);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
     const [chatAuthProvider, setChatAuthProvider] = React.useState<ChatAuthProvider | undefined>();
     
