@@ -9,10 +9,16 @@ import { IContainer, IContainerClientCreateRequest } from "../../../common/schem
 
 export async function loader({ params }: ILoaderParams): Promise<IContainer[]> {
     const containersLite = await ContainersApiProvider.instance.list();
-    const containers = containersLite.map((container) => {
-        return ContainersApiProvider.instance.get(container.id);
-    });
-    return Promise.all(containers);
+    const containers: IContainer[] = [];
+    for (const container of containersLite) {
+        try {
+            const fullContainer = await ContainersApiProvider.instance.get(container.id);
+            if (fullContainer) {
+                containers.push(fullContainer);
+            }
+        } catch (e) {console.log('caught e' + e)} // Ignore, typically means user doesn't have access to the container
+    }
+    return containers;
 }
 
 export async function action({ params, request }: ILoaderParams) {
