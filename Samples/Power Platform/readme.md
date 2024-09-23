@@ -6,10 +6,14 @@ View and manage containers.
 ![alt text](./Images/Files.png "Title")
 Control files in a container to include CRUD operations, sharing, versions and container columns.
 
-This tutorial is a step by-step guide for working with SharePoint Embedded. It contains key building blocks and learning resources for creating custom line of business applications that leverage the power of Office 365 and the Microsoft Graph:
+# Overview
 
-* **Containers**:dedicated SharePoint partition where your application stores files.
-* **Files**: Folders and documents necessary to work with your application.
+This Power Platform solution helps you get started managing your SharePoint Embedded environment to include container management, uploading and viewing files and searching across containers, content and metadata.
+
+You will find key building blocks and learning resources for creating custom line of business applications that leverage the power of Microsoft 365 and the Microsoft Graph:
+
+* **Containers**: dedicated SharePoint partition where your application stores files.
+* **Files**: folders and documents necessary to work with your application.
 * **Search**: a quick way to find information in containers or files.
 
 # Prerequisites
