@@ -15,7 +15,7 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
 
 
 ## Prerequisites
-1. Your M365 tenant is enabled for the private preview functionality. This is the tenant you will register your SPE app with. If it's not enabled already, you can request access to the private preview using this link: https://forms.microsoft.com/r/gn8DY82CQe. Our team will review the request and if it's approved, we will reach out to you within a week.
+1. Your M365 tenant is enabled for the private preview functionality. This is the tenant you will register your SPE app with. If it's not enabled already, you can request access to the private preview using this link: https://aka.ms/specopilotpreview. Our team will review the request and if it's approved, we will reach out to you within a week.
 2. A Copilot license enabled for at least one user in that tenant. You have two ways to get a developer environment for Copilot:
 A sandbox Microsoft 365 tenant with Copilot (available in limited preview through TAP membership). https://developer.microsoft.com/en-us/microsoft-365/tap
 An eligible Microsoft 365 or Office 365 production environment with a Copilot for Microsoft 365 license.
