@@ -11,8 +11,8 @@
     "test": "echo \"No tests yet...\"",
     "host": "ngrok http 7072",
     "publish": "npm run publish-bits && npm run publish-settings",
-    "publish-bits": "func azure functionapp publish marcspefunctions",
-    "publish-settings": "func azure functionapp publish marcspefunctions --publish-settings-only"
+    "publish-bits": "func azure functionapp publish {{AZURE_FUNCTION_APP_NAME}}",
+    "publish-settings": "func azure functionapp publish {{AZURE_FUNCTION_APP_NAME}} --publish-settings-only"
   },
   "dependencies": {
     "@azure/ai-form-recognizer": "^5.0.0",
