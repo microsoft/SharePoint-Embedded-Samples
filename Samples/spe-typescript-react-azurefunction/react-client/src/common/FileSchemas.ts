@@ -45,13 +45,17 @@ export class IDriveItem implements DriveItem {
     public get isWordDocument(): boolean {
         return this.isFolder ? false : IDriveItem._wordExtensions.includes(this.extension || '');
     }
-
+    
     public get isExcelDocument(): boolean {
         return this.isFolder ? false : IDriveItem._excelExtensions.includes(this.extension || '');
     }
-
+    
     public get isPowerPointDocument(): boolean {
         return this.isFolder ? false : IDriveItem._powerPointExtensions.includes(this.extension || '');
+    }
+
+    public get isPdfConvertibleDocument(): boolean {
+        return this.isFolder ? false : IDriveItem._pdfConvertibleExtensions.includes(this.extension || '');
     }
 
     public get desktopUrl(): string | undefined {
@@ -77,6 +81,7 @@ export class IDriveItem implements DriveItem {
     private static readonly _wordExtensions: string[] = ['doc', 'docx', 'docm', 'dot', 'dotx', 'dotm'];
     private static readonly _excelExtensions: string[] = ['xls', 'xlsx', 'xlsm', 'xlt', 'xltx', 'xltm'];
     private static readonly _powerPointExtensions: string[] = ['ppt', 'pptx', 'pptm', 'pot', 'potx', 'potm', 'pps', 'ppsx', 'ppsm'];
+    private static readonly _pdfConvertibleExtensions: string[] = ['csv', 'doc', 'docx', 'odp', 'ods', 'odt', 'pot', 'potm', 'potx', 'pps', 'ppsx', 'ppsm', 'ppt', 'pptm', 'pptx', 'rtf', 'xls', 'xlsx'];
     private static readonly _allExtensions: string[] = [...IDriveItem._wordExtensions, ...IDriveItem._excelExtensions, ...IDriveItem._powerPointExtensions];
 
     public static isOfficeExtension(extension: string | undefined): boolean {
