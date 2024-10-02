@@ -12,6 +12,7 @@ import { Msal2Provider, PromptType } from "@microsoft/mgt-msal2-provider";
 import * as Constants from './common/Constants';
 import * as Scopes from './common/Scopes';
 import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons';
+import { initializeIcons } from "@fluentui/react/lib/Icons";
 import ErrorPage from './ErrorPage';
 import { CustomAppApiAuthProvider } from './providers/CustomAppApiAuthProvider';
 import { Home } from './routes/Home';
@@ -21,6 +22,7 @@ import { GraphAuthProvider } from './providers/GraphAuthProvider';
 
 // Register icons and pull the fonts from the default Microsoft Fluent CDN:
 initializeFileTypeIcons();
+initializeIcons();
 
 const provider = new Msal2Provider({
   clientId: Constants.REACT_APP_AZURE_SERVER_APP_ID,

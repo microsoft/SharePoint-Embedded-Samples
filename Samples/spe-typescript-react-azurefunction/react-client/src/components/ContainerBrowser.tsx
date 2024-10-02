@@ -20,13 +20,14 @@ import {
 import {
     Folder24Filled,
     Checkmark16Filled,
+    Open20Filled,
 } from '@fluentui/react-icons';
 import { IContainer } from '../../../common/schemas/ContainerSchemas';
 import { ContainersApiProvider } from '../providers/ContainersApiProvider';
 import { IDriveItem } from '../common/FileSchemas';
 import { GraphProvider } from '../providers/GraphProvider';
 import { getFileTypeIconProps } from '@fluentui/react-file-type-icons';
-import { Icon } from '@fluentui/react';
+import { Icon, Modal, Shimmer } from '@fluentui/react';
 import ContainerActionBar from './ContainerActionBar';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { ILoaderParams } from '../common/ILoaderParams';
@@ -54,6 +55,9 @@ export const ContainerBrowser: React.FunctionComponent = () => {
     const [folderPath, setFolderPath] = useState<IDriveItem[]>([] as IDriveItem[]);
     const [selectedItem, setSelectedItem] = useState<IDriveItem | undefined>(undefined);
     const [selectedItemKeys, setSelectedItemKeys] = useState<string[]>([]);
+    const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
+    const [previewUrl, setPreviewUrl] = useState<URL | undefined>(undefined);
+    const [previewFile, setPreviewFile] = useState<IDriveItem | undefined>(undefined);
     const [refreshTime, setRefreshTime] = useState<number>(0);
 
     useEffect(() => {
@@ -119,12 +123,20 @@ export const ContainerBrowser: React.FunctionComponent = () => {
         if (!file.isFile) {
             return;
         }
+        setPreviewFile(file);
+        setIsPreviewOpen(true);
         filesApi.getPreviewUrl(container.id, file.id).then((url) => {
             if (url) {
-                window.open(url, '_blank');
+                setPreviewUrl(url);
             }
         });
     };
+
+    const closePreview = () => {
+        setIsPreviewOpen(false);
+        setPreviewUrl(undefined);
+        setPreviewFile(undefined);
+    }
 
     const getItemIcon = (driveItem: IDriveItem): JSX.Element => {
         if (driveItem.folder) {
@@ -337,6 +349,55 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                     </DataGrid>
                 </div>
             </div>)}
+            <Modal
+                isOpen={isPreviewOpen}
+                onDismiss={closePreview}
+                isBlocking={false}
+                containerClassName='file-preview-modal'
+            >
+                {previewFile && (<>
+                    <Link
+                        style={{ position: 'absolute', top: '10px', right: '10px' }}
+                        onClick={closePreview}
+                    >
+                        <Icon iconName='Cancel' />
+                    </Link>
+                    <h2 style={{ textAlign: 'center' }}>
+                        {previewUrl && (
+                            <Link 
+                                href={previewUrl.toString()} 
+                                target='_blank'
+                                onClick={closePreview}
+                            >
+                                {previewFile.name}
+                                <Open20Filled style={{ marginLeft: '5px' }} />
+                            </Link>
+                        )}
+                        {!previewUrl && (
+                            <>{previewFile.name}</>
+                        )}    
+                    </h2>
+                    {previewUrl && (
+                        <iframe 
+                            title='file-preview' 
+                            src={previewUrl.toString()} 
+                            style={{ width: '90vw', height: '80vh', border: 'none' }}
+                        />
+                    )}
+                    {!previewUrl && (
+                        <div style={{ alignContent: 'center', padding: '40px', width: '80vw', height: '80vh', border: 'none' }}>
+                            <Shimmer width="75%" style={{ padding: '10px' }} />
+                            <Shimmer width="75%" style={{ padding: '10px' }} />
+                            <Shimmer width="50%" style={{ padding: '10px' }} />
+                            <Shimmer width="50%" style={{ padding: '10px' }} />
+                            <Shimmer width="25%" style={{ padding: '10px' }} />
+                            <Shimmer width="25%" style={{ padding: '10px' }} />
+                        </div>
+                    )}
+                </>)}
+                
+            </Modal>
+
         </div>
     );
 }

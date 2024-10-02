@@ -327,3 +327,10 @@ body {
   display: block;
 }
 
+.file-preview-modal {
+  /* Rounded corners */
+  border-radius: 10px;
+  padding: 20px;
+  overflow: hidden;
+}
+
