@@ -1,13 +1,5 @@
 # SharePoint Embedded Starter Kit
 
-![alt text](./Images/Containers.png "Title")
-View and manage containers.
-
-![alt text](./Images/Files.png "Title")
-Control files in a container to include CRUD operations, sharing, versions and container columns.
-
-![alt text](./Images/Search.png "Title")
-Search across containers or files in a specific container to include the body of the document, metadata assigned to the document or content that has been OCRed and indexed.
 
 # Overview
 
@@ -18,6 +10,15 @@ You will find key building blocks and learning resources for creating custom lin
 * **Containers**: dedicated SharePoint partition where your application stores files.
 * **Files**: folders and documents necessary to work with your application.
 * **Search**: a quick way to find information in containers or files.
+
+![alt text](./Images/Containers.png "Title")
+View and manage containers.
+
+![alt text](./Images/Files.png "Title")
+Control files in a container to include CRUD operations, sharing, versions and container columns.
+
+![alt text](./Images/Search.png "Title")
+Search across containers or files in a specific container to include the body of the document, metadata assigned to the document or content that has been OCRed and indexed.
 
 # Prerequisites
 
