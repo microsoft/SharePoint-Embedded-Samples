@@ -1,10 +1,13 @@
-# SharePoint Embedded Center of Excellence
+# SharePoint Embedded Starter Kit
 
 ![alt text](./Images/Containers.png "Title")
 View and manage containers.
 
 ![alt text](./Images/Files.png "Title")
 Control files in a container to include CRUD operations, sharing, versions and container columns.
+
+![alt text](./Images/Search.png "Title")
+Search across containers or files in a specific container to include the body of the document, metadata assigned to the document or content that has been OCRed and indexed.
 
 # Overview
 
@@ -20,8 +23,8 @@ You will find key building blocks and learning resources for creating custom lin
 
 To get the most out of this solution the following dependencies need to be installed or configured.
 
-1. To provide the best user experience, download and install the [Power Platform Creator Kit](https://[Creator Kit - overview (preview) - Power Platform | Microsoft Learn](https://learn.microsoft.com/en-us/power-platform/guidance/creator-kit/overview)).
-2. You will need to [configure and create](https://[Set up and configure SharePoint Embedded - Training | Microsoft Learn](https://learn.microsoft.com/en-us/training/modules/sharepoint-embedded-setup/5-exercise-setup-configure-sharepoint-embedded)) a ContainerTypeID.  Once created, you can use this solution to add new containers to your ContainerType.
+1. To provide the best user experience, download and install the [Power Platform Creator Kit([https://Creator Kit - overview (preview) - Power Platform | Microsoft Learn](https://learn.microsoft.com/en-us/power-platform/guidance/creator-kit/overview)).
+2. You will need to [configure and create([https://Set up and configure SharePoint Embedded - Training | Microsoft Learn](https://learn.microsoft.com/en-us/training/modules/sharepoint-embedded-setup/5-exercise-setup-configure-sharepoint-embedded)) a ContainerTypeID.  Once created, you can use this solution to add new containers to your ContainerType.
 3. When installing the solution, you will be prompted to populate the environment variables with information from the ContainerTypeID in step 2.
 
 # How to use this tutorial?
