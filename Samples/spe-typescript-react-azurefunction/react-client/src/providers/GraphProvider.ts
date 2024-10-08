@@ -95,6 +95,13 @@ export class GraphProvider {
         return url;
     }
 
+    public async getSocketUrl(driveId: string): Promise<URL> {
+        const endpoint = `/drives/${driveId}/root/subscriptions/socketIo`;
+        const response = await this._providerClient?.api(endpoint).get();
+        const url = new URL(response.notificationUrl as string);
+        return url;
+    }
+
     public async getSpUrl(): Promise<string> {
         const endpoint = `/sites/root`;
         const response = await this._providerClient?.api(endpoint).get();

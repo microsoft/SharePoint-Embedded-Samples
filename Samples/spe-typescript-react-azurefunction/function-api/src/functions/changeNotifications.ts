@@ -99,9 +99,8 @@ export async function enableContainerProcessing(request: HttpRequest, context: I
                 await graph.addContainerColumn(containerId, newColumn);
             }
         }
-        const url = new URL(request.url);
-        const hostname = url.hostname;
-        const notificationUrl = `${hostname}/api/onDriveChanged?tid=${jwt.tid}driveId=${containerId}`;
+        const host = request.headers.has('x-forwarded-host') ? request.headers.get('x-forwarded-host') : request.headers.get('host');
+        const notificationUrl = `https://${host}/api/onDriveChanged?tid=${jwt.tid}&driveId=${containerId}`;
         console.log(`Subscribing to drive changes at ${notificationUrl}`);
         const subscription = await graph.subscribeToDriveChanges(containerId, notificationUrl);
         
@@ -129,17 +128,19 @@ export async function enableContainerProcessing(request: HttpRequest, context: I
 }
 
 export async function onDriveChanged(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    
+    console.log('onDriveChanged called');
     let validationToken = request.query.get('validationToken');
     if (!validationToken && request.method === 'POST') {
         const requestBody = await request.json() as IChangeNotificationRequestBody;
         validationToken = requestBody.validationToken!;
     }
-    const tenantId = request.query.get('driveId') || '';
+    const tenantId = request.query.get('tid') || '';
     const driveId = request.query.get('driveId') || '';
+    
+    console.log(`Going to process drive ${driveId} for tenant ${tenantId}`);
     if (tenantId && driveId) {
         const graph = new GraphProvider(new AppAuthProvider(tenantId));
-        processDrive(graph, driveId).catch(console.error);
+        processDrive(graph, driveId).catch((e) => console.error("Failed to process drive: " + e));
     }
     if (validationToken) {
         return { 
@@ -179,8 +180,9 @@ async function processItem(graph: GraphProvider, driveId: string, item: IDrivePr
         console.error(`Download URL not found for item ${item.id}`);
         return;
     }
-    
+    console.log(`Processing item ${item.name}`);
     const stream = await graph.getDriveItemStream(downloadUrl);
+    console.log('Got stream for item');
     const azureAi = new AzureDocAnalysisProvider();
     const fields = await azureAi.extractReceiptFields(stream) as IProcessedFileFields;
     if (!fields) {

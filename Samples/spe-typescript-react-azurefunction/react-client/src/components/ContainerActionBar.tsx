@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     makeStyles, 
     shorthands, 
@@ -19,6 +19,8 @@ import {
     Input,
     DialogActions,
     Spinner,
+    SwitchOnChangeData,
+    Switch,
 } from '@fluentui/react-components';
 import {
     ArrowUpload20Filled,
@@ -30,13 +32,16 @@ import {
     Add20Filled,
     Folder24Filled,
 } from '@fluentui/react-icons';
+import { useRevalidator } from "react-router-dom";
 import { IDriveItem } from '../common/FileSchemas';
 import { GraphProvider } from '../providers/GraphProvider';
 import { getFileTypeIconProps } from '@fluentui/react-file-type-icons';
 import { Icon } from '@fluentui/react';
 import { ContainerSettingsDialog } from './ContainerSettingsDialog';
 import { IContainer } from '../../../common/schemas/ContainerSchemas';
+import { ContainersApiProvider } from '../providers/ContainersApiProvider';
 
+const containersApi = ContainersApiProvider.instance;
 const filesApi = GraphProvider.instance;
 
 const useStyles = makeStyles({
@@ -76,6 +81,7 @@ export interface IContainerActionBarProps {
 
 export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProps> = (props: IContainerActionBarProps) => {
     const [showContainerSettings, setShowContainerSettings] = useState(false);
+    const [processingEnabled, setProcessingEnabled] = useState(props.container.customProperties?.docProcessingSubscriptionId !== undefined);
     const [uploads, setUploads] = useState<Map<string, IPendingUpload>>(new Map<string, IPendingUpload>());
     
     const [showNewFolderDialog, setShowNewFolderDialog] = useState<boolean>(false);
@@ -90,6 +96,11 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
     const [showDeletingSpinner, setShowDeletingSpinner] = useState<boolean>(false);
 
     const uploadFileRef = useRef<HTMLInputElement>(null);
+    const revalidator = useRevalidator();
+
+    useEffect(() => {
+        setProcessingEnabled(props.container.customProperties?.docProcessingSubscriptionId !== undefined);
+    }, [props.container.customProperties?.docProcessingSubscriptionId]);
 
     const onUploadFileClick = () => {
         if (uploadFileRef.current) {
@@ -120,6 +131,26 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
             });
         }
         setUploads(new Map<string, IPendingUpload>(uploads));
+    };
+
+    const processingEnabledChanged = async (event: React.ChangeEvent<HTMLInputElement>, data: SwitchOnChangeData) => {
+        if (data.checked) {
+            containersApi.enableProcessing(props.container.id)
+                .catch((error: any) => {
+                    console.error(error);
+                    setProcessingEnabled(false);
+                })
+                .finally(() => revalidator.revalidate());
+            setProcessingEnabled(true);
+        } else {
+            containersApi.disableProcessing(props.container.id)
+                .catch((error: any) => {
+                    console.error(error);
+                    setProcessingEnabled(true);
+                })
+                .finally(() => revalidator.revalidate());
+            setProcessingEnabled(false);
+        }
     };
 
     const createNewFolder = async () => {
@@ -270,6 +301,11 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
                     <Spinner size="extra-tiny" />
                 </Button>
             }
+            
+            <span className={styles.processingSwitch}>
+                <Switch checked={processingEnabled} onChange={processingEnabledChanged} label="Receipt Processing" />
+            </span>
+            
             <Dialog open={showNewFolderDialog}>
                 <DialogSurface>
                     {!showCreatingSpinner && (
