@@ -31,6 +31,7 @@ import { Icon, Modal, Shimmer } from '@fluentui/react';
 import ContainerActionBar from './ContainerActionBar';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { ILoaderParams } from '../common/ILoaderParams';
+import { io } from 'socket.io-client';
 
 const containersApi = ContainersApiProvider.instance;
 const filesApi = GraphProvider.instance;
@@ -65,14 +66,30 @@ export const ContainerBrowser: React.FunctionComponent = () => {
             if (!container) {
                 return;
             }
-            filesApi.listItems(container.id, parentId)
-                .then(setDriveItems)
+            refreshDriveItems();
+            
+            filesApi.getSocketUrl(container.id)
+                .then((url) => {
+                    const urlStr = url.toString();
+                    const socket = io(urlStr, { transports: ["websocket"] });
+                    socket.on('notification', refreshDriveItems);
+                })
                 .catch(console.error);
+
         })();
     }, [container, parentId, refreshTime]);
 
     const refresh = () => {
         setRefreshTime(new Date().getTime());
+    }
+
+    const refreshDriveItems = () => {
+        if (!container) {
+            return;
+        }
+        filesApi.listItems(container.id, parentId)
+            .then(setDriveItems)
+            .catch(console.error); 
     }
 
     const setLocation = (newPath: IDriveItem[]) => {

@@ -9,7 +9,9 @@
     "AZURE_CLIENT_ID": "{{clientId}}",
     "SPE_CONTAINER_TYPE_ID": "{{containerTypeId}}",
 
-    "AZURE_CLIENT_SECRET": "{{clientSecret}}"
+    "AZURE_CLIENT_SECRET": "{{clientSecret}}",
+    "AZURE_AI_ENDPOINT": "{{Azure AI Doc Intelligence Endpoint -- this is optional, only used if you enable receipt processing}}",
+    "AZURE_AI_API_KEY": "{{Azure AI Doc Intelligence API Key -- this is optional, only used if you enable receipt processing}}"
   },
   "Host": {
     "LocalHttpPort": 7072,
