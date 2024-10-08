@@ -1,8 +1,6 @@
 {
   "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "features": {
-		"ghcr.io/jlaundry/devcontainer-features/azure-functions-core-tools:1": {}
-  },
+  "postCreateCommand": "npm i -g azure-functions-core-tools@4 --unsafe-perm true",
   "forwardPorts": [7072, 8080],
   "portsAttributes": {
     "7072": {
