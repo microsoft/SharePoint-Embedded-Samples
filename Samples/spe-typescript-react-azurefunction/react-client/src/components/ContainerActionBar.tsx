@@ -31,6 +31,7 @@ import {
     PreviewLink20Filled,
     Add20Filled,
     Folder24Filled,
+    DocumentPdf20Regular
 } from '@fluentui/react-icons';
 import { useRevalidator } from "react-router-dom";
 import { IDriveItem } from '../common/FileSchemas';
@@ -275,6 +276,22 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
                                     </MenuItem>
                                 )}
                             </>)}
+
+                            {props.selectedItem.isPdfConvertibleDocument && (
+                                <MenuItem
+                                    icon={<DocumentPdf20Regular />}
+                                    onClick={async () => {
+                                        const pdfUrl = await filesApi.getPdfUrl(
+                                            props.selectedItem?.parentReference?.driveId ?? "",
+                                            props.selectedItem?.id ?? ""
+                                          );                
+                                          window.open(pdfUrl, "_blank");                                        
+                                    }}
+                                >
+                                    Open as PDF
+                                </MenuItem>    
+                            )} 
+
                             <MenuItem
                                 icon={<PreviewLink20Filled />}
                                 onClick={() => props.onFilePreviewSelected?.(props.selectedItem!)}

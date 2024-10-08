@@ -2,14 +2,11 @@
     "name": "spe-typescript-react-azurefunction",
     "private": true,
     "scripts": {
-      "start": "npm install && npx lerna run start --parallel"
+        "start": "npm i -D && concurrently --names \"API,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run start-api\" \"npm run start-client\"",
+        "start-api": "cd function-api && npm install && npm run start",
+        "start-client": "cd react-client && npm install && npm run start"
     },
-    "workspaces": [
-      "function-api",
-      "react-client"
-    ],
     "devDependencies": {
-      "lerna": "^6.3.0"
+        "concurrently": "^9.0.1"
     }
-  }
-  
+}

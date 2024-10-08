@@ -107,4 +107,16 @@ export class GraphProvider {
         const response = await this._providerClient?.api(endpoint).get();
         return response.webUrl;
     }
+
+    public async getPdfUrl(
+        driveId: string,
+        itemId: string
+      ): Promise<URL> {
+        const endpoint = `/drives/${driveId}/items/${itemId}/content?format=pdf`;
+        // NB: We use the `raw` response type so that we can capture the redirected URL of the PDF file.
+        // See: https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format?view=graph-rest-1.0&tabs=http#response
+        const response = await this._providerClient?.api(endpoint).responseType(Graph.ResponseType.RAW).get();    
+        const url = new URL(response.url);
+        return url;
+    }        
 }
