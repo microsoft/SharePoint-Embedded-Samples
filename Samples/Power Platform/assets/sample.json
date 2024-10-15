@@ -1,0 +1,76 @@
+[
+    {
+      "name": "SharePoint-Embedded-Starter-Kit-for-the-Power-Platform",
+      "source": "SharePointEmbedded",
+      "title": "SharePoint Embedded Starter Kit for the Power Platform",
+      "shortDescription": "This Power Platform solution helps you get started managing your SharePoint Embedded environment to include container management, uploading and viewing files and searching across containers, content and metadata.",
+      "url": "https://github.com/microsoft/SharePoint-Embedded-Samples/tree/main/Samples/Power%20Platform",
+      "longDescription": [
+        "This Power Platform solution helps you get started managing your SharePoint Embedded environment to include container management, uploading and viewing files and searching across containers, content and metadata.  You will find key building blocks and learning resources for creating custom line of business applications that leverage the power of Microsoft 365 and the Microsoft Graph: Containers: dedicated SharePoint partition where your application stores files.  Files: folders and documents necessary to work with your application.  Search: a quick way to find information in containers or files."
+      ],
+      "creationDateTime": "2024-09-15",
+      "updateDateTime": "2024-09-15",
+      "products": [
+        "SharePoint Embedded"
+      ],
+      "metadata": [
+        {
+          "key": "Storage PLatform",
+          "value": "SharePoint Embedded"
+        },
+        {
+          "key": "User Interface",
+          "value": "Power Apps"
+        },
+        {
+          "key": "Business Logic Workflow",
+          "value": "Power Automate"
+        },
+        {
+          "key": "SharePoint Embedded Persona",
+          "value": "Administrator and Low Code Solution Developer"
+        }
+      ],
+      "thumbnails": [
+        {
+          "type": "image",
+          "order": 100,
+          "url": "Samples/Power Platform/Images/Containers.png",
+          "alt": "SharePoint Embedded Container Management"
+        },
+        {
+          "type": "image",
+          "order": 200,
+          "url": "Samples/Power Platform/Images/Files.png",
+          "alt": "SharePoint Embedded File Management"
+        },
+        {
+          "type": "image",
+          "order": 300,
+          "url": "Samples/Power Platform/Images/Search.png",
+          "alt": "SharePoint Embedded Search"
+        }
+      ],
+      "authors": [
+        {
+          "gitHubAccount": "spucelik",
+          "pictureUrl": "https://avatars.githubusercontent.com/u/25673985?v=4",
+          "name": "Steve Pucelik"
+        }
+      ],
+      "references": [
+        {
+          "name": "GitHub Project",
+          "url": "https://github.com/microsoft/SharePoint-Embedded-Samples/tree/main/Samples/Power%20Platform"
+        },
+        {
+          "name": "Configure SharePoint Embedded",
+          "url": "https://learn.microsoft.com/en-us/training/modules/sharepoint-embedded-setup/5-exercise-setup-configure-sharepoint-embedded"
+        },
+        {
+          "name": "Contact the SharePoint Embedded Team",
+          "url": "maitlo:sharepointembedded@microsoft.com"
+        }
+      ]
+    }
+    ]
