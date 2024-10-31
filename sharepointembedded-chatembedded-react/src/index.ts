@@ -1,3 +1,10 @@
-export { default as ChatEmbedded } from './ChatEmbedded';
-export { default as ChatEmbeddedAPI } from './ChatEmbeddedAPI';
-export type { IChatEmbeddedApiAuthProvider, ChatLaunchConfig } from './ChatEmbeddedAPI';
+import {  default as ChatEmbedded } from './ChatEmbedded';
+import {  default as ChatEmbeddedAPI } from './ChatEmbeddedAPI';
+import { IChatEmbeddedApiAuthProvider, ChatLaunchConfig } from './ChatEmbeddedAPI';
+
+export {
+    ChatEmbedded,
+    ChatEmbeddedAPI,
+    IChatEmbeddedApiAuthProvider,
+    ChatLaunchConfig
+}

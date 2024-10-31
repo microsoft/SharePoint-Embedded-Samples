@@ -1,13 +1,10 @@
 {
   "name": "@microsoft/sharepointembedded-copilotchat-react",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A sharepoint embedded copilot chat react componenet that can be integrated into your sharepoint embedded custom react+typescript applications.",
   "repository": {
     "type": "git",
     "url": "https://github.com/microsoft/SharePoint-Embedded-Samples.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -39,9 +36,9 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.0",
     "@types/node": "^22.7.2",
-    "@types/react": "^18.3.9",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@types/react": "^17.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "rimraf": "^6.0.1",
     "rollup": "^4.22.4",
     "rollup-plugin-dts": "^6.1.1",
@@ -50,7 +47,7 @@
     "typescript": "^5.6.2"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }
