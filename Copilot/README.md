@@ -35,22 +35,24 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
 
 ## Getting Started
 
-### 1. Clone this repository and copy SDK files into your React repo
+### 1. Clone this repository and add the SDK into your React repo
 
-```
+```bash
 git clone -b feature/copilot https://github.com/microsoft/SharePoint-Embedded-Samples
+
+cd SharePoint-Embedded-Samples/Samples/spa-azurefunction
+
+version="1.0.2"; # Compatibility with React 17, v1.0.1 has compatibility with React 18
+
+url="https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-$version.tgz"; 
+
+expected_checksum="c3a8708b77e87594e203e7f825c8f3958a4a1b4290ed80561e18bc8f1574aec0"; 
+
+package_path="microsoft-sharepointembedded-copilotchat-react-$version.tgz"; 
+
+curl -o $package_path $url && [ "$(sha256sum $package_path | awk '{ print $1 }')" == "$expected_checksum" ] && npm install $package_path || { echo "Checksum does not match. Aborting installation."; rm $package_path; }
 ```
 
-Folder structure should look like:
-
-- your project
-  - package.json (you likely have this file)
-  - src/ (your application code likely lives into this folder)
-    - **sdk/**
-      - ChatEmbedded.tsx
-      - ChatEmbeddedAPI.ts
-      - README.md
-      - types.ts
 
 ### 2. Create an `authProvider` object.
 
@@ -71,7 +73,7 @@ Example usage in app:
 ```typescript
 
 // In your app:
-import { IChatEmbeddedApiAuthProvider } from './sdk/ChatEmbedded';
+import { IChatEmbeddedApiAuthProvider } from "@microsoft/sharepointembedded-copilotchat-react";
 
 const authProvider: IChatEmbeddedApiAuthProvider = {
     hostname: 'https://m365x10735106.sharepoint.com',
@@ -132,7 +134,7 @@ Example:
 
 ```typescript
 import React from 'react';
-import ChatEmbedded, { ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from './sdk/ChatEmbedded';
+import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from "@microsoft/sharepointembedded-copilotchat-react";
 
 //...
 async function requestSPOAccessToken() {
@@ -158,7 +160,7 @@ function App() {
 
 ```typescript
 import React from 'react';
-import ChatEmbedded, { ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from './sdk/ChatEmbedded';
+import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from "@microsoft/sharepointembedded-copilotchat-react";
 
 //...
 async function requestSPOAccessToken() {
@@ -217,7 +219,7 @@ await chatApi.openChat(launchConfig);
 Full example:
 ```typescript
 import React from 'react';
-import ChatEmbedded, { ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from './sdk/ChatEmbedded';
+import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from "@microsoft/sharepointembedded-copilotchat-react";
 
 //...
 async function requestSPOAccessToken() {
@@ -232,12 +234,16 @@ const authProvider: IChatEmbeddedApiAuthProvider = {
 function App() {
   const [chatApi, setChatApi] = React.useState<ChatEmbeddedAPI|null>(null);
 
-  React.useEffect(async () => {
-    if (!chatApi) {
-      return;
-    }
+  React.useEffect(() => {
+    const openChat = async () => {
+      if (!chatApi) {
+        return;
+      }
 
-    await chatApi.openChat();
+      await chatApi.openChat();
+    };
+
+    openChat();
   }, [chatApi]);
 
 
