@@ -6,12 +6,6 @@ import ChatEmbedded, { ChatEmbeddedAPI, ChatLaunchConfig } from '../sdk/ChatEmbe
 
 export const ChatSidebar: React.FunctionComponent = () => {
 
-    return (<>
-
-    </>);
-}
-
-/*
     const [chatAuthProvider, setChatAuthProvider] = React.useState<ChatAuthProvider | undefined>();
     
     const [chatConfig] = React.useState<ChatLaunchConfig>({
@@ -19,7 +13,7 @@ export const ChatSidebar: React.FunctionComponent = () => {
         theme: ChatController.instance.theme,
         zeroQueryPrompts: ChatController.instance.zeroQueryPrompts,
         suggestedPrompts: ChatController.instance.suggestedPrompts,
-        instruction: ChatController.instance.pirateMetaPrompt,
+        instruction: ChatController.instance.metaPromptStyle,
     });
 
     
@@ -40,4 +34,7 @@ export const ChatSidebar: React.FunctionComponent = () => {
         />
     )}
     </>);
-*/
+}
+
+
+    

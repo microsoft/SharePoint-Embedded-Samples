@@ -106,7 +106,7 @@ export const Containers: React.FunctionComponent = () => {
             <div className="view-container-breadcrumb">
                 <Breadcrumb size='medium'>
                     <BreadcrumbItem>
-                        <BreadcrumbButton size='medium' onClick={() => navigate('/containers')}>Containers</BreadcrumbButton>
+                        <BreadcrumbButton size='medium' onClick={() => navigate('/containers')}>Regulations</BreadcrumbButton>
                     </BreadcrumbItem>
                 </Breadcrumb>
             </div>

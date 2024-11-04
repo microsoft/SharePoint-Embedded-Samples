@@ -67,7 +67,7 @@ function App() {
   const mainContentRef = React.useRef(null);
   const loginRef = React.useRef(null);
 
-  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
   const sidebarRef = React.useRef<HTMLDivElement | null>(null);
   const sidebarResizerRef = React.useRef(null);
 
@@ -114,11 +114,11 @@ function App() {
         <div className="spe-app-header">
           <div className="spe-app-header-title">
             <Text size={700} weight='semibold'>
-              SharePoint Embedded
+              Contoso Tax Advisor
             </Text>
             <br />
             <Text size={300}>
-              TypeScript + React + Azure Functions Sample App
+              Your trusted tax advisor at your finger tip
             </Text>
           </div>
           <div className="spe-app-header-search" style={{ display: 'none' }}>
@@ -162,7 +162,7 @@ function App() {
               <div className="navigation-tabs">
                 <TabList vertical={true} size='large' selectedValue="containers">
                   <Tab value="home" icon={<Map20Regular />}>Home</Tab>
-                  <Tab value="containers" icon={<People20Regular />}>Containers</Tab>
+                  <Tab value="containers" icon={<People20Regular />}>Tax regulations</Tab>
                 </TabList>
               </div>
             </FluentProvider>
