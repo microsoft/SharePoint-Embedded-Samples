@@ -48,7 +48,7 @@ export class ChatController {
     }
 
 
-    public readonly header = "SharePoint Embedded Chat";
+    public readonly header = "Tax Agent";
     public readonly theme: IThemeOptions = {
         useDarkMode: false,
         customTheme: {
@@ -78,15 +78,15 @@ export class ChatController {
     };
 
     public readonly zeroQueryPrompts = {
-        headerText: "SharePoint Embedded Chat: How can I help you today?",
+        headerText: "Tax Agent: How can I help you today?",
         promptSuggestionList: [
             {
-                suggestionText: 'Show me recent files',
+                suggestionText: 'Summarize recent tax changes',
                 iconRegular: { name: IconName.ChatBubblesQuestion, style: IconStyle.Regular },
                 iconHover: { name: IconName.ChatBubblesQuestion, style: IconStyle.Filled },
             },
             {
-                suggestionText: 'What is SharePoint Embedded?',
+                suggestionText: 'What are tax regulations for employers?',
                 iconRegular: { name: IconName.DocumentCatchUp, style: IconStyle.Regular },
                 iconHover: { name: IconName.DocumentCatchUp, style: IconStyle.Filled },
             }
@@ -94,9 +94,9 @@ export class ChatController {
     };
 
     public readonly suggestedPrompts = [
-        "List and summarize recent files",
+        "List and summarize recent tax laws",
     ];
 
-    public readonly pirateMetaPrompt = "Response must be in the tone of a pirate. Yarrr!";
+    public readonly metaPromptStyle = "Assume that you are are a tax professional";
 
 }

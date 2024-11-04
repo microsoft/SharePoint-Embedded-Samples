@@ -103,7 +103,7 @@ class ChatEmbeddedAPI {
 
     private readonly _path: string = "/_layouts/15/chatembedded.aspx";
     private readonly _defaultHeader: IHeader = {
-        title: "SharePoint Embedded Chat",
+        title: "Tax Advisor",
         hideIcon: true,
         showCloseButton: false,
     };
