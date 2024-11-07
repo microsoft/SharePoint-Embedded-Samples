@@ -35,7 +35,7 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
 
 ## Getting Started
 
-### 1. Clone this repository and add the SDK into your React repo
+### 1. Clone this repository and install the SDK into your React repo
 
 ```bash
 git clone -b feature/copilot https://github.com/microsoft/SharePoint-Embedded-Samples
