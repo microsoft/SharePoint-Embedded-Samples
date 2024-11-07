@@ -73,7 +73,7 @@ Example usage in app:
 ```typescript
 
 // In your app:
-import { IChatEmbeddedApiAuthProvider } from "@microsoft/sharepointembedded-copilotchat-react";
+import { IChatEmbeddedApiAuthProvider } from '@microsoft/sharepointembedded-copilotchat-react';
 
 const authProvider: IChatEmbeddedApiAuthProvider = {
     hostname: 'https://m365x10735106.sharepoint.com',
@@ -134,7 +134,7 @@ Example:
 
 ```typescript
 import React from 'react';
-import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from "@microsoft/sharepointembedded-copilotchat-react";
+import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from '@microsoft/sharepointembedded-copilotchat-react';
 
 //...
 async function requestSPOAccessToken() {
@@ -160,7 +160,7 @@ function App() {
 
 ```typescript
 import React from 'react';
-import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from "@microsoft/sharepointembedded-copilotchat-react";
+import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from '@microsoft/sharepointembedded-copilotchat-react';
 
 //...
 async function requestSPOAccessToken() {
@@ -219,7 +219,7 @@ await chatApi.openChat(launchConfig);
 Full example:
 ```typescript
 import React from 'react';
-import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from "@microsoft/sharepointembedded-copilotchat-react";
+import { ChatEmbedded, ChatEmbeddedAPI, IChatEmbeddedApiAuthProvider } from '@microsoft/sharepointembedded-copilotchat-react';
 
 //...
 async function requestSPOAccessToken() {
