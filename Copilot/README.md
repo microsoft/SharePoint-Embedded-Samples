@@ -42,7 +42,16 @@ git clone -b feature/copilot https://github.com/microsoft/SharePoint-Embedded-Sa
 
 cd SharePoint-Embedded-Samples/Samples/spa-azurefunction
 
-version="1.0.2"; # Compatibility with React 17, v1.0.1 has compatibility with React 18
+npm install "https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-1.0.2.tgz"
+```
+
+
+#### If you want to verify checksums
+
+In MacOS/Linux
+
+```bash
+version="1.0.2"; # Compatibility with React 17
 
 url="https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-$version.tgz"; 
 
@@ -51,6 +60,26 @@ expected_checksum="c3a8708b77e87594e203e7f825c8f3958a4a1b4290ed80561e18bc8f1574a
 package_path="microsoft-sharepointembedded-copilotchat-react-$version.tgz"; 
 
 curl -o $package_path $url && [ "$(sha256sum $package_path | awk '{ print $1 }')" == "$expected_checksum" ] && npm install $package_path || { echo "Checksum does not match. Aborting installation."; rm $package_path; }
+```
+
+In Windows:
+```powershell
+$version = "1.0.2" # Compatibility with React 17
+$url = "https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-$version.tgz"
+$expected_checksum = "c3a8708b77e87594e203e7f825c8f3958a4a1b4290ed80561e18bc8f1574aec0"
+$package_path = "microsoft-sharepointembedded-copilotchat-react-$version.tgz"
+
+Invoke-WebRequest -Uri $url -OutFile $package_path
+
+$calculated_checksum = Get-FileHash -Path $package_path -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+
+if ($calculated_checksum -eq $expected_checksum) {
+    Write-Output "Checksum matches. Installing the package..."
+    npm install $package_path
+} else {
+    Write-Output "Checksum does not match. Aborting installation."
+    Remove-Item $package_path
+}
 ```
 
 
