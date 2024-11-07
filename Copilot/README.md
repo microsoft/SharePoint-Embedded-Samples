@@ -78,8 +78,8 @@ if ($calculated_checksum -eq $expected_checksum) {
     npm install $package_path
 } else {
     Write-Output "Checksum does not match. Aborting installation."
-    Remove-Item $package_path
 }
+Remove-Item $package_path
 ```
 
 
