@@ -2,7 +2,7 @@
 import React from "react";
 import { ChatAuthProvider } from "../providers/ChatAuthProvider";
 import { ChatController } from "../providers/ChatController";
-import ChatEmbedded, { ChatEmbeddedAPI, ChatLaunchConfig } from '../sdk/ChatEmbedded'
+import { ChatEmbedded, ChatEmbeddedAPI, ChatLaunchConfig } from '@microsoft/sharepointembedded-copilotchat-react';
 
 export const ChatSidebar: React.FunctionComponent = () => {
 
