@@ -33,6 +33,53 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
 4. Your Container Type configuration for `DiscoverabilityDisabled` must be set to `false`
     - Visit [Configuring Container Types](https://learn.microsoft.com/en-us/sharepoint/dev/embedded/concepts/app-concepts/containertypes#configuring-container-types) to learn how to set this configuration
 
+## Quick Start
+
+### 1. Use the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction` Application
+
+Naviagate to the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\components\ChatSidebar.tsx` file and adjust the return statement of this function by removing the commented out react function component code.
+```typescript
+export const ChatSidebar: React.FunctionComponent = () => {
+
+    // return (<>
+
+    // </>);
+
+    const [chatAuthProvider, setChatAuthProvider] = React.useState<ChatAuthProvider | undefined>();
+...
+```
+
+Then navigate to the `Q:\src\SPE-Demo\SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\routes\App.tsx` file and set the toggle to true.
+```typescript
+function App() {  
+  const containerTypeId = Constants.SPE_CONTAINER_TYPE_ID;
+  const baseSearchQuery = `ContainerTypeId:${containerTypeId}`;
+  const [selectedContainer, setSelectedContainer] = useState<IContainer | undefined>(undefined);
+  const [searchQuery, setSearchQuery] = useState<string>(baseSearchQuery)
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
+  const isSignedIn = useIsSignedIn();
+  const mainContentRef = React.useRef(null);
+  const loginRef = React.useRef(null);
+
+  const [showSidebar, setShowSidebar] = useState<boolean>(true); // !!! <-Set this Value to true->
+  const sidebarRef = React.useRef<HTMLDivElement | null>(null);
+  const sidebarResizerRef = React.useRef(null);
+
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  }
+
+```
+
+Ensure the following files have been setup correctly:
+1. `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\.env`
+2. `Q:\src\SPE-Demo\SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\function-api\local.settings.json`
+
+Run `npm start` in the project directory:
+```bash
+cd SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction
+npm run start
+```
 ## Getting Started
 
 ### 1. Clone this repository and install the SDK into your React repo
@@ -51,11 +98,11 @@ npm install "https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d32
 In MacOS/Linux
 
 ```bash
-version="1.0.2"; # Compatibility with React 17
+version="1.0.3";
 
-url="https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-$version.tgz"; 
+url="https://download.microsoft.com/download/4d8b9fec-9ae3-44c5-bcc9-f329ee96cbc1/microsoft-sharepointembedded-copilotchat-react-1.0.3.tgz"; 
 
-expected_checksum="c3a8708b77e87594e203e7f825c8f3958a4a1b4290ed80561e18bc8f1574aec0"; 
+expected_checksum="B9ABEBF07A597BA6FA5A2838ECBE6F1D53BD5EBD8A0FC5FBC2D21764BFF9C11C"; 
 
 package_path="microsoft-sharepointembedded-copilotchat-react-$version.tgz"; 
 
@@ -64,9 +111,9 @@ curl -o $package_path $url && [ "$(sha256sum $package_path | awk '{ print $1 }')
 
 In Windows:
 ```powershell
-$version = "1.0.2" # Compatibility with React 17
-$url = "https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-$version.tgz"
-$expected_checksum = "c3a8708b77e87594e203e7f825c8f3958a4a1b4290ed80561e18bc8f1574aec0"
+$version = "1.0.2"
+$url = "https://download.microsoft.com/download/4d8b9fec-9ae3-44c5-bcc9-f329ee96cbc1/microsoft-sharepointembedded-copilotchat-react-1.0.3.tgz"
+$expected_checksum = "B9ABEBF07A597BA6FA5A2838ECBE6F1D53BD5EBD8A0FC5FBC2D21764BFF9C11C"
 $package_path = "microsoft-sharepointembedded-copilotchat-react-$version.tgz"
 
 Invoke-WebRequest -Uri $url -OutFile $package_path
