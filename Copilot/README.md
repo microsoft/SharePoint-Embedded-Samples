@@ -22,9 +22,8 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
 ## Prerequisites
 1. Your M365 tenant is enabled for the private preview functionality. This is the tenant you will register your SPE app with. If it's not enabled already, you can request access to the private preview using this link: https://aka.ms/specopilotpreview. Our team will review the request and if it's approved, we will reach out to you within a week.
 2. A Copilot license enabled for at least one user in that tenant. You have two ways to get a developer environment for Copilot:
-- [A sandbox Microsoft 365 tenant](https://developer.microsoft.com/en-us/microsoft-365/tap) with Copilot (available in limited preview through TAP membership). 
-- [An eligible Microsoft 365 or Office 365 production environment](https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/prerequisites#customers-with-existing-microsoft-365-and-copilot-licenses
-) with a Copilot for Microsoft 365 license.
+    - [A sandbox Microsoft 365 tenant](https://developer.microsoft.com/en-us/microsoft-365/tap) with Copilot (available in limited preview through TAP membership). 
+    - [An eligible Microsoft 365 or Office 365 production environment](https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/prerequisites#customers-with-existing-microsoft-365-and-copilot-licenses) with a Copilot for Microsoft 365 license.
 
 3. A working React SharePoint Embedded application, written in TypeScript.
     - If you are not using TypeScript, please see the Appendix below for steps to take to get this running in your app.
@@ -37,38 +36,41 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
 
 ### 1. Use the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction` Application
 
-Naviagate to the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\components\ChatSidebar.tsx` file and adjust the return statement of this function by removing the commented out react function component code.
+Naviagate to the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\components\ChatSidebar.tsx` file and adjust the Function Component by replacing the return statement with the code that is commented out in the file. It should look somewhat like this:
 ```typescript
 export const ChatSidebar: React.FunctionComponent = () => {
 
-    // return (<>
-
-    // </>);
-
     const [chatAuthProvider, setChatAuthProvider] = React.useState<ChatAuthProvider | undefined>();
-...
+    
+    const [chatConfig] = React.useState<ChatLaunchConfig>({
+        header: ChatController.instance.header,
+        theme: ChatController.instance.theme,
+        zeroQueryPrompts: ChatController.instance.zeroQueryPrompts,
+        suggestedPrompts: ChatController.instance.suggestedPrompts,
+        instruction: ChatController.instance.pirateMetaPrompt,
+    });
+
+   ...
+
+   return (<>
+    {chatAuthProvider && (
+        <ChatEmbedded
+            authProvider={chatAuthProvider}
+            onApiReady={onApiReady}
+        />
+    )}
+    </>);   
+}
 ```
 
-Then navigate to the `Q:\src\SPE-Demo\SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\routes\App.tsx` file and set the toggle to true.
+Then navigate to the `Q:\src\SPE-Demo\SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\routes\App.tsx` file and look for this line:
+
 ```typescript
-function App() {  
-  const containerTypeId = Constants.SPE_CONTAINER_TYPE_ID;
-  const baseSearchQuery = `ContainerTypeId:${containerTypeId}`;
-  const [selectedContainer, setSelectedContainer] = useState<IContainer | undefined>(undefined);
-  const [searchQuery, setSearchQuery] = useState<string>(baseSearchQuery)
-  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
-  const isSignedIn = useIsSignedIn();
-  const mainContentRef = React.useRef(null);
-  const loginRef = React.useRef(null);
-
-  const [showSidebar, setShowSidebar] = useState<boolean>(true); // !!! <-Set this Value to true->
-  const sidebarRef = React.useRef<HTMLDivElement | null>(null);
-  const sidebarResizerRef = React.useRef(null);
-
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-  }
-
+  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+```
+and replace it with this line
+```typescript
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
 ```
 
 Ensure the following files have been setup correctly:
