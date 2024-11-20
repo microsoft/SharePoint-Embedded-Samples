@@ -36,7 +36,7 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
 
 ### 1. Use the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction` Application
 
-Naviagate to the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\components\ChatSidebar.tsx` file and adjust the Function Component by replacing the return statement with the code that is commented out in the file. It should look somewhat like this:
+Navigate to the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\components\ChatSidebar.tsx` file and adjust the Function Component by replacing the return statement with the code that is commented out in the file. It should look somewhat like this:
 ```typescript
 export const ChatSidebar: React.FunctionComponent = () => {
 
@@ -75,7 +75,7 @@ and replace it with this line
 
 Ensure the following files have been setup correctly:
 1. `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\.env`
-2. `Q:\src\SPE-Demo\SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\function-api\local.settings.json`
+2. `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\function-api\local.settings.json`
 
 Run `npm start` in the project directory:
 ```bash
