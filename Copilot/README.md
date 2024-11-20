@@ -9,7 +9,7 @@ _**Please note**:_ This SDK and the custom copilot chat experience is in private
 
 This copilot chat control offers the following features:
 - Reason over documents in Sharepoint Embedded containers and user-accessible content in Sharepoint Online.
-- Developer can configure the application code to limit the search scope to file, folder, and containers.
+- Developers can configure the application code to limit the search scope to file, folder, and containers.
 - Developers can customize and configure chat control including starter prompts, suggested prompts, colors and more.
 
 Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more about how to configure this functionality.
@@ -47,10 +47,10 @@ export const ChatSidebar: React.FunctionComponent = () => {
         theme: ChatController.instance.theme,
         zeroQueryPrompts: ChatController.instance.zeroQueryPrompts,
         suggestedPrompts: ChatController.instance.suggestedPrompts,
-        instruction: ChatController.instance.pirateMetaPrompt,
+        instruction: ChatController.instance.metaPrompt,
     });
 
-   ...
+   // ...
 
    return (<>
     {chatAuthProvider && (
@@ -63,7 +63,7 @@ export const ChatSidebar: React.FunctionComponent = () => {
 }
 ```
 
-Then navigate to the `Q:\src\SPE-Demo\SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\routes\App.tsx` file and look for this line:
+Then navigate to the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction\react-client\src\routes\App.tsx` file and look for this line:
 
 ```typescript
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
