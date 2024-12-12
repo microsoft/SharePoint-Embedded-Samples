@@ -84,14 +84,12 @@ npm run start
 ```
 ## Getting Started
 
-### 1. Clone this repository and install the SDK into your React repo
+### 1. Install the SDK into your React repo
 
 ```bash
-git clone -b feature/copilot https://github.com/microsoft/SharePoint-Embedded-Samples
+# Install the SDK with npm
 
-cd SharePoint-Embedded-Samples/Samples/spa-azurefunction
-
-npm install "https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-1.0.2.tgz"
+npm install "https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-1.0.3.tgz"
 ```
 
 
@@ -113,7 +111,7 @@ curl -o $package_path $url && [ "$(sha256sum $package_path | awk '{ print $1 }')
 
 In Windows:
 ```powershell
-$version = "1.0.2"
+$version = "1.0.3"
 $url = "https://download.microsoft.com/download/4d8b9fec-9ae3-44c5-bcc9-f329ee96cbc1/microsoft-sharepointembedded-copilotchat-react-1.0.3.tgz"
 $expected_checksum = "B9ABEBF07A597BA6FA5A2838ECBE6F1D53BD5EBD8A0FC5FBC2D21764BFF9C11C"
 $package_path = "microsoft-sharepointembedded-copilotchat-react-$version.tgz"
