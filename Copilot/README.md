@@ -84,12 +84,12 @@ npm run start
 ```
 ## Getting Started
 
-### 1. Clone this repository and install the SDK into your React repo
+### 1. Install the SDK into your React repo
 
 ```bash
 # Install the SDK with npm
 
-npm install "https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-1.0.2.tgz"
+npm install "https://download.microsoft.com/download/1315a30d-fe00-45b3-a149-d3235201f8ce/microsoft-sharepointembedded-copilotchat-react-1.0.3.tgz"
 ```
 
 
