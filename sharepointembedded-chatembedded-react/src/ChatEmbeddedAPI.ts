@@ -22,6 +22,7 @@
  * SOFTWARE
  */
 import { ICustomPrompts, ICustomTheme, IHeader, IThemeOptions, IDataSourcesProps, IZeroQueryPrompts } from "./types";
+import { ITheme, useTheme } from '@fluentui/react';
 
 export interface IChatEmbeddedConfig {
     contentWindow: Window;
@@ -29,6 +30,7 @@ export interface IChatEmbeddedConfig {
     onChatReady?: () => void;
     onChatClose?: (data: object) => void;
     onNotification?: (data: object) => void;
+    themeV8: ITheme;
 }
 
 export interface IChatEmbeddedApiAuthProvider {
@@ -50,6 +52,7 @@ class ChatEmbeddedAPI {
 
     private _customPrompts: ICustomPrompts = {};
     private _theme: ICustomTheme = {};
+    private _themeV8: ITheme;
 
     private _header: IHeader;
     private _contentWindow: Window;
@@ -73,6 +76,7 @@ class ChatEmbeddedAPI {
 
         this._messageListener = this._onWindowMessage.bind(this);
         this._header = this._defaultHeader;
+        this._themeV8 = config.themeV8;
     }
 
     public get channelId() {
@@ -224,6 +228,7 @@ class ChatEmbeddedAPI {
                         dataSources: this._dataSources,
                     },
                     theme: this._theme,
+                    themeV8: this._themeV8
                 },
             }
         });
@@ -375,6 +380,21 @@ class ChatEmbeddedAPI {
             ...themeOptions.customTheme,
         };
     }
+
+}
+
+export function getSafeTheme(themeOptions?: ITheme): ITheme {
+    // The spread operator is used to merge the default theme and the partial theme options,
+    // with properties in themeV8Options overriding those in the default themeV8
+
+    const themeV8: ITheme = {
+        ...useTheme(),
+        ...(themeOptions ?? {}),
+      };
+    // Remove components from theme to avoid serializing errors
+    const {components, ...safeTheme} = themeV8;
+    void components;
+    return safeTheme;
 }
 
 export default ChatEmbeddedAPI;
