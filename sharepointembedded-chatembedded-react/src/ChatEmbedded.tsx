@@ -22,7 +22,8 @@
  * SOFTWARE
  */
 import React from 'react';
-import ChatEmbeddedAPI, {IChatEmbeddedApiAuthProvider, ChatLaunchConfig} from './ChatEmbeddedAPI';
+import ChatEmbeddedAPI, {IChatEmbeddedApiAuthProvider, ChatLaunchConfig, getSafeTheme} from './ChatEmbeddedAPI';
+import { ITheme } from '@fluentui/react';
 
 interface ChatEmbeddedProps {
     authProvider: IChatEmbeddedApiAuthProvider,
@@ -30,6 +31,7 @@ interface ChatEmbeddedProps {
     onNotification?: (data: any) => void;
     onChatClose?: (data: any) => void;
     style?: React.CSSProperties;
+    themeV8?: ITheme;
 }
 
 export type { IChatEmbeddedApiAuthProvider, ChatLaunchConfig};
@@ -38,8 +40,9 @@ export { ChatEmbeddedAPI };
 export default function ChatEmbedded(props: ChatEmbeddedProps) {
     const [chatApi, setChatApi] = React.useState<ChatEmbeddedAPI | undefined>();
 
-    const {authProvider, onApiReady, onNotification, style} = props;
+    const {authProvider, onApiReady, onNotification, style, themeV8} = props;
 
+    const safeThemeV8 = getSafeTheme(themeV8);
     const onIFrameRef = React.useCallback((iframeElement: any) => {
         if (iframeElement && iframeElement.contentWindow) {
             if (!chatApi) {
@@ -47,6 +50,7 @@ export default function ChatEmbedded(props: ChatEmbeddedProps) {
                     contentWindow: iframeElement.contentWindow,
                     onNotification,
                     authProvider,
+                    themeV8: safeThemeV8
                 });
                 setChatApi(newApi);
                 onApiReady(newApi);
