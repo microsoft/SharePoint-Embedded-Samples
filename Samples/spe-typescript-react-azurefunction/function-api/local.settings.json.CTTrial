@@ -1,0 +1,15 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+    "AZURE_SPA_CLIENT_ID": "c6687643-37f6-4af9-8729-dd0cdd43d91e",
+    "AZURE_CLIENT_ID": "c6687643-37f6-4af9-8729-dd0cdd43d91e",
+    "SPE_CONTAINER_TYPE_ID": "5f10855e-4f9c-4f88-87be-e470dac4ba94",
+  },
+  "Host": {
+    "LocalHttpPort": 7072,
+    "CORS": "*"
+  }
+}
