@@ -190,7 +190,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
         createTableColumn<IDriveItem>({
             columnId: 'driveItemName',
             renderHeaderCell: () => {
-                return 'Name'
+                return 'Documents'
             },
             renderCell: (driveItem) => {
                 return (
@@ -200,32 +200,32 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                 )
             }
         }),
-        createTableColumn<IDriveItem>({
-            columnId: 'lastModifiedTimestamp',
-            renderHeaderCell: () => {
-                return 'Modified'
-            },
-            renderCell: (driveItem) => {
-                return (
-                    <TableCellLayout>
-                        {driveItem.lastModifiedDateTime}
-                    </TableCellLayout>
-                )
-            }
-        }),
-        createTableColumn<IDriveItem>({
-            columnId: 'lastModifiedBy',
-            renderHeaderCell: () => {
-                return 'Modified By'
-            },
-            renderCell: (driveItem) => {
-                return (
-                    <TableCellLayout>
-                        {driveItem.modifiedByName}
-                    </TableCellLayout>
-                )
-            }
-        }),
+        // createTableColumn<IDriveItem>({
+        //     columnId: 'lastModifiedTimestamp',
+        //     renderHeaderCell: () => {
+        //         return 'Modified'
+        //     },
+        //     renderCell: (driveItem) => {
+        //         return (
+        //             <TableCellLayout>
+        //                 {driveItem.lastModifiedDateTime}
+        //             </TableCellLayout>
+        //         )
+        //     }
+        // }),
+        // createTableColumn<IDriveItem>({
+        //     columnId: 'lastModifiedBy',
+        //     renderHeaderCell: () => {
+        //         return 'Modified By'
+        //     },
+        //     renderCell: (driveItem) => {
+        //         return (
+        //             <TableCellLayout>
+        //                 {driveItem.modifiedByName}
+        //             </TableCellLayout>
+        //         )
+        //     }
+        // }),
     ];
     if (container?.customProperties?.docProcessingSubscriptionId) {
         columns.push(

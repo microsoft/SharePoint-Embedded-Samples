@@ -319,9 +319,9 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
                 </Button>
             }
             
-            <span className={styles.processingSwitch}>
+            {/* <span className={styles.processingSwitch}>
                 <Switch checked={processingEnabled} onChange={processingEnabledChanged} label="Receipt Processing" />
-            </span>
+            </span> */}
             
             <Dialog open={showNewFolderDialog}>
                 <DialogSurface>
