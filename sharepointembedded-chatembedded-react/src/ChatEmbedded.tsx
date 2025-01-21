@@ -32,6 +32,7 @@ interface ChatEmbeddedProps {
     onChatClose?: (data: any) => void;
     style?: React.CSSProperties;
     themeV8?: ITheme;
+    containerTypeId: string;
 }
 
 export type { IChatEmbeddedApiAuthProvider, ChatLaunchConfig};
@@ -40,7 +41,7 @@ export { ChatEmbeddedAPI };
 export default function ChatEmbedded(props: ChatEmbeddedProps) {
     const [chatApi, setChatApi] = React.useState<ChatEmbeddedAPI | undefined>();
 
-    const {authProvider, onApiReady, onNotification, style, themeV8} = props;
+    const {authProvider, onApiReady, onNotification, style, themeV8, containerTypeId} = props;
 
     const safeThemeV8 = getSafeTheme(themeV8);
     const onIFrameRef = React.useCallback((iframeElement: any) => {
@@ -50,7 +51,9 @@ export default function ChatEmbedded(props: ChatEmbeddedProps) {
                     contentWindow: iframeElement.contentWindow,
                     onNotification,
                     authProvider,
-                    themeV8: safeThemeV8
+                    themeV8: safeThemeV8,
+                    containerTypeId
+
                 });
                 setChatApi(newApi);
                 onApiReady(newApi);
