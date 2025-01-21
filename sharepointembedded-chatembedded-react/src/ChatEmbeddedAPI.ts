@@ -31,6 +31,7 @@ export interface IChatEmbeddedConfig {
     onChatClose?: (data: object) => void;
     onNotification?: (data: object) => void;
     themeV8: ITheme;
+    containerTypeId: string;
 }
 
 export interface IChatEmbeddedApiAuthProvider {
@@ -63,6 +64,7 @@ class ChatEmbeddedAPI {
     private _messageListener: (event: MessageEvent) => void;
     private readonly authProvider: IChatEmbeddedApiAuthProvider;
 
+    private _containerTypeId: string;
     // Notifications:
     private _onChatClose?: (data: object) => void;
     private _onNotification?: (data: object) => void;
@@ -77,6 +79,7 @@ class ChatEmbeddedAPI {
         this._messageListener = this._onWindowMessage.bind(this);
         this._header = this._defaultHeader;
         this._themeV8 = config.themeV8;
+        this._containerTypeId = config.containerTypeId;
     }
 
     public get channelId() {
@@ -112,9 +115,24 @@ class ChatEmbeddedAPI {
         showCloseButton: false,
     };
 
+    /*
+    Expectation is that we will only be called within a Container context
+    The API can only be called from an SPE site context.
+    That is, a call to
+        https://tenant.sharepoint.com/contentstorage/CSP_xxxxxx/_api/v2.1/private/augloop/setSPEContext
+    would work a but a call with the root site
+        https://tenant.sharepoint.com/_api/v2.1/private/augloop/setSPEContext
+    will not.
+
+    Furthermore, the chatembedded.aspx page should only be loaded within an SPE site context.
+    Therefore the document.referrer should be an SPE site of the form
+        https://tenant.sharepoint.com/contentstorage/CSP_xxxxxx/_layouts/15/chatembedded.aspx
+ 
+  */
     private get _url(): string {
+        const path: string = `/contentstorage/CSP_${this._containerTypeId}/_layouts/15/chatembedded.aspx`;
         const url = new URL(this.authProvider.hostname);
-        url.pathname = this._path;
+        url.pathname = path;
         // url.searchParams.append("disableFeatures", "61170");
         url.searchParams.append("chatodsp", JSON.stringify(this._baseConfig));
         url.searchParams.append("app", "sharepointembedded");
