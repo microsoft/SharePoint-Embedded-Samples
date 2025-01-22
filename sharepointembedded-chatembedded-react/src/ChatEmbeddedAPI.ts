@@ -44,6 +44,12 @@ export interface ChatLaunchConfig {
     zeroQueryPrompts?: IZeroQueryPrompts;
     suggestedPrompts?: string[];
     instruction?: string;
+    locale?: string;
+    /**
+   * String to be used as placeholder text for chat input
+   * @defaultValue 'Ask questions or type / to add files or people.'
+   */
+    chatInputPlaceholder?: string;
 }
 
 class ChatEmbeddedAPI {
@@ -58,6 +64,8 @@ class ChatEmbeddedAPI {
     private _contentWindow: Window;
     private _instruction?: string;
     private _dataSources?: IDataSourcesProps[];
+    private _locale?: string;
+    private _chatInputPlaceholder?: string;
 
     private _heartbeatInterval?: NodeJS.Timeout;
     private _messageListener: (event: MessageEvent) => void;
@@ -222,10 +230,14 @@ class ChatEmbeddedAPI {
                 command: 'configure',
                 options: {
                     chatConfig: {
+                        language: this._locale,
                         header: this._header,
                         customPrompts: this._customPrompts,
                         instruction: this._instruction,
                         dataSources: this._dataSources,
+                        chatInput: {
+                            placeholder: this._chatInputPlaceholder
+                        }
                     },
                     theme: this._theme,
                     themeV8: this._themeV8
@@ -249,6 +261,9 @@ class ChatEmbeddedAPI {
             }
 
             this._instruction = launchConfig.instruction;
+
+            this._locale = launchConfig.locale;
+            this._chatInputPlaceholder = launchConfig.chatInputPlaceholder;
         }
 
         const accessToken = await this.authProvider.getToken();
