@@ -47,7 +47,7 @@ export interface ChatLaunchConfig {
     locale?: string;
     /**
    * String to be used as placeholder text for chat input
-   * @defaultValue 'Ask questions or type / to add files or people.'
+     * @defaultValue 'Ask questions or type / to add people.'
    */
     chatInputPlaceholder?: string;
 }
@@ -263,7 +263,7 @@ class ChatEmbeddedAPI {
             this._instruction = launchConfig.instruction;
 
             this._locale = launchConfig.locale;
-            this._chatInputPlaceholder = launchConfig.chatInputPlaceholder;
+            this._chatInputPlaceholder = launchConfig.chatInputPlaceholder ?? 'Ask questions or type / to add people.';
         }
 
         const accessToken = await this.authProvider.getToken();
