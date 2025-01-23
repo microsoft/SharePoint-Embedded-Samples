@@ -31,6 +31,7 @@ export interface IChatEmbeddedConfig {
     onChatClose?: (data: object) => void;
     onNotification?: (data: object) => void;
     themeV8: ITheme;
+    containerId: string;
 }
 
 export interface IChatEmbeddedApiAuthProvider {
@@ -71,6 +72,8 @@ class ChatEmbeddedAPI {
     private _messageListener: (event: MessageEvent) => void;
     private readonly authProvider: IChatEmbeddedApiAuthProvider;
 
+    private _authToken3P?: string;
+    private _containerId: string;
     // Notifications:
     private _onChatClose?: (data: object) => void;
     private _onNotification?: (data: object) => void;
@@ -85,6 +88,7 @@ class ChatEmbeddedAPI {
         this._messageListener = this._onWindowMessage.bind(this);
         this._header = this._defaultHeader;
         this._themeV8 = config.themeV8;
+        this._containerId = config.containerId;
     }
 
     public get channelId() {
@@ -120,9 +124,50 @@ class ChatEmbeddedAPI {
         showCloseButton: false,
     };
 
-    private get _url(): string {
-        const url = new URL(this.authProvider.hostname);
-        url.pathname = this._path;
+    /*
+    Expectation is that we will only be called within a Container context
+    The API can only be called from an SPE site context.
+    That is, a call to
+        https://tenant.sharepoint.com/contentstorage/CSP_xxxxxx/_api/v2.1/private/augloop/setSPEContext
+    would work a but a call with the root site
+        https://tenant.sharepoint.com/_api/v2.1/private/augloop/setSPEContext
+    will not.
+
+    Furthermore, the chatembedded.aspx page should only be loaded within an SPE site context.
+    Therefore the document.referrer should be an SPE site of the form
+        https://tenant.sharepoint.com/contentstorage/CSP_xxxxxx/_layouts/15/chatembedded.aspx
+ 
+  */
+    private async _url(): Promise<string> {
+        // Define the interface for the expected response
+        interface ISharepointIds {
+            listId: string;
+            siteId: string;
+            siteUrl: string;
+            tenantId: string;
+            webId: string;
+        }
+
+        interface IApiResponse {
+            sharepointIds: ISharepointIds;
+        }
+        const registerApi = `${this.authProvider.hostname}/_api/v2.1/drives/${this._containerId}?$select=sharePointIds`;
+        const response = await fetch(registerApi, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this._authToken3P}`
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch site URL: ${response.statusText}`);
+        }
+        // Extract the siteUrl from the response
+        const siteUrlResponse: IApiResponse = await response.json();
+        const siteUrl = siteUrlResponse.sharepointIds.siteUrl;
+        const url = new URL(siteUrl);  
+        // Append additional paths to the URL
+        url.pathname = `${url.pathname}/_layouts/15/chatembedded.aspx`;
         // url.searchParams.append("disableFeatures", "61170");
         url.searchParams.append("chatodsp", JSON.stringify(this._baseConfig));
         url.searchParams.append("app", "sharepointembedded");
@@ -267,10 +312,12 @@ class ChatEmbeddedAPI {
         }
 
         const accessToken = await this.authProvider.getToken();
+        this._authToken3P = accessToken;
         const contentWindow = this._contentWindow;
         const form = contentWindow.document.createElement("form");
         form.method = "POST";
-        form.action = this._url;
+        const url = await this._url();
+        form.action = url;
 
         const idTokenInput = contentWindow.document.createElement("input");
         idTokenInput.setAttribute("type", "hidden");
