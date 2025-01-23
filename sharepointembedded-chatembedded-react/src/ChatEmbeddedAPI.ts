@@ -151,6 +151,12 @@ class ChatEmbeddedAPI {
         interface IApiResponse {
             sharepointIds: ISharepointIds;
         }
+        // Validate the containerId to match the specific format
+        const containerIdPattern = /^b![a-zA-Z0-9-_]+$/;
+        if (!this._containerId || !containerIdPattern.test(this._containerId)) {
+            throw new Error('Invalid containerId format');
+        }
+        
         const registerApi = `${this.authProvider.hostname}/_api/v2.1/drives/${this._containerId}?$select=sharePointIds`;
         const response = await fetch(registerApi, {
             method: 'GET',
