@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/sharepointembedded-copilotchat-react",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A sharepoint embedded copilot chat react componenet that can be integrated into your sharepoint embedded custom react+typescript applications.",
   "repository": {
     "type": "git",
