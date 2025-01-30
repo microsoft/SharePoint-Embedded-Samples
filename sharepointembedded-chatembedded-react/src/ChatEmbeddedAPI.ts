@@ -110,7 +110,10 @@ class ChatEmbeddedAPI {
             authentication: {
                 enabled: true,
                 claimsChallenge: { enabled: false },
-                tokens: { augloop: true },
+                tokens: { 
+                    augloop: true,
+                    sharepointEmbedded: true
+                 },
             },
             messaging: {
                 origin: window.location.origin,
@@ -154,7 +157,7 @@ class ChatEmbeddedAPI {
 
         interface IApiResponse {
             sharepointIds: ISharepointIds;
-        }
+        }        
         const registerApi = `${this.authProvider.hostname}/_api/v2.1/drives/${this._containerId}?$select=sharePointIds`;
         const response = await fetch(registerApi, {
             method: 'GET',
@@ -229,7 +232,24 @@ class ChatEmbeddedAPI {
                 if (!event.data.data || !event.data.data.command) {
                     return;
                 }
-                switch (event.data.data.command) {
+                const command = event.data.data.command;
+                switch (command) {
+                    case 'fetchAuthToken':
+                        console.log('---------- FETCH AUTH TOKEN ----------');
+                        const tokenType = event.data.data.type;
+                        switch(tokenType) {
+                            case 'SharePoint-embedded':
+                                console.log('---------- FETCH AUTH TOKEN SHAREPOINT-EMBEDDED----------');
+                                this.port.postMessage({ type: 'result', id: event.data.id, result: 'success', data: { 
+                                    authToken: this._authToken3P
+                                }});
+                                break;
+                            case 'ms-augloop':
+                                console.log('---------- NOT IMPLEMENTED ----------');
+                            default:
+                                break;
+                        }
+                        break;
                     case 'preProcessQuery':
                         // console.info('---------- PRE PROCESS QUERY ----------');
                         this.port.postMessage({ type: 'result', id: event.data.id, result: 'success', data: {
