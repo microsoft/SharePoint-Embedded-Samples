@@ -27,7 +27,7 @@ export class GraphProvider {
         const endpoint = `/drives/${driveId}/items/${parentId}/children`;
         const query = {
             $expand: 'listitem($expand=fields)',
-            $select: 'id,name,createdDateTime,lastModifiedBy,lastModifiedDateTime,size,folder,file,root,parentReference,webUrl,webDavUrl'
+            $select: 'id,name,createdDateTime,lastModifiedBy,lastModifiedDateTime,size,folder,file,root,parentReference,webUrl,webDavUrl,content.downloadUrl'
         };
         const response = await this._providerClient?.api(endpoint).query(query).get();
         const items: DriveItem[] = response.value as DriveItem[];
@@ -35,6 +35,40 @@ export class GraphProvider {
     }
 
     public async uploadFile(driveId: string, file: File, parentId: string = 'root'): Promise<IDriveItem> {
+        const smallSizeMax = 4 * 1024 * 1024;
+        if (file.size > smallSizeMax) {
+            return this._uploadLargeFile(driveId, file, parentId);
+        } else {
+            return this._uploadSmallFile(driveId, file, parentId);
+        }
+    }
+
+    private async _uploadLargeFile(driveId: string, file: File, parentId: string): Promise<IDriveItem> {
+        const options: Graph.LargeFileUploadTaskOptions = {
+            // Chunk size must be a multiple of 320 KiB: https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession?view=odsp-graph-online#upload-bytes-to-the-upload-session
+            rangeSize: 10 * 320 * 1024, // 3.2 MiB
+            uploadEventHandlers: {
+                progress: (range, _) => {
+                    console.log(`Uploaded bytes ${range?.minValue}-${range?.maxValue} of ${file.size}`);
+                }
+            },
+        };
+        const endpoint = `/drives/${driveId}/items/${parentId}:/${file.name}:/createUploadSession`;
+        const payload = {
+            item: {
+                "@microsoft.graph.conflictBehavior": "rename",
+                "name": file.name
+            }
+        }
+        const session = await Graph.LargeFileUploadTask.createUploadSession(this._client, endpoint, payload);
+        const upload = new Graph.FileUpload(file, file.name, file.size);
+        const task = new Graph.LargeFileUploadTask(this._client, upload, session, options);
+        const result = await task.upload();
+        console.log(result);
+        return result.responseBody as IDriveItem;
+    } 
+
+    private async _uploadSmallFile(driveId: string, file: File, parentId: string): Promise<IDriveItem> {
         const fileReader = new FileReader();
         fileReader.readAsArrayBuffer(file);
         return new Promise<IDriveItem>((resolve, reject) => {
@@ -87,6 +121,15 @@ export class GraphProvider {
         return this._providerClient?.api(endpoint).delete();
     }
 
+    public async getPath(driveId: string, itemId: string): Promise<string> {
+        const endpoint = `/drives/${driveId}/items/${itemId}`;
+        const response = await this._providerClient?.api(endpoint).get();
+        if (response.root !== undefined) {
+            return endpoint;
+        }
+        return `${response.parentReference.path}/${response.name}`;
+    }
+
     public async getPreviewUrl(driveId: string, itemId: string): Promise<URL> {
         const endpoint = `/drives/${driveId}/items/${itemId}/preview`;
         const response = await this._providerClient?.api(endpoint).post({});
@@ -118,5 +161,13 @@ export class GraphProvider {
         const response = await this._providerClient?.api(endpoint).responseType(Graph.ResponseType.RAW).get();    
         const url = new URL(response.url);
         return url;
-    }        
+    }
+    
+    public async getContentStream(
+        driveId: string,
+        itemId: string
+      ): Promise<ReadableStream<Uint8Array>> {
+        const endpoint = `/drives/${driveId}/items/${itemId}/content`;
+        return await this._providerClient?.api(endpoint).getStream();
+    }
 }

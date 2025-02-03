@@ -10,6 +10,7 @@ export class IDriveItem implements DriveItem {
     parentReference?: ItemReference;
     webUrl?: string;
     webDavUrl?: string;
+    '@microsoft.graph.downloadUrl'?: string;
     size?: number;
     folder?: Folder;
     file?: {};
@@ -56,6 +57,10 @@ export class IDriveItem implements DriveItem {
 
     public get isPdfConvertibleDocument(): boolean {
         return this.isFolder ? false : IDriveItem._pdfConvertibleExtensions.includes(this.extension || '');
+    }
+
+    public get downloadUrl(): string | undefined {
+        return this['@microsoft.graph.downloadUrl'];
     }
 
     public get desktopUrl(): string | undefined {

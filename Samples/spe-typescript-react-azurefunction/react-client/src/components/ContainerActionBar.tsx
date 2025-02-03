@@ -31,7 +31,8 @@ import {
     PreviewLink20Filled,
     Add20Filled,
     Folder24Filled,
-    DocumentPdf20Regular
+    DocumentPdf20Regular,
+    ArrowDownload20Filled,
 } from '@fluentui/react-icons';
 import { useRevalidator } from "react-router-dom";
 import { IDriveItem } from '../common/FileSchemas';
@@ -162,6 +163,16 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
         setShowNewFolderDialog(false);
         props.onItemsUpdated?.();
     };
+
+    const onDownloadClick = async () => {
+        if (!props.selectedItem
+            || !props.selectedItem.isFile
+            || !props.selectedItem.downloadUrl
+        ) {
+            return;
+        }
+        window.open(props.selectedItem.downloadUrl, '_blank');
+    }
 
     const onRenameClick = () => {
         if (props.selectedItem === undefined) {
@@ -301,7 +312,7 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
                         </MenuList>
                     </MenuPopover>
                 </Menu>
-                {/*<Button icon={<ArrowDownload20Regular />} size='small' appearance='subtle'>Download</Button>*/}
+                <Button onClick={onDownloadClick} icon={<ArrowDownload20Filled />} size='small' appearance='subtle'>Download</Button>
             </>)}
 
             {props.selectedItem && (<>
