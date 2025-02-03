@@ -35,19 +35,19 @@
         {
           "type": "image",
           "order": 100,
-          "url": "Samples/Power Platform/Images/Containers.png",
+          "url": "https://raw.githubusercontent.com/microsoft/SharePoint-Embedded-Samples/refs/heads/main/Samples/Power%20Platform/Images/Containers.png",
           "alt": "SharePoint Embedded Container Management"
         },
         {
           "type": "image",
           "order": 200,
-          "url": "Samples/Power Platform/Images/Files.png",
+          "url": "https://raw.githubusercontent.com/microsoft/SharePoint-Embedded-Samples/refs/heads/main/Samples/Power%20Platform/Images/Files.png",
           "alt": "SharePoint Embedded File Management"
         },
         {
           "type": "image",
           "order": 300,
-          "url": "Samples/Power Platform/Images/Search.png",
+          "url": "https://raw.githubusercontent.com/microsoft/SharePoint-Embedded-Samples/refs/heads/main/Samples/Power%20Platform/Images/Search.png",
           "alt": "SharePoint Embedded Search"
         }
       ],
