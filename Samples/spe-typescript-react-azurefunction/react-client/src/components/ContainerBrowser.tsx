@@ -32,6 +32,7 @@ import ContainerActionBar from './ContainerActionBar';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { ILoaderParams } from '../common/ILoaderParams';
 import { io } from 'socket.io-client';
+import { useContainer } from '../routes/App';
 
 const containersApi = ContainersApiProvider.instance;
 const filesApi = GraphProvider.instance;
@@ -60,12 +61,14 @@ export const ContainerBrowser: React.FunctionComponent = () => {
     const [previewUrl, setPreviewUrl] = useState<URL | undefined>(undefined);
     const [previewFile, setPreviewFile] = useState<IDriveItem | undefined>(undefined);
     const [refreshTime, setRefreshTime] = useState<number>(0);
+    const { setSelectedContainer } = useContainer();
 
     useEffect(() => {
         (async () => {
             if (!container) {
                 return;
             }
+            setSelectedContainer(container);
             refreshDriveItems();
             
             filesApi.getSocketUrl(container.id)
