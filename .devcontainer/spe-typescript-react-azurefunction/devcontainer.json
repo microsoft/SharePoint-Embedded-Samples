@@ -1,6 +1,7 @@
 {
   "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "postCreateCommand": "npm i -g azure-functions-core-tools@4 --unsafe-perm true",
+  "postCreateCommand": "bash .devcontainer/spe-typescript-react-azurefunction/postCreate.sh",
+  "postStartCommand": "bash .devcontainer/spe-typescript-react-azurefunction/postStart.sh",
   "forwardPorts": [7072, 8080],
   "portsAttributes": {
     "7072": {
