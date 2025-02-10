@@ -12,7 +12,7 @@
     "@microsoft/mgt-msal2-provider": "^4.2.1",
     "@microsoft/mgt-react": "^4.2.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@microsoft/sharepointembedded-copilotchat-react": "https://download.microsoft.com/download/e608e6af-52b0-4cd6-a1c6-37a5882e3fc4/microsoft-sharepointembedded-copilotchat-react-1.0.4.tgz",
+    "@microsoft/sharepointembedded-copilotchat-react": "https://download.microsoft.com/download/27d10531-b158-40c9-a146-af376c0e7f2a/microsoft-sharepointembedded-copilotchat-react-1.0.7.tgz",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
