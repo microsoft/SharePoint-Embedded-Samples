@@ -99,4 +99,5 @@ export class ChatController {
 
     public readonly pirateMetaPrompt = "Response must be in the tone of a pirate. Yarrr!";
 
+    public readonly locale = "en";
 }

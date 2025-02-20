@@ -23,7 +23,8 @@ import {
   Toolbar,
   ToolbarButton,
   webDarkTheme,
-  webLightTheme
+  webLightTheme,
+  Spinner
 } from "@fluentui/react-components";
 import {
   Map20Regular,
@@ -37,9 +38,17 @@ import * as Constants from '../common/Constants';
 import { ContainerSelector } from '../components/ContainerSelector';
 import { IContainer } from '../../../common/schemas/ContainerSchemas';
 import { CreateContainerButton } from '../components/CreateContainerButton';
-import { Outlet } from 'react-router-dom';
 import { ChatSidebar } from '../components/ChatSidebar';
+import { Outlet, useOutletContext } from "react-router-dom";
 
+type ContextType = {
+  selectedContainer: IContainer | null,
+  setSelectedContainer: React.Dispatch<React.SetStateAction<IContainer | null>>
+};
+
+export function useContainer() {
+  return useOutletContext<ContextType>();
+}
 
 const useIsSignedIn = () => {
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
@@ -58,9 +67,9 @@ const useIsSignedIn = () => {
 }
 
 function App() {  
+  const [selectedContainer, setSelectedContainer] = useState<IContainer | null>(null);
   const containerTypeId = Constants.SPE_CONTAINER_TYPE_ID;
   const baseSearchQuery = `ContainerTypeId:${containerTypeId}`;
-  const [selectedContainer, setSelectedContainer] = useState<IContainer | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState<string>(baseSearchQuery)
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
   const isSignedIn = useIsSignedIn();
@@ -179,14 +188,30 @@ function App() {
           <div className="spe-app-content-main" ref={mainContentRef}>
             <div className="main-content-header" />
             <div className="main-content-body">
-              <Outlet />
+              <Outlet context={{ selectedContainer, setSelectedContainer }} />
             </div>            
           </div>
           <div style={{ display: showSidebar ? 'block' : 'none' }} className="spe-app-content-sidebar" ref={sidebarRef}>
             <div className="sidebar-resizer" ref={sidebarResizerRef} onMouseDown={onResizerMouseDown} />
             <div className="sidebar-content">
               <div className="spe-embedded-chat">
-                <ChatSidebar />
+                {selectedContainer && (
+                  <ChatSidebar
+                    container={selectedContainer}
+                  />
+                )}
+                {!selectedContainer && (<>
+                  <Spinner
+                    size='huge'
+                    labelPosition='below'
+                    label={
+                      <Text
+                        size={600}
+                        weight='bold'>
+                        Select a container to view chat
+                      </Text>
+                    } />
+                </>)}
               </div>
             </div>
           </div>
