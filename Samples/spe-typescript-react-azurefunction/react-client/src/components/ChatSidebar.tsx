@@ -3,8 +3,19 @@ import React from "react";
 import { ChatAuthProvider } from "../providers/ChatAuthProvider";
 import { ChatController } from "../providers/ChatController";
 import { ChatEmbedded, ChatEmbeddedAPI, ChatLaunchConfig } from '@microsoft/sharepointembedded-copilotchat-react';
+import { IContainer } from '../../../common/schemas/ContainerSchemas';
 
-export const ChatSidebar: React.FunctionComponent = () => {
+
+
+interface ChatSidebarProps {
+
+    container: IContainer;
+
+}
+
+
+export const ChatSidebar: React.FunctionComponent<ChatSidebarProps> = ({ container }) => {
+
 
     return (<>
 
@@ -20,6 +31,7 @@ export const ChatSidebar: React.FunctionComponent = () => {
         zeroQueryPrompts: ChatController.instance.zeroQueryPrompts,
         suggestedPrompts: ChatController.instance.suggestedPrompts,
         instruction: ChatController.instance.pirateMetaPrompt,
+        locale: ChatController.instance.locale,
     });
 
     
@@ -37,6 +49,7 @@ export const ChatSidebar: React.FunctionComponent = () => {
         <ChatEmbedded
             authProvider={chatAuthProvider}
             onApiReady={onApiReady}
+            containerId={container.id}
         />
     )}
     </>);

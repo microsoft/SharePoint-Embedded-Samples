@@ -25,6 +25,14 @@ export class ChatAuthProvider {
                 redirectUri: window.location.origin,
             },
             cache: {
+                // https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/caching.md
+                /*
+                Cache Location	| Cleared on |	Shared between windows/tabs |	Redirect flow supported
+                -----------------   ----------  -------------------------   ------------------------
+                sessionStorage |	window/tab close |	No |	Yes
+                localStorage |	browser close | Yes |   Yes
+                memoryStorage | page |  refresh/navigation | No |	No
+                */
                 cacheLocation: 'localStorage',
                 storeAuthStateInCookie: true
             },

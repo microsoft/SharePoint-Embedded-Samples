@@ -57,6 +57,7 @@ export const ChatSidebar: React.FunctionComponent = () => {
         <ChatEmbedded
             authProvider={chatAuthProvider}
             onApiReady={onApiReady}
+            containerId={container.id}
         />
     )}
     </>);   
@@ -89,7 +90,7 @@ npm run start
 ```bash
 # Install the SDK with npm
 
-npm install "https://download.microsoft.com/download/e608e6af-52b0-4cd6-a1c6-37a5882e3fc4/microsoft-sharepointembedded-copilotchat-react-1.0.4.tgz"
+npm install "https://download.microsoft.com/download/27d10531-b158-40c9-a146-af376c0e7f2a/microsoft-sharepointembedded-copilotchat-react-1.0.7.tgz"
 ```
 
 
@@ -98,11 +99,11 @@ npm install "https://download.microsoft.com/download/e608e6af-52b0-4cd6-a1c6-37a
 In MacOS/Linux
 
 ```bash
-version="1.0.4";
+version="1.0.7";
 
-url="https://download.microsoft.com/download/e608e6af-52b0-4cd6-a1c6-37a5882e3fc4/microsoft-sharepointembedded-copilotchat-react-1.0.4.tgz"; 
+url="https://download.microsoft.com/download/27d10531-b158-40c9-a146-af376c0e7f2a/microsoft-sharepointembedded-copilotchat-react-1.0.7.tgz"; 
 
-expected_checksum="68380003FD387CDC97E269C44BA3D9B94BC3310524738208391935347754D198"; 
+expected_checksum="A87FF410E8684A3C16456B2092564422BF80DA9FAFF3A684821DACEAEEA23D22"; 
 
 package_path="microsoft-sharepointembedded-copilotchat-react-$version.tgz"; 
 
@@ -111,9 +112,9 @@ curl -o $package_path $url && [ "$(sha256sum $package_path | awk '{ print $1 }')
 
 In Windows:
 ```powershell
-$version = "1.0.4"
-$url = "https://download.microsoft.com/download/e608e6af-52b0-4cd6-a1c6-37a5882e3fc4/microsoft-sharepointembedded-copilotchat-react-1.0.4.tgz"
-$expected_checksum = "68380003FD387CDC97E269C44BA3D9B94BC3310524738208391935347754D198"
+$version = "1.0.7"
+$url = "https://download.microsoft.com/download/27d10531-b158-40c9-a146-af376c0e7f2a/microsoft-sharepointembedded-copilotchat-react-1.0.7.tgz"
+$expected_checksum = "A87FF410E8684A3C16456B2092564422BF80DA9FAFF3A684821DACEAEEA23D22"
 $package_path = "microsoft-sharepointembedded-copilotchat-react-$version.tgz"
 
 Invoke-WebRequest -Uri $url -OutFile $package_path
@@ -256,6 +257,7 @@ function App() {
     <ChatEmbedded
       onApiReady={setChatApi}
       authProvider={authProvider}
+      containerId={container.id}
       style={{ width: 'calc(100% - 4px)', height: 'calc(100vh - 8px)' }}
     />
     //...
@@ -287,6 +289,7 @@ const launchConfig: ChatLaunchConfig = {
   zeroQueryPrompts,
   suggestedPrompts: ["What are my files?",],
   instruction: "Response must be in the tone of a pirate",
+  locale: "en",
 };
 
 await chatApi.openChat(launchConfig);
@@ -328,6 +331,7 @@ function App() {
     <ChatEmbedded
       onApiReady={(api) => setChatApi(api)}
       authProvider={authProvider}
+      containerId={container.id}
       style={{ width: 'calc(100% - 4px)', height: 'calc(100vh - 8px)' }}
     />
     //...
@@ -346,3 +350,111 @@ npm i typescript
 npx tsc --init
 // change tsconfig.json to set outDir to "./dist"
 ```
+
+## Setting Locale
+The Copilot iframe dynamically loads localization settings to ensure that the chat interface is displayed in the appropriate language. These settings are derived from SharePoint, which provides a comprehensive set of localization options. 
+
+When the Copilot iframe is initialized, it retrieves the current localization settings from SharePoint. These settings dictate the language and regional preferences for the chat interface, ensuring that all UI elements, messages, and interactions are presented in the user's preferred language. This seamless integration with SharePoint's localization framework allows Copilot to provide a consistent an
+
+You can have this localized by setting your language options in the SharePoint account settings: [Change your personal language and region settings - Microsoft Support](https://support.microsoft.com/en-us/office/change-your-personal-language-and-region-settings-caa1fccc-bcdb-42f3-9e5b-45957647ffd7) note, if your M365 setting is different from your Sharepoint account langauge settings it will take precedence, you can change your M365 language settings here: [Change your display language in Microsoft 365](https://support.microsoft.com/en-us/topic/change-your-display-language-and-time-zone-in-microsoft-365-for-business-6f238bff-5252-441e-b32b-655d5d85d15b)
+
+An additional locale option can be passed in through the `ChatLaunchConfig` to further set the language the Copilot will respond in:
+```typescript
+ const [chatConfig] = React.useState<ChatLaunchConfig>({
+        header: ChatController.instance.header,
+        theme: ChatController.instance.theme,
+        zeroQueryPrompts: ChatController.instance.zeroQueryPrompts,
+        suggestedPrompts: ChatController.instance.suggestedPrompts,
+        instruction: ChatController.instance.pirateMetaPrompt,
+        locale: "en",
+    });
+```
+#### Locale Options
+Here are some examples of locale options you can use:
+
+| Locale Code  | Common Name                              |
+|--------------|------------------------------------------|
+| af           | Afrikaans                                |
+| en-gb        | English (UK)                             |
+| he           | Hebrew                                   |
+| kok          | Konkani                                  |
+| nn-no        | Norwegian (Nynorsk)                      |
+| sr-latn-rs   | Serbian (Latin, Serbia)                  |
+| am-et        | Amharic                                  |
+| es           | Spanish                                  |
+| hi           | Hindi                                    |
+| lb-lu        | Luxembourgish                            |
+| or-in        | Odia (India)                             |
+| sv           | Swedish                                  |
+| ar           | Arabic                                   |
+| es-mx        | Spanish (Mexico)                         |
+| hr           | Croatian                                 |
+| lo           | Lao                                      |
+| pa           | Punjabi                                  |
+| ta           | Tamil                                    |
+| as-in        | Assamese                                 |
+| et           | Estonian                                 |
+| hu           | Hungarian                                |
+| lt           | Lithuanian                               |
+| pl           | Polish                                   |
+| te           | Telugu                                   |
+| az-latn-az   | Azerbaijani (Latin, Azerbaijan)          |
+| eu           | Basque                                   |
+| hy           | Armenian                                 |
+| lv           | Latvian                                  |
+| pt-br        | Portuguese (Brazil)                      |
+| th           | Thai                                     |
+| bg           | Bulgarian                                |
+| fa           | Persian                                  |
+| id           | Indonesian                               |
+| mi-nz        | Maori (New Zealand)                      |
+| pt-pt        | Portuguese (Portugal)                    |
+| tr           | Turkish                                  |
+| bs-latn-ba   | Bosnian (Latin, Bosnia and Herzegovina)  |
+| fi           | Finnish                                  |
+| is           | Icelandic                                |
+| mk           | Macedonian                               |
+| quz-pe       | Quechua (Peru)                           |
+| tt           | Tatar                                    |
+| ca-es-valencia | Catalan (Valencian)                    |
+| fil-ph       | Filipino (Philippines)                   |
+| it           | Italian                                  |
+| ml           | Malayalam                                |
+| ro           | Romanian                                 |
+| ug           | Uyghur                                   |
+| ca           | Catalan                                  |
+| fr-ca        | French (Canada)                          |
+| ja           | Japanese                                 |
+| mr           | Marathi                                  |
+| ru           | Russian                                  |
+| uk           | Ukrainian                                |
+| cs           | Czech                                    |
+| fr           | French                                   |
+| ka           | Georgian                                 |
+| ms           | Malay                                    |
+| sk           | Slovak                                   |
+| ur           | Urdu                                     |
+| cy-gb        | Welsh (UK)                               |
+| ga-ie        | Irish (Ireland)                          |
+| kk           | Kazakh                                   |
+| mt-mt        | Maltese (Malta)                          |
+| sl           | Slovenian                                |
+| uz-latn-uz   | Uzbek (Latin, Uzbekistan)                |
+| da           | Danish                                   |
+| gd           | Scottish Gaelic                          |
+| km-kh        | Khmer (Cambodia)                         |
+| nb-no        | Norwegian (Bokmål)                       |
+| sq           | Albanian                                 |
+| vi           | Vietnamese                               |
+| de           | German                                   |
+| gl           | Galician                                 |
+| kn           | Kannada                                  |
+| ne-np        | Nepali (Nepal)                           |
+| sr-cyrl-ba   | Serbian (Cyrillic, Bosnia and Herzegovina)|
+| zh-cn        | Chinese (Simplified)                     |
+| el           | Greek                                    |
+| gu           | Gujarati                                 |
+| ko           | Korean                                   |
+| nl           | Dutch                                    |
+| sr-cyrl-rs   | Serbian (Cyrillic, Serbia)               |
+| zh-tw        | Chinese (Traditional)                    |
