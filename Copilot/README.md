@@ -36,12 +36,11 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
     - Visit [Configuring Container Types](https://learn.microsoft.com/en-us/sharepoint/dev/embedded/concepts/app-concepts/containertypes#configuring-container-types) to learn how to set this configuration
 
 
-## CSP Policies
+## Content Security Policies
 
  The Content-Security-Policy (CSP) for embedded chat hosts, ensures that only specified hosts can load the `chatembedded.aspx` page. This helps in securing the application by restricting which domains can embed the chat component.
 
- It is intended to allow consuming tenant SPE admins to set an allowlist of hosts that they will allow to embed the SPE DA Lite in an iFrame. Specifically, the value they set here will be used in a Content-Security-Policy header as a frame-ancestors value.
-
+This allows SPE admins to set an allowlist of hosts that may embed the SPE DA Lite in an iframe. Specifically, the value they set here will be used in a Content-Security-Policy header as a frame-ancestors value.
 > [!NOTE]
 >
 > If this configuration is not set, the [Content-Security-Policy](https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy) will default be set to
@@ -59,7 +58,7 @@ Connect-SPOService "https://<domain>-admin.sharepoint.com"
 # Login with your admin account.
 ...
 
-Set-SPOApplication -OwningApplicationId 423poi45 -CopilotEmbeddedChatHosts "http://localhost:3000 https://contoso.sharepoint.com https://fabrikam.com" 
+Set-SPOApplication -OwningApplicationId 423poi45 -CopilotEmbeddedChatHosts "http://localhost:* https://contoso.sharepoint.com https://fabrikam.com" 
 
 # This will set the container type configuration “CopilotEmbeddedChatHosts” accordingly. 
 ...
@@ -71,7 +70,7 @@ OwningApplicationName           : SharePoint Embedded App
 Applications                    : {<OwningApplicationId>}
 SharingCapability               : ExternalUserAndGuestSharing
 OverrideTenantSharingCapability : False
-CopilotEmbeddedChatHosts        : {http://localhost:*}
+CopilotEmbeddedChatHosts        : {http://localhost:* https://contoso.sharepoint.com https://fabrikam.com}
 
 ```
 
