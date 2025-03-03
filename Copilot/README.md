@@ -35,6 +35,46 @@ Watch this [demo](https://www.youtube.com/watch?v=30i7q09EtQo) to learn more abo
 4. Your Container Type configuration for `DiscoverabilityDisabled` must be set to `false`
     - Visit [Configuring Container Types](https://learn.microsoft.com/en-us/sharepoint/dev/embedded/concepts/app-concepts/containertypes#configuring-container-types) to learn how to set this configuration
 
+
+## CSP Policies
+
+ The Content-Security-Policy (CSP) for embedded chat hosts, ensures that only specified hosts can load the `chatembedded.aspx` page. This helps in securing the application by restricting which domains can embed the chat component.
+
+ It is intended to allow consuming tenant SPE admins to set an allowlist of hosts that they will allow to embed the SPE DA Lite in an iFrame. Specifically, the value they set here will be used in a Content-Security-Policy header as a frame-ancestors value.
+
+> [!NOTE]
+>
+> If this configuration is not set, the [Content-Security-Policy](https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy) will default be set to
+> [frame-ancestors](https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors): ‘none’ which means no one can embed the Declarative Agent.
+
+Below are example commands to use the [Connect to SharePoint Online using PowerShell](/powershell/sharepoint/sharepoint-online/connect-sharepoint-online) commands:
+
+- [Set-SPOApplication](/powershell/module/SharePoint-online/set-spoapplication) to set the `CopilotEmbeddedChatHosts` property.
+- [Get-SPOApplication](/powershell/module/SharePoint-online/get-spoapplication) to get the `CopilotEmbeddedChatHosts` property.
+
+```powershell
+# Note this MUST be run in Windows PowerShell. It will not work in PowerShell.
+Import-Module -Name "Microsoft.Online.SharePoint.PowerShell"
+Connect-SPOService "https://<domain>-admin.sharepoint.com"
+# Login with your admin account.
+...
+
+Set-SPOApplication -OwningApplicationId 423poi45 -CopilotEmbeddedChatHosts "http://localhost:3000 https://contoso.sharepoint.com https://fabrikam.com" 
+
+# This will set the container type configuration “CopilotEmbeddedChatHosts” accordingly. 
+...
+
+Get-SPOApplication -OwningApplicationId <OwningApplicationId> | Select-Object CopilotEmbeddedChatHosts
+
+OwningApplicationId             : <OwningApplicationId>
+OwningApplicationName           : SharePoint Embedded App
+Applications                    : {<OwningApplicationId>}
+SharingCapability               : ExternalUserAndGuestSharing
+OverrideTenantSharingCapability : False
+CopilotEmbeddedChatHosts        : {http://localhost:*}
+
+```
+
 ## Quick Start
 
 ### 1. Use the `SharePoint-Embedded-Samples\Samples\spe-typescript-react-azurefunction` Application
