@@ -1,3 +1,6 @@
+> [!NOTE]  
+> March 3 2025 - Updates are underway that may cause current instructions not to work. Will update when resolved.
+
 # SharePoint Embedded copilot
 
 This SDK provides a React component that allows you to add copilot experience to your SharePoint Embedded React application.
