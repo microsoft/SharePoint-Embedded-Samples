@@ -8,17 +8,7 @@ import { ContainersApiProvider } from "../providers/ContainersApiProvider";
 import { IContainer, IContainerClientCreateRequest } from "../../../common/schemas/ContainerSchemas";
 
 export async function loader({ params }: ILoaderParams): Promise<IContainer[]> {
-    const containersLite = await ContainersApiProvider.instance.list();
-    const containers: IContainer[] = [];
-    for (const container of containersLite) {
-        try {
-            const fullContainer = await ContainersApiProvider.instance.get(container.id);
-            if (fullContainer) {
-                containers.push(fullContainer);
-            }
-        } catch (e) {console.log('caught e' + e)} // Ignore, typically means user doesn't have access to the container
-    }
-    return containers;
+    return await ContainersApiProvider.instance.list();
 }
 
 export async function action({ params, request }: ILoaderParams) {
