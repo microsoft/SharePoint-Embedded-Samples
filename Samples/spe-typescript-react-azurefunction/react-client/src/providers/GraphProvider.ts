@@ -1,7 +1,7 @@
 
 import { IGraph, Providers } from "@microsoft/mgt-element";
 import { DriveItem } from "@microsoft/microsoft-graph-types";
-import { DriveItemArrayConstructor, IDriveItem } from "../common/FileSchemas";
+import { DriveItemArrayConstructor, DriveItemConstructor, IDriveItem } from "../common/FileSchemas";
 import * as Graph from "@microsoft/microsoft-graph-client";
 import { GraphAuthProvider } from "./GraphAuthProvider";
 
@@ -32,6 +32,32 @@ export class GraphProvider {
         const response = await this._providerClient?.api(endpoint).query(query).get();
         const items: DriveItem[] = response.value as DriveItem[];
         return DriveItemArrayConstructor.from(items);
+    }
+
+    public async getItem(driveId: string, itemId: string): Promise<IDriveItem> {
+        const endpoint = `/drives/${driveId}/items/${itemId}`;
+        const query = {
+            $expand: 'listitem($expand=fields)',
+            $select: 'id,name,createdDateTime,lastModifiedBy,lastModifiedDateTime,size,folder,file,root,parentReference,webUrl,webDavUrl,content.downloadUrl'
+        };
+        const response = await this._providerClient?.api(endpoint).query(query).get();
+        const item: DriveItem = response as DriveItem;
+        return DriveItemConstructor.from(item);
+    }
+
+    public async getItemPath(item: IDriveItem): Promise<IDriveItem[]> {
+        if (!item || item.root) {
+            return [];
+        }
+        if (!item.parentReference) {
+            return [item];
+        }
+        let parentPath: IDriveItem[] = [];
+        try {
+            const parent = await this.getItem(item.parentReference.driveId!, item.parentReference.id!);
+            parentPath = await this.getItemPath(parent);
+        } catch (e) { }
+        return [...parentPath, item];
     }
 
     public async uploadFile(driveId: string, file: File, parentId: string = 'root'): Promise<IDriveItem> {

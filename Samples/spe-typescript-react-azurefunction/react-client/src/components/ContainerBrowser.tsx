@@ -29,7 +29,7 @@ import { GraphProvider } from '../providers/GraphProvider';
 import { getFileTypeIconProps } from '@fluentui/react-file-type-icons';
 import { Icon, Modal, Shimmer } from '@fluentui/react';
 import ContainerActionBar from './ContainerActionBar';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate, useParams, useRevalidator } from 'react-router-dom';
 import { ILoaderParams } from '../common/ILoaderParams';
 import { io } from 'socket.io-client';
 import { useContainer } from '../routes/App';
@@ -41,71 +41,80 @@ export interface IContainerContentBrowserProps {
     container: IContainer | string;
 }
 
-export async function loader({ params }: ILoaderParams): Promise<IContainer | undefined> {
+export interface IContainerLoader {
+    container: IContainer | undefined;
+    parent: IDriveItem | undefined;
+    driveItems: IDriveItem[];
+}
+
+export async function loader({ params }: ILoaderParams): Promise<IContainerLoader> {
     const containerId = params.containerId as string || undefined;
-    if (containerId) {
-        const container = await containersApi.get(containerId);
-        return container;
+    if (!containerId) {
+        throw new Error('Container ID is required');
+    }
+    const itemId = params.itemId as string || 'root';
+
+    let container = undefined;
+    try {
+        container = await containersApi.get(containerId);
+    } catch (e) {
+        console.log(`Failed to load container: ${e}`);
+    }
+    
+    let parent = undefined;
+    try {
+        parent = await filesApi.getItem(containerId, itemId);
+    } catch (e) {
+        console.log(`Failed to load parent item: ${e}`);
+    }
+    
+    let driveItems: IDriveItem[] = [];
+    try {
+        driveItems = await filesApi.listItems(containerId, itemId);
+    } catch (e) {
+        console.log(`Failed to load drive items: ${e}`);
+    }
+
+    return {
+        container: container,
+        parent: parent,
+        driveItems: driveItems,
     }
 }
 
 export const ContainerBrowser: React.FunctionComponent = () => {
-    const container = useLoaderData() as IContainer | undefined;
+    const {container, parent, driveItems} = useLoaderData() as IContainerLoader;
+    const {containerId, itemId = 'root'} = useParams();
+    const { revalidate } = useRevalidator();
     const navigate = useNavigate();
-    const [parentId, setParentId] = useState<string>('root');
-    const [driveItems, setDriveItems] = useState<IDriveItem[]>([] as IDriveItem[]);
     const [folderPath, setFolderPath] = useState<IDriveItem[]>([] as IDriveItem[]);
     const [selectedItem, setSelectedItem] = useState<IDriveItem | undefined>(undefined);
     const [selectedItemKeys, setSelectedItemKeys] = useState<string[]>([]);
     const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
     const [previewUrl, setPreviewUrl] = useState<URL | undefined>(undefined);
     const [previewFile, setPreviewFile] = useState<IDriveItem | undefined>(undefined);
-    const [refreshTime, setRefreshTime] = useState<number>(0);
     const { setSelectedContainer } = useContainer();
 
     useEffect(() => {
-        (async () => {
-            if (!container) {
-                return;
-            }
-            setSelectedContainer(container);
-            refreshDriveItems();
-            
+        setSelectedContainer(container);
+        if (container) {
             filesApi.getSocketUrl(container.id)
                 .then((url) => {
                     const urlStr = url.toString();
                     const socket = io(urlStr, { transports: ["websocket"] });
-                    socket.on('notification', refreshDriveItems);
+                    socket.on('notification', revalidate);
                 })
                 .catch(console.error);
-
-        })();
-    }, [container, parentId, refreshTime]);
-
-    const refresh = () => {
-        setRefreshTime(new Date().getTime());
-    }
-
-    const refreshDriveItems = () => {
-        if (!container) {
-            return;
         }
-        filesApi.listItems(container.id, parentId)
-            .then(setDriveItems)
-            .catch(console.error); 
-    }
+    }, [container, setSelectedContainer, revalidate]);
 
-    const setLocation = (newPath: IDriveItem[]) => {
-        let newParentId = 'root';
-        if (newPath.length > 0) {
-            newParentId = newPath[newPath.length - 1].id;
+    useEffect(() => {
+        if (parent) {
+            filesApi.getItemPath(parent)
+                .then(setFolderPath)
+                .catch(e => console.log(`Failed to load folder path: ${e}`));
         }
-        if (newParentId !== parentId) {
-            setFolderPath(newPath);
-            setParentId(newParentId);
-            clearSelection();
-        }
-    };
+    }, [parent]);
 
     const clearSelection = () => {
         setSelectedItem(undefined);
@@ -113,14 +122,11 @@ export const ContainerBrowser: React.FunctionComponent = () => {
     };
 
     const onBreadcrumbClick = (folder: IDriveItem) => {
-        while (folderPath.length > 0 && folderPath[folderPath.length - 1].id !== folder.id) {
-            folderPath.pop();
-        }
-        setLocation(folderPath);
+       navigate(`/containers/${containerId}/${folder.id}`);
     };
 
     const onFolderClicked = (folder: IDriveItem) => {
-        setLocation([...folderPath, folder]);
+        navigate(`/containers/${containerId}/${folder.id}`);
     };
 
     const onSelectionChange = (ignored: any, data: OnSelectionChangeData) => {
@@ -137,7 +143,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
     }
 
     const onFilePreviewSelected = async (file: IDriveItem) => {
-        if (!container) {
+        if (!containerId) {
             return;
         }
         if (!file.isFile) {
@@ -145,7 +151,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
         }
         setPreviewFile(file);
         setIsPreviewOpen(true);
-        filesApi.getPreviewUrl(container.id, file.id).then((url) => {
+        filesApi.getPreviewUrl(containerId, file.id).then((url) => {
             if (url) {
                 setPreviewUrl(url);
             }
@@ -303,31 +309,31 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                     <BreadcrumbItem>
                         <BreadcrumbButton size='medium' onClick={() => navigate('/containers')}>Containers</BreadcrumbButton>
                     </BreadcrumbItem>
-                    {container && (<>
-                        <BreadcrumbDivider />
-                        <BreadcrumbItem>
-                            <BreadcrumbButton size='medium' onClick={() => setLocation([])}>{container.displayName}</BreadcrumbButton>
-                        </BreadcrumbItem>
-                        {folderPath.map((folder) => (
-                            <React.Fragment key={folder.id}>
-                                <BreadcrumbDivider />
-                                <BreadcrumbItem>
-                                    <BreadcrumbButton onClick={() => onBreadcrumbClick(folder)}>{folder.name}</BreadcrumbButton>
-                                </BreadcrumbItem>
-                            </React.Fragment>
-                        ))}
-                    </>)}
+                    <BreadcrumbDivider />
+                    <BreadcrumbItem>
+                        <BreadcrumbButton size='medium' onClick={() => navigate(`/containers/${containerId}`)}>{container?.displayName || 'Container'}</BreadcrumbButton>
+                    </BreadcrumbItem>
+                    {folderPath.map((folder) => (
+                        <React.Fragment key={folder.id}>
+                            <BreadcrumbDivider />
+                            <BreadcrumbItem>
+                                <BreadcrumbButton onClick={() => onBreadcrumbClick(folder)}>{folder.name}</BreadcrumbButton>
+                            </BreadcrumbItem>
+                        </React.Fragment>
+                    ))}
                 </Breadcrumb>
             </div>
-            {container && (<div className="container-browser">
+            <div className="container-browser">
                 <div className="container-actions">
-                    <ContainerActionBar
-                        container={container}
-                        parentId={parentId}
-                        selectedItem={selectedItem}
-                        onFilePreviewSelected={onFilePreviewSelected}
-                        onItemsUpdated={refresh}
-                    />
+                    {containerId && itemId && (
+                        <ContainerActionBar
+                            containerId={containerId}
+                            parentId={itemId}
+                            selectedItem={selectedItem}
+                            onFilePreviewSelected={onFilePreviewSelected}
+                            onItemsUpdated={revalidate}
+                        />
+                    )}
                 </div>
                 <div className="files-list-container">
                     <DataGrid
@@ -368,7 +374,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                         </DataGridBody>
                     </DataGrid>
                 </div>
-            </div>)}
+            </div>
             <Modal
                 isOpen={isPreviewOpen}
                 onDismiss={closePreview}

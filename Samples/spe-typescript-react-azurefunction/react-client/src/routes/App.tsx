@@ -42,8 +42,8 @@ import { ChatSidebar } from '../components/ChatSidebar';
 import { Outlet, useOutletContext } from "react-router-dom";
 
 type ContextType = {
-  selectedContainer: IContainer | null,
-  setSelectedContainer: React.Dispatch<React.SetStateAction<IContainer | null>>
+  selectedContainer: IContainer | undefined,
+  setSelectedContainer: React.Dispatch<React.SetStateAction<IContainer | undefined>>
 };
 
 export function useContainer() {

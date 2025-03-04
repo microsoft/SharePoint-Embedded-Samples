@@ -34,14 +34,14 @@ import {
     DocumentPdf20Regular,
     ArrowDownload20Filled,
 } from '@fluentui/react-icons';
-import { useRevalidator } from "react-router-dom";
+import { useLoaderData, useRevalidator } from "react-router-dom";
 import { IDriveItem } from '../common/FileSchemas';
 import { GraphProvider } from '../providers/GraphProvider';
 import { getFileTypeIconProps } from '@fluentui/react-file-type-icons';
 import { Icon } from '@fluentui/react';
 import { ContainerSettingsDialog } from './ContainerSettingsDialog';
-import { IContainer } from '../../../common/schemas/ContainerSchemas';
 import { ContainersApiProvider } from '../providers/ContainersApiProvider';
+import { IContainerLoader } from './ContainerBrowser';
 
 const containersApi = ContainersApiProvider.instance;
 const filesApi = GraphProvider.instance;
@@ -74,7 +74,7 @@ type IPendingUpload = {
 }
 
 export interface IContainerActionBarProps {
-    container: IContainer;
+    containerId: string;
     parentId: string;
     selectedItem?: IDriveItem;
     onFilePreviewSelected?: (file: IDriveItem) => void;
@@ -82,8 +82,10 @@ export interface IContainerActionBarProps {
 }
 
 export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProps> = (props: IContainerActionBarProps) => {
-    const [showContainerSettings, setShowContainerSettings] = useState(false);
-    const [processingEnabled, setProcessingEnabled] = useState(props.container.customProperties?.docProcessingSubscriptionId !== undefined);
+    const {container} = useLoaderData() as IContainerLoader;
+
+    const [showContainerSettings] = useState(false);
+    const [processingEnabled, setProcessingEnabled] = useState(false);
     const [uploads, setUploads] = useState<Map<string, IPendingUpload>>(new Map<string, IPendingUpload>());
     
     const [showNewFolderDialog, setShowNewFolderDialog] = useState<boolean>(false);
@@ -101,8 +103,8 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
     const revalidator = useRevalidator();
 
     useEffect(() => {
-        setProcessingEnabled(props.container.customProperties?.docProcessingSubscriptionId !== undefined);
-    }, [props.container.customProperties?.docProcessingSubscriptionId]);
+        setProcessingEnabled(container?.customProperties?.docProcessingSubscriptionId !== undefined);
+    }, [container, container?.customProperties?.docProcessingSubscriptionId]);
 
     const onUploadFileClick = () => {
         if (uploadFileRef.current) {
@@ -117,10 +119,10 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
         }
         for (let i = 0; i < files.length; i++) {
             const upload: IPendingUpload = {
-                driveId: props.container.id,
+                driveId: props.containerId,
                 parentId: props.parentId,
                 file: files[i],
-                uploadTask: filesApi.uploadFile(props.container.id, files[i], props.parentId)
+                uploadTask: filesApi.uploadFile(props.containerId, files[i], props.parentId)
             };
             const uploadId = `${upload.driveId}/${upload.parentId}/${files[i].name}`;
             uploads.set(uploadId, upload);
@@ -137,7 +139,7 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
 
     const processingEnabledChanged = async (event: React.ChangeEvent<HTMLInputElement>, data: SwitchOnChangeData) => {
         if (data.checked) {
-            containersApi.enableProcessing(props.container.id)
+            containersApi.enableProcessing(props.containerId)
                 .catch((error: any) => {
                     console.error(error);
                     setProcessingEnabled(false);
@@ -145,7 +147,7 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
                 .finally(() => revalidator.revalidate());
             setProcessingEnabled(true);
         } else {
-            containersApi.disableProcessing(props.container.id)
+            containersApi.disableProcessing(props.containerId)
                 .catch((error: any) => {
                     console.error(error);
                     setProcessingEnabled(true);
@@ -157,7 +159,7 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
 
     const createNewFolder = async () => {
         setShowCreatingSpinner(true);
-        await filesApi.createFolder(props.container.id, props.parentId, newFolderName);
+        await filesApi.createFolder(props.containerId, props.parentId, newFolderName);
         setShowCreatingSpinner(false);
         setNewFolderName('');
         setShowNewFolderDialog(false);
@@ -189,7 +191,7 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
             return;
         }
         setShowRenamingSpinner(true);
-        await filesApi.renameItem(props.container.id, props.selectedItem.id, newName);
+        await filesApi.renameItem(props.containerId, props.selectedItem.id, newName);
         setShowRenamingSpinner(false);
         setNewName('');
         setShowRenameDialog(false);
@@ -210,14 +212,14 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
             return;
         }
         setShowDeletingSpinner(true);
-        await filesApi.deleteItem(props.container.id, props.selectedItem.id);
+        await filesApi.deleteItem(props.containerId, props.selectedItem.id);
         setShowDeletingSpinner(false);
         setShowDeleteDialog(false);
         props.onItemsUpdated?.();
     }
 
     const onNewDocument = async (extension: string) => {
-        const newItem = await filesApi.newDocument(props.container.id, props.parentId, extension);
+        const newItem = await filesApi.newDocument(props.containerId, props.parentId, extension);
         props.onItemsUpdated?.();
         window.open(newItem.webUrl, '_blank');
     }
@@ -320,8 +322,10 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
                 <Button onClick={onRenameClick} icon={<Rename20Filled />} size='small' appearance='subtle'>Rename</Button>
                 <Button onClick={onDeleteClick} icon={<Delete20Filled />} size='small' appearance='subtle'>Delete</Button>
             </>)}
-
-            <ContainerSettingsDialog isOpen={showContainerSettings} container={props.container} />
+            
+            {container && (
+                <ContainerSettingsDialog isOpen={showContainerSettings} container={container} />
+            )}
 
             {uploads.size > 0 && 
                 <Button disabled={true}>
@@ -330,9 +334,11 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
                 </Button>
             }
             
-            <span className={styles.processingSwitch}>
-                <Switch checked={processingEnabled} onChange={processingEnabledChanged} label="Receipt Processing" />
-            </span>
+            {container && (
+                <span className={styles.processingSwitch}>
+                    <Switch checked={processingEnabled} onChange={processingEnabledChanged} label="Receipt Processing" />
+                </span>
+            )}
             
             <Dialog open={showNewFolderDialog}>
                 <DialogSurface>

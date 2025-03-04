@@ -59,7 +59,7 @@ const router = createBrowserRouter([
         action: createContainerAction,
       },
       {
-        path: "/containers/:containerId",
+        path: "/containers/:containerId/:itemId?",
         element: <ContainerBrowser />,
         loader: containerLoader,
       },
