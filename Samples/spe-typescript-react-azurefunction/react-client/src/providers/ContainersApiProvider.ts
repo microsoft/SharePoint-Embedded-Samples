@@ -25,11 +25,7 @@ export class ContainersApiProvider {
             method: 'GET',
             headers: this._headers(await this.authProvider.getToken())
         };
-        const containers = await this._send('/containers', request) as IContainer[];
-        // Deep load containers
-        containers.map(c => this.get(c.id));
-        await Promise.all(containers);
-        return containers;
+        return await this._send('/containers', request) as IContainer[];
     }
 
     public async get(id: string): Promise<IContainer> {
