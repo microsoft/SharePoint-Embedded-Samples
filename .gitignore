@@ -396,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+sharepointembedded-chatembedded-react/.npmrc
+sharepointembedded-chatembedded-react/microsoft-sharepointembedded-copilotchat-react-*.tgz
+sharepointembedded-chatembedded-react/package-lock.json
+sharepointembedded-chatembedded-react/dist/*
+sharepointembedded-chatembedded-react/temp/sharepointembedded-copilotchat-react.api.json
+sharepointembedded-chatembedded-react/temp/sharepointembedded-copilotchat-react.api.md
