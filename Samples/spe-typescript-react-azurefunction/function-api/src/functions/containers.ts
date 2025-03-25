@@ -20,8 +20,8 @@ export async function listContainers(request: HttpRequest, context: InvocationCo
         const token = await authProvider.getToken();
         const graph = new GraphProvider(authProvider);
         const containers = await graph.listContainers();
-        containers.map(c => graph.getContainer(c.id));
-        return { jsonBody: await Promise.all(containers) };
+        const hydratedContainers = containers.map(c => graph.getContainer(c.id));
+        return { jsonBody: await Promise.all(hydratedContainers) };
     } catch (error) {
         if (error instanceof ApiError) {
             return { status: error.status, body: error.message };
