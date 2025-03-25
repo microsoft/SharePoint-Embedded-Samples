@@ -32,6 +32,7 @@ import {
   MoreVertical24Filled,
   Chat32Regular,
   SignOut24Filled,
+  Pen20Regular,
 } from '@fluentui/react-icons';
 import './App.css';
 import * as Constants from '../common/Constants';
@@ -76,7 +77,7 @@ function App() {
   const mainContentRef = React.useRef(null);
   const loginRef = React.useRef(null);
 
-  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
   const sidebarRef = React.useRef<HTMLDivElement | null>(null);
   const sidebarResizerRef = React.useRef(null);
 
@@ -123,11 +124,11 @@ function App() {
         <div className="spe-app-header">
           <div className="spe-app-header-title">
             <Text size={700} weight='semibold'>
-              SharePoint Embedded
+              Contoso Audit
             </Text>
             <br />
             <Text size={300}>
-              TypeScript + React + Azure Functions Sample App
+              Case management
             </Text>
           </div>
           <div className="spe-app-header-search" style={{ display: 'none' }}>
@@ -171,7 +172,7 @@ function App() {
               <div className="navigation-tabs">
                 <TabList vertical={true} size='large' selectedValue="containers">
                   <Tab value="home" icon={<Map20Regular />}>Home</Tab>
-                  <Tab value="containers" icon={<People20Regular />}>Containers</Tab>
+                  <Tab value="containers" icon={<Pen20Regular />}>Cases</Tab>
                 </TabList>
               </div>
             </FluentProvider>
@@ -191,7 +192,7 @@ function App() {
               <Outlet context={{ selectedContainer, setSelectedContainer }} />
             </div>            
           </div>
-          <div style={{ display: showSidebar ? 'block' : 'none' }} className="spe-app-content-sidebar" ref={sidebarRef}>
+          <div style={{ display: showSidebar && selectedContainer ? 'block' : 'none' }} className="spe-app-content-sidebar" ref={sidebarRef}>
             <div className="sidebar-resizer" ref={sidebarResizerRef} onMouseDown={onResizerMouseDown} />
             <div className="sidebar-content">
               <div className="spe-embedded-chat">

@@ -334,7 +334,7 @@ export const ContainerActionBar: React.FunctionComponent<IContainerActionBarProp
                 </Button>
             }
             
-            {container && (
+            {container && false && (
                 <span className={styles.processingSwitch}>
                     <Switch checked={processingEnabled} onChange={processingEnabledChanged} label="Receipt Processing" />
                 </span>

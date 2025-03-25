@@ -34,5 +34,6 @@ export const SP_CONTAINER_SELECTED = `${Constants.SP_ROOT_SITE_URL}/Container.Se
 
 // embedded chat scopes
 export const CHAT_SCOPES = [
-    SP_CONTAINER_SELECTED
+    SP_CONTAINER_SELECTED,
+    ...GRAPH_OPENID_CONNECT_BASIC
 ];

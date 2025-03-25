@@ -6,6 +6,7 @@ import { Spinner } from "@microsoft/mgt-react";
 import { ChatController } from "../providers/ChatController";
 import { ContainersApiProvider } from "../providers/ContainersApiProvider";
 import { IContainer, IContainerClientCreateRequest } from "../../../common/schemas/ContainerSchemas";
+import { useContainer } from '../routes/App';
 
 export async function loader({ params }: ILoaderParams): Promise<IContainer[]> {
     return await ContainersApiProvider.instance.list();
@@ -25,9 +26,11 @@ export const Containers: React.FunctionComponent = () => {
     const [showCreatingSpinner, setShowCreatingSpinner] = useState<boolean>(false);
     const navigate = useNavigate();
     const containers = useLoaderData() as IContainer[];
+    const { setSelectedContainer } = useContainer();
     const container = useActionData() as IContainer | undefined;
 
     const submit = useSubmit();
+    setSelectedContainer(undefined);
 
     const onSelectionChange = (e: any, data: OnSelectionChangeData) => {
         const selectedIds = Array.from(data.selectedItems) as string[];
@@ -96,21 +99,21 @@ export const Containers: React.FunctionComponent = () => {
             <div className="view-container-breadcrumb">
                 <Breadcrumb size='medium'>
                     <BreadcrumbItem>
-                        <BreadcrumbButton size='medium' onClick={() => navigate('/containers')}>Containers</BreadcrumbButton>
+                        <BreadcrumbButton size='medium' onClick={() => navigate('/containers')}>My Cases</BreadcrumbButton>
                     </BreadcrumbItem>
                 </Breadcrumb>
             </div>
             <Form>
             <Dialog open={showCreateDialog}>
                 <DialogTrigger disableButtonEnhancement>
-                    <Button appearance="primary" onClick={() => setShowCreateDialog(true)}>Create Container</Button>
+                    <Button appearance="primary" onClick={() => setShowCreateDialog(true)}>Create Case</Button>
                 </DialogTrigger>
                 <DialogSurface>
                     {!showCreatingSpinner && (
                     <DialogBody>
-                    <DialogTitle>New Container</DialogTitle>
+                    <DialogTitle>New Case</DialogTitle>
                     <DialogContent className="create-container-content">
-                        Create a new container 
+                        Create a new case 
                         <Label>Display name</Label>
                         <Input
                             placeholder="Display name"
@@ -140,7 +143,7 @@ export const Containers: React.FunctionComponent = () => {
                     )}
                     {showCreatingSpinner && (<>
                         <Spinner />
-                        <p>Creating container...</p>
+                        <p>Creating case...</p>
                     </>)}
                 </DialogSurface>
                 </Dialog>

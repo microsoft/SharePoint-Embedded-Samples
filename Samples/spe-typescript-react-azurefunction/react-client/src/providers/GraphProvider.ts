@@ -156,12 +156,25 @@ export class GraphProvider {
         return `${response.parentReference.path}/${response.name}`;
     }
 
-    public async getPreviewUrl(driveId: string, itemId: string): Promise<URL> {
+    public async getPreAuthPreviewUrl(driveId: string, itemId: string): Promise<URL> {
         const endpoint = `/drives/${driveId}/items/${itemId}/preview`;
         const response = await this._providerClient?.api(endpoint).post({});
         const url = new URL(response.getUrl);
         url.searchParams.set('nb', 'true');
         return url;
+    }
+
+    public async getPreviewUrl(driveId: string, itemId: string): Promise<URL> {
+        const endpoint = `/drives/${driveId}/items/${itemId}`;
+        const query = {
+            $select: 'sharepointIds'
+        };
+        const file = await this._providerClient?.api(endpoint).query(query).get();
+        const siteUrl = file.sharepointIds.siteUrl;
+        const listItemUniqueId = file.sharepointIds.listItemUniqueId;
+        const embedUrlString = `${siteUrl}/_layouts/15/embed.aspx?uniqueId=${listItemUniqueId}`;
+        const embedUrl = new URL(embedUrlString);
+        return embedUrl;
     }
 
     public async getSocketUrl(driveId: string): Promise<URL> {

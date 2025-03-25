@@ -78,7 +78,7 @@ export class ChatController {
     };
 
     public readonly zeroQueryPrompts = {
-        headerText: "SharePoint Embedded Chat: How can I help you today?",
+        headerText: "How can I help you today?",
         promptSuggestionList: [
             {
                 suggestionText: 'Show me recent files',
@@ -93,6 +93,24 @@ export class ChatController {
         ]
     };
 
+    public getPrompts(container: IContainer): PromptSuggestions {
+        return {
+            headerText: `What do you want to know about ${container.displayName}?`,
+            promptSuggestionList: [
+                {
+                    suggestionText: 'Show me recent files',
+                    iconRegular: { name: IconName.ChatBubblesQuestion, style: IconStyle.Regular },
+                    iconHover: { name: IconName.ChatBubblesQuestion, style: IconStyle.Filled },
+                },
+                {
+                    suggestionText: 'Make a table of expenses over the past five years',
+                    iconRegular: { name: IconName.DocumentCatchUp, style: IconStyle.Regular },
+                    iconHover: { name: IconName.DocumentCatchUp, style: IconStyle.Filled },
+                }
+            ]
+        }
+    }
+
     public readonly suggestedPrompts = [
         "List and summarize recent files",
     ];
@@ -100,4 +118,13 @@ export class ChatController {
     public readonly pirateMetaPrompt = "Response must be in the tone of a pirate. Yarrr!";
 
     public readonly locale = "en";
+}
+
+type PromptSuggestions = {
+    headerText: string;
+    promptSuggestionList: {
+        suggestionText: string;
+        iconRegular: { name: IconName; style: IconStyle };
+        iconHover: { name: IconName; style: IconStyle };
+    }[];
 }

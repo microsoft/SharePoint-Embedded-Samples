@@ -91,6 +91,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
     const [selectedItem, setSelectedItem] = useState<IDriveItem | undefined>(undefined);
     const [selectedItemKeys, setSelectedItemKeys] = useState<string[]>([]);
     const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
+    const [preAuthPreviewUrl, setPreAuthPreviewUrl] = useState<URL | undefined>(undefined);
     const [previewUrl, setPreviewUrl] = useState<URL | undefined>(undefined);
     const [previewFile, setPreviewFile] = useState<IDriveItem | undefined>(undefined);
     const { setSelectedContainer } = useContainer();
@@ -151,15 +152,13 @@ export const ContainerBrowser: React.FunctionComponent = () => {
         }
         setPreviewFile(file);
         setIsPreviewOpen(true);
-        filesApi.getPreviewUrl(containerId, file.id).then((url) => {
-            if (url) {
-                setPreviewUrl(url);
-            }
-        });
+        filesApi.getPreAuthPreviewUrl(containerId, file.id).then(setPreAuthPreviewUrl);
+        filesApi.getPreviewUrl(containerId, file.id).then(setPreviewUrl);
     };
 
     const closePreview = () => {
         setIsPreviewOpen(false);
+        setPreAuthPreviewUrl(undefined);
         setPreviewUrl(undefined);
         setPreviewFile(undefined);
     }
@@ -307,7 +306,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
             <div className="view-container-breadcrumb">
                 <Breadcrumb size='medium'>
                     <BreadcrumbItem>
-                        <BreadcrumbButton size='medium' onClick={() => navigate('/containers')}>Containers</BreadcrumbButton>
+                        <BreadcrumbButton size='medium' onClick={() => navigate('/containers')}>Cases</BreadcrumbButton>
                     </BreadcrumbItem>
                     <BreadcrumbDivider />
                     <BreadcrumbItem>
