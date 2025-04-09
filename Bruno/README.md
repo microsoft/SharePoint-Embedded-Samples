@@ -1,0 +1,1 @@
+This Bruno collection as exported from v2.1.0. You must use this version or higher to import this collection.
