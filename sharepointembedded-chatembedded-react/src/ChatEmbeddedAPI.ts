@@ -241,7 +241,8 @@ class ChatEmbeddedAPI {
                             case 'SharePoint-embedded':
                                 console.log('---------- FETCH AUTH TOKEN SHAREPOINT-EMBEDDED----------');
                                 this.port.postMessage({ type: 'result', id: event.data.id, result: 'success', data: { 
-                                    authToken: this._authToken3P
+                                    authToken: this._authToken3P,
+                                    result: 'success'
                                 }});
                                 break;
                             case 'ms-augloop':
