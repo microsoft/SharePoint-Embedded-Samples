@@ -111,7 +111,6 @@ class ChatEmbeddedAPI {
                 enabled: true,
                 claimsChallenge: { enabled: false },
                 tokens: { 
-                    augloop: true,
                     sharepointEmbedded: true
                  },
             },
@@ -177,7 +176,7 @@ class ChatEmbeddedAPI {
         url.pathname = `${url.pathname}/_layouts/15/chatembedded.aspx`;
         // url.searchParams.append("disableFeatures", "61170");
         url.searchParams.append("chatodsp", JSON.stringify(this._baseConfig));
-        url.searchParams.append("app", "sharepointembedded");
+        url.searchParams.append("app", "SharePointEmbedded");
         return url.toString();
     }
 
