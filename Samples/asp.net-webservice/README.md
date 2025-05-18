@@ -24,7 +24,7 @@ This application demonstrates the basic flow to work with SharePoint Embedded co
 * An onboarded application id (sometimes called client id) and its corresponding ContainerTypeId
 * The application client secret, or a client certificate if you want to create application owned containers.
  These can be generated/uploaded in [Azure's Active Directory (AzureAD or AAD) portal](https://portal.azure.com).
-* Visual Studio and/or .Net Framework installed (.NET 6.0 SDK is needed).
+* Visual Studio and/or .Net installed (.NET 8.0 or higher SDK is needed).
 * A ContainerType
 * Having the application registered in the consuming tenant (even if the owner of the application is the same as the consuming)
 * Having the containerType registered in the consuming tenant (even if the owner of the CT is the same as the consuming)
