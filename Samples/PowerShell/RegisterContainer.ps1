@@ -116,30 +116,24 @@ Try {
     $Expiration = [DateTime]::UtcNow.AddMinutes(20)
 
     $AudienceClaim = "https://login.microsoftonline.com/$ConsumerTenantId/oauth2/v2.0/token"
-# Define the necessary variables
-$Expiration = [DateTime]::UtcNow.AddHours(1)  # Example expiration time
-$Now = [DateTime]::UtcNow
 
-# Calculate the claims
-$UnixEpoch = [DateTime]::Parse("1970-01-01T00:00:00Z")
+    # Calculate the claims
+    $UnixEpoch = [DateTime]::new(1970, 1, 1, 0, 0, 0, [DateTimeKind]::Utc)
 
-$ExpirationTimeClaim = [Math]::Round(($Expiration - $UnixEpoch).TotalSeconds)
-Write-Host "Expiration Claim: $ExpirationTimeClaim"
-$IssuerClaim = $ClientId
-$JWTIdClaim = [Guid]::NewGuid()
-$NotBeforeClaim = [Math]::Round(($Now - $UnixEpoch).TotalSeconds)
-$currentDateTime = Get-Date
-
-$SubjectClaim = $ClientId
-$IssuedAtClaim = [Math]::Round(($Now - $UnixEpoch).TotalSeconds)
-$IssuedAtClaim = [Math]::Round(($currentDateTime - $UnixEpoch).TotalSeconds)
+    $ExpirationTimeClaim = [Math]::Round(($Expiration - $UnixEpoch).TotalSeconds)
+    Write-Host "Expiration Claim: $ExpirationTimeClaim"
+    $IssuerClaim = $ClientId
+    $JWTIdClaim = [Guid]::NewGuid()
+    $NotBeforeClaim = [Math]::Round(($Now - $UnixEpoch).TotalSeconds)
+    $SubjectClaim = $ClientId
+    $IssuedAtClaim = [Math]::Round(($Now - $UnixEpoch).TotalSeconds)
 
     $Payload = @{
         aud = $AudienceClaim
         exp = $ExpirationTimeClaim
         iss = $IssuerClaim
         jti = $JWTIdClaim
-        nbf = $currentDateTime
+        nbf = $NotBeforeClaim
         sub = $SubjectClaim
         iat = $IssuedAtClaim
     } | ConvertTo-Json -Compress
