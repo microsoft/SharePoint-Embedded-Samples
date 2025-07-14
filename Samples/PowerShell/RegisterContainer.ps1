@@ -109,53 +109,41 @@ Try {
     $Base64Header = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($Header))
     $SafeHeader = $Base64Header -replace '\+', '-' -replace '/','_' -replace '='
 
-
     # JWT Payload
     Write-Host "Building the JWT payload..."
     $Now = [DateTime]::UtcNow
     $Expiration = [DateTime]::UtcNow.AddMinutes(20)
 
-    $AudienceClaim = "https://login.microsoftonline.com/$ConsumerTenantId/oauth2/v2.0/token"
+$AudienceClaim = "https://login.microsoftonline.com/$ConsumerTenantId/oauth2/v2.0/token"
 # Define the necessary variables
-$Expiration = [DateTime]::UtcNow.AddHours(1)  # Example expiration time
-$Now = [DateTime]::UtcNow
+
+$now = [DateTimeOffset]::UtcNow
+$Expiration = $now.AddMinutes(10)
 
 # Calculate the claims
-$UnixEpoch = [DateTime]::Parse("1970-01-01T00:00:00Z")
-
-$ExpirationTimeClaim = [Math]::Round(($Expiration - $UnixEpoch).TotalSeconds)
-Write-Host "Expiration Claim: $ExpirationTimeClaim"
 $IssuerClaim = $ClientId
 $JWTIdClaim = [Guid]::NewGuid()
-$NotBeforeClaim = [Math]::Round(($Now - $UnixEpoch).TotalSeconds)
-$currentDateTime = Get-Date
 
 $SubjectClaim = $ClientId
-$IssuedAtClaim = [Math]::Round(($Now - $UnixEpoch).TotalSeconds)
-$IssuedAtClaim = [Math]::Round(($currentDateTime - $UnixEpoch).TotalSeconds)
 
     $Payload = @{
         aud = $AudienceClaim
-        exp = $ExpirationTimeClaim
+        exp = [int]($Expiration.ToUnixTimeSeconds())
         iss = $IssuerClaim
         jti = $JWTIdClaim
-        nbf = $currentDateTime
+        nbf = [int]($now.ToUnixTimeSeconds())
         sub = $SubjectClaim
-        iat = $IssuedAtClaim
     } | ConvertTo-Json -Compress
 
     $Base64Payload = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($Payload))
     $SafePayload = $Base64Payload -replace '\+', '-' -replace '/','_' -replace '='
 
-
     # JWT Signature
     Write-Host "Building the JWT signature..."
     $UnsignedToken = "$SafeHeader.$SafePayload"
 
-    
     $PemKey = Get-Content -Path $PemCertificationFilePath -Raw
     
-
     $rsa = [System.Security.Cryptography.RSA]::Create()
     $rsa.ImportFromPem($PemKey)
 
@@ -194,6 +182,7 @@ $IssuedAtClaim = [Math]::Round(($currentDateTime - $UnixEpoch).TotalSeconds)
     $AccessToken = $AccessTokenResponse.access_token
     $SecureAccessToken = $AccessToken | ConvertTo-SecureString -AsPlainText -Force
 
+    #Write-Host $AccessToken
 
     # Registering the Consumer Tenant
     Write-Host "Registering the container type in the consumer tenant..."
