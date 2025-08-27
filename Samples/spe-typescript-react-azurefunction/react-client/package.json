@@ -13,6 +13,7 @@
     "@microsoft/mgt-react": "^4.2.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@microsoft/sharepointembedded-copilotchat-react": "https://download.microsoft.com/download/970802a5-2a7e-44ed-b17d-ad7dc99be312/microsoft-sharepointembedded-copilotchat-react-1.0.9.tgz",
+    "@ms/utilities-cross-window": "^1.9.1",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
