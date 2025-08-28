@@ -5,16 +5,16 @@ import {
     BreadcrumbButton,
     BreadcrumbItem,
     BreadcrumbDivider,
-    Link, 
-    DataGrid, 
-    DataGridHeader, 
-    DataGridRow, 
-    DataGridHeaderCell, 
-    DataGridBody, 
-    DataGridCell, 
-    TableColumnDefinition, 
-    createTableColumn, 
-    TableCellLayout, 
+    Link,
+    DataGrid,
+    DataGridHeader,
+    DataGridRow,
+    DataGridHeaderCell,
+    DataGridBody,
+    DataGridCell,
+    TableColumnDefinition,
+    createTableColumn,
+    TableCellLayout,
     OnSelectionChangeData,
 } from '@fluentui/react-components';
 import {
@@ -26,6 +26,7 @@ import { IContainer } from '../../../common/schemas/ContainerSchemas';
 import { ContainersApiProvider } from '../providers/ContainersApiProvider';
 import { IDriveItem } from '../common/FileSchemas';
 import { GraphProvider } from '../providers/GraphProvider';
+import { GraphAuthProvider } from '../providers/GraphAuthProvider';
 import { getFileTypeIconProps } from '@fluentui/react-file-type-icons';
 import { Icon, Modal, Shimmer } from '@fluentui/react';
 import ContainerActionBar from './ContainerActionBar';
@@ -33,6 +34,9 @@ import { useLoaderData, useNavigate, useParams, useRevalidator } from 'react-rou
 import { ILoaderParams } from '../common/ILoaderParams';
 import { io } from 'socket.io-client';
 import { useContainer } from '../routes/App';
+import { hostTheme } from '../common/theme';
+import EmbedIFrameV2 from './EmbedIFrameV2';
+import { MipAuthProvider } from '../providers/MipAuthProvider';
 
 const containersApi = ContainersApiProvider.instance;
 const filesApi = GraphProvider.instance;
@@ -60,14 +64,14 @@ export async function loader({ params }: ILoaderParams): Promise<IContainerLoade
     } catch (e) {
         console.log(`Failed to load container: ${e}`);
     }
-    
+
     let parent = undefined;
     try {
         parent = await filesApi.getItem(containerId, itemId);
     } catch (e) {
         console.log(`Failed to load parent item: ${e}`);
     }
-    
+
     let driveItems: IDriveItem[] = [];
     try {
         driveItems = await filesApi.listItems(containerId, itemId);
@@ -82,17 +86,60 @@ export async function loader({ params }: ILoaderParams): Promise<IContainerLoade
     }
 }
 
+export const channelId = '0.44338640';
+export const uniqueId = 'example'; // Unique ID for the iframe
+const clientId = 'SampleApp';
+const fileAzureUrl = 'https://pdfwebviewer.blob.core.windows.net/files/formfill_differentTypes.pdf';
+
+/**
+ * Update the file downloadUrl and downloadToken for testing
+ */
+// TODO for e2e test: update the URL that you could retrieve the token
+const downloadUrl =
+    'https://microsoft-my.sharepoint-df.com/personal/haic_microsoft_com/_layouts/15/download.aspx?UniqueId=a75b9f8a-6f90-4226-b1e9-2669f1972c41&Translate=false';
+// TODO for e2e test: add valid token
+export const downloadToken = '';
+export const tokenExpires = '';
+// TODO for e2e test: add valid mip token
+export const mipToken = '';
+
+export const contextObject = {
+    item: {
+        '@content.downloadUrl': downloadUrl,
+        name: 'formfill_differentTypes.pdf'
+    },
+    theme: hostTheme,
+    accessToken: downloadToken
+};
+
+const getEmbedOptions = (embedOptions: any) => encodeURIComponent(JSON.stringify(embedOptions));
+export const hostOrigin = 'http://localhost:8080';
+
+// Get embed options
+const embedParam = getEmbedOptions({
+    af: false,
+    o: window.location.origin,
+    z: 'width',
+    mpmp: true // Allow MIP
+});
+
 export const ContainerBrowser: React.FunctionComponent = () => {
-    const {container, parent, driveItems} = useLoaderData() as IContainerLoader;
-    const {containerId, itemId = 'root'} = useParams();
+    const { container, parent, driveItems } = useLoaderData() as IContainerLoader;
+    const { containerId, itemId = 'root' } = useParams();
     const { revalidate } = useRevalidator();
     const navigate = useNavigate();
+
+    // Generate a dynamic channel ID for embedding
+    //const channelId = `channel_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
     const [folderPath, setFolderPath] = useState<IDriveItem[]>([] as IDriveItem[]);
     const [selectedItem, setSelectedItem] = useState<IDriveItem | undefined>(undefined);
     const [selectedItemKeys, setSelectedItemKeys] = useState<string[]>([]);
     const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
     const [previewUrl, setPreviewUrl] = useState<URL | undefined>(undefined);
     const [previewFile, setPreviewFile] = useState<IDriveItem | undefined>(undefined);
+    const [previewContext, setPreviewContext] = useState<string>('');
+    const [authToken, setAuthToken] = useState<string>('');
     const { setSelectedContainer } = useContainer();
 
     useEffect(() => {
@@ -101,7 +148,8 @@ export const ContainerBrowser: React.FunctionComponent = () => {
             filesApi.getSocketUrl(container.id)
                 .then((url) => {
                     const urlStr = url.toString();
-                    const socket = io(urlStr, { transports: ["websocket"] });
+                    // Use a type assertion to allow the transports option
+                    const socket = io(urlStr, { transports: ["websocket"] } as any);
                     socket.on('notification', revalidate);
                 })
                 .catch(console.error);
@@ -122,7 +170,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
     };
 
     const onBreadcrumbClick = (folder: IDriveItem) => {
-       navigate(`/containers/${containerId}/${folder.id}`);
+        navigate(`/containers/${containerId}/${folder.id}`);
     };
 
     const onFolderClicked = (folder: IDriveItem) => {
@@ -149,19 +197,73 @@ export const ContainerBrowser: React.FunctionComponent = () => {
         if (!file.isFile) {
             return;
         }
+
         setPreviewFile(file);
         setIsPreviewOpen(true);
-        filesApi.getPreviewUrl(containerId, file.id).then((url) => {
+
+        // Get the preview URL
+        try {
+            const url = await filesApi.getPreviewUrl(containerId, file.id);
             if (url) {
                 setPreviewUrl(url);
+
+
+
+                // Enhance URL with channel ID and origin
+                let enhancedUrl = url.toString() +
+                    `&embed=${embedParam}` +
+                    `#channelId=${channelId}&origin=${hostOrigin}`;
+
+                // Prepare context object
+                const context: {
+                    item: {
+                        name: string;
+                        [key: string]: any; // Allow for dynamic properties like '@content.downloadUrl'
+                    };
+                    theme: any;
+                    accessToken: string;
+                } = {
+                    item: {
+                        name: file.name,
+                    },
+                    theme: hostTheme,
+                    accessToken: ''
+                };
+
+                // If we have a download URL, add it to the context
+                if (file.downloadUrl) {
+                    context.item['@content.downloadUrl'] = file.downloadUrl;
+                }
+
+
+                // Get auth token
+                try {
+                    const authProvider = MipAuthProvider.instance;
+                    const token = await authProvider.getToken();
+                    setAuthToken(token);
+                    context.accessToken = token;
+                    setPreviewContext(JSON.stringify(context));
+                } catch (error) {
+                    console.error('Failed to get auth token:', error);
+                    setAuthToken('');
+
+                    // Set empty token in context
+                    context.accessToken = '';
+                    setPreviewContext(JSON.stringify(context));
+                }
+
             }
-        });
+        } catch (error) {
+            console.error('Failed to get preview URL:', error);
+        }
     };
 
     const closePreview = () => {
         setIsPreviewOpen(false);
         setPreviewUrl(undefined);
         setPreviewFile(undefined);
+        setPreviewContext('');
+        setAuthToken('');
     }
 
     const getItemIcon = (driveItem: IDriveItem): JSX.Element => {
@@ -190,9 +292,9 @@ export const ContainerBrowser: React.FunctionComponent = () => {
             </Link>;
         }
         if (driveItem.folder) {
-            return <Link style={{ fontSize: '12px' }} onClick={e => {onFolderClicked(driveItem); stopPropagation(e)}}>{driveItem.name}</Link>;
+            return <Link style={{ fontSize: '12px' }} onClick={e => { onFolderClicked(driveItem); stopPropagation(e) }}>{driveItem.name}</Link>;
         }
-        return <Link style={{ fontSize: '12px' }} onClick={e => {onFilePreviewSelected(driveItem); stopPropagation(e)}}>{driveItem.name}</Link>;
+        return <Link style={{ fontSize: '12px' }} onClick={e => { onFilePreviewSelected(driveItem); stopPropagation(e) }}>{driveItem.name}</Link>;
     }
 
     const columns: TableColumnDefinition<IDriveItem>[] = [
@@ -383,15 +485,15 @@ export const ContainerBrowser: React.FunctionComponent = () => {
             >
                 {previewFile && (<>
                     <Link
-                        style={{ position: 'absolute', top: '10px', right: '10px' }}
+                        style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}
                         onClick={closePreview}
                     >
                         <Icon iconName='Cancel' />
                     </Link>
                     <h2 style={{ textAlign: 'center' }}>
                         {previewUrl && (
-                            <Link 
-                                href={previewUrl.toString()} 
+                            <Link
+                                href={previewUrl.toString()}
                                 target='_blank'
                                 onClick={closePreview}
                             >
@@ -401,14 +503,16 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                         )}
                         {!previewUrl && (
                             <>{previewFile.name}</>
-                        )}    
+                        )}
                     </h2>
-                    {previewUrl && (
-                        <iframe 
-                            title='file-preview' 
-                            src={previewUrl.toString()} 
-                            style={{ width: '90vw', height: '80vh', border: 'none' }}
-                        />
+                    {previewUrl && previewContext && (
+                        <div style={{ width: '90vw', height: '80vh' }}>
+                            <EmbedIFrameV2
+                                actionUrl={previewUrl.toString() + `&embed=${embedParam}` + `#channelId=${channelId}&origin=${hostOrigin}`}
+                                context={previewContext}
+                                authToken={authToken}
+                            />
+                        </div>
                     )}
                     {!previewUrl && (
                         <div style={{ alignContent: 'center', padding: '40px', width: '80vw', height: '80vh', border: 'none' }}>
@@ -421,7 +525,6 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                         </div>
                     )}
                 </>)}
-                
             </Modal>
 
         </div>
