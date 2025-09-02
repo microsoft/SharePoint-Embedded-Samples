@@ -3,6 +3,7 @@ import * as Constants from '../common/Constants';
 
 // MIP specific constants
 const MIP_RESOURCE = 'https://aadrm.com/';
+const MIP_SYNC_RESOURCE = 'https://psor.o365syncservice.com/'
 const MIP_UNIFIED_POLICY_SCOPE = 'UnifiedPolicy.User.Read';
 const MIP_USER_IMPERSONATION_SCOPE = 'user_impersonation';
 const MS_GRAPH_USER_READ = 'User.Read';

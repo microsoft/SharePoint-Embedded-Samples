@@ -86,32 +86,7 @@ export async function loader({ params }: ILoaderParams): Promise<IContainerLoade
     }
 }
 
-export const channelId = '0.44338640';
-export const uniqueId = 'example'; // Unique ID for the iframe
-const clientId = 'SampleApp';
-const fileAzureUrl = 'https://pdfwebviewer.blob.core.windows.net/files/formfill_differentTypes.pdf';
-
-/**
- * Update the file downloadUrl and downloadToken for testing
- */
-// TODO for e2e test: update the URL that you could retrieve the token
-const downloadUrl =
-    'https://microsoft-my.sharepoint-df.com/personal/haic_microsoft_com/_layouts/15/download.aspx?UniqueId=a75b9f8a-6f90-4226-b1e9-2669f1972c41&Translate=false';
-// TODO for e2e test: add valid token
-export const downloadToken = '';
-export const tokenExpires = '';
-// TODO for e2e test: add valid mip token
-export const mipToken = '';
-
-export const contextObject = {
-    item: {
-        '@content.downloadUrl': downloadUrl,
-        name: 'formfill_differentTypes.pdf'
-    },
-    theme: hostTheme,
-    accessToken: downloadToken
-};
-
+export const channelId = '0.44338641';
 const getEmbedOptions = (embedOptions: any) => encodeURIComponent(JSON.stringify(embedOptions));
 export const hostOrigin = 'http://localhost:8080';
 
@@ -506,7 +481,13 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                         )}
                     </h2>
                     {previewUrl && previewContext && (
-                        <div style={{ width: '90vw', height: '80vh' }}>
+                        <div style={{ 
+                            width: '90vw', 
+                            height: '80vh', 
+                            display: 'flex', 
+                            justifyContent: 'center', 
+                            alignItems: 'center' 
+                        }}>
                             <EmbedIFrameV2
                                 actionUrl={previewUrl.toString() + `&embed=${embedParam}` + `#channelId=${channelId}&origin=${hostOrigin}`}
                                 context={previewContext}

@@ -59,7 +59,7 @@ const EmbedIFrameV2: React.FC<IEmbedIFrameProps> = ({ actionUrl, context, authTo
       // This channelId must be equal to the value in the embed page url.
       channelId: channelId,
       // Important! Origin of the embed page, ex: https://microsoft.sharepoint-df.com
-      origin: 'https://a830edad9050849speprod1.sharepoint.com',
+      origin: 'https://a830edad9050849aljordace5.sharepoint.com',
       onCommand: (command: ICommand): Promise<IErrorResult | ISuccessResult> => {
         console.log('getToken command', command);
 
@@ -77,7 +77,7 @@ const EmbedIFrameV2: React.FC<IEmbedIFrameProps> = ({ actionUrl, context, authTo
           // **** Respond embed with token  ***
           case 'getToken':
             let token;
-            let expires = '';
+            let expires = new Date(Date.now() + 3600 * 1000).toISOString();
             let tokenCommand = command as ITokenCommand;
             switch (tokenCommand?.tokenType) {
               case TokenType.SHAREPOINT:
@@ -195,7 +195,7 @@ const EmbedIFrameV2: React.FC<IEmbedIFrameProps> = ({ actionUrl, context, authTo
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
       {/* Invisible form targeting the iframe */}
       <form ref={formRef} action={actionUrl} method='POST' target='iframe-target' style={{ display: 'none' }}>
         <input key='context' type='hidden' name='context' value={context} />
@@ -205,13 +205,9 @@ const EmbedIFrameV2: React.FC<IEmbedIFrameProps> = ({ actionUrl, context, authTo
       <iframe
         ref={iframeRef}
         name='iframe-target'
-        style={{ width: '700px', height: '800px', border: '1px solid #ccc' }}
+        style={{ width: '100%', height: '100%', border: '1px solid #ccc', maxWidth: '900px', maxHeight: '90%' }}
         title='Iframe with POST'
       />
-      {/* Button to post a message to the iframe */}
-      <button onClick={postMessageToIframe} style={{ marginTop: '10px' }}>
-        Post Message to Iframe
-      </button>
     </div>
   );
 };
