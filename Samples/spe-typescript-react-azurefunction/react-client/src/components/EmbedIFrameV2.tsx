@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { createHost, ISuccessResult, IErrorResult, ICommand } from '@ms/utilities-cross-window';
 import { TokenType } from '../common/interface';
 import { channelId } from './ContainerBrowser';
+import { MIP_HOST } from '../common/Constants';
 
 type IErrorNotification = {
   notification: 'error';
@@ -59,7 +60,7 @@ const EmbedIFrameV2: React.FC<IEmbedIFrameProps> = ({ actionUrl, context, authTo
       // This channelId must be equal to the value in the embed page url.
       channelId: channelId,
       // Important! Origin of the embed page, ex: https://microsoft.sharepoint-df.com
-      origin: 'https://a830edad9050849aljordace5.sharepoint.com',
+      origin: MIP_HOST || '',
       onCommand: (command: ICommand): Promise<IErrorResult | ISuccessResult> => {
         console.log('getToken command', command);
 

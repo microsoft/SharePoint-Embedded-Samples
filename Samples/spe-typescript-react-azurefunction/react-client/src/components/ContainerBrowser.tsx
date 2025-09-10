@@ -37,6 +37,7 @@ import { useContainer } from '../routes/App';
 import { hostTheme } from '../common/theme';
 import EmbedIFrameV2 from './EmbedIFrameV2';
 import { MipAuthProvider } from '../providers/MipAuthProvider';
+import { MIP_CHANNEL_ID, MIP_REACT_APP_URL } from '../common/Constants';
 
 const containersApi = ContainersApiProvider.instance;
 const filesApi = GraphProvider.instance;
@@ -86,9 +87,9 @@ export async function loader({ params }: ILoaderParams): Promise<IContainerLoade
     }
 }
 
-export const channelId = '0.44338641';
+export const channelId = MIP_CHANNEL_ID;
+export const hostOrigin = MIP_REACT_APP_URL;
 const getEmbedOptions = (embedOptions: any) => encodeURIComponent(JSON.stringify(embedOptions));
-export const hostOrigin = 'http://localhost:8080';
 
 // Get embed options
 const embedParam = getEmbedOptions({
@@ -181,15 +182,6 @@ export const ContainerBrowser: React.FunctionComponent = () => {
             const url = await filesApi.getPreviewUrl(containerId, file.id);
             if (url) {
                 setPreviewUrl(url);
-
-
-
-                // Enhance URL with channel ID and origin
-                let enhancedUrl = url.toString() +
-                    `&embed=${embedParam}` +
-                    `#channelId=${channelId}&origin=${hostOrigin}`;
-
-                // Prepare context object
                 const context: {
                     item: {
                         name: string;
