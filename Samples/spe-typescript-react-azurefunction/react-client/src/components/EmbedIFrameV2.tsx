@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 
 import { createHost, ISuccessResult, IErrorResult, ICommand } from '@ms/utilities-cross-window';
 import { TokenType } from '../common/interface';
-import { channelId } from './ContainerBrowser';
 import { MIP_HOST } from '../common/Constants';
 
 type IErrorNotification = {
@@ -58,7 +57,7 @@ const EmbedIFrameV2: React.FC<IEmbedIFrameProps> = ({ actionUrl, context, authTo
     const host = createHost({
       // Important for message channel initialization! ChannelId assigned to embed page.
       // This channelId must be equal to the value in the embed page url.
-      channelId: channelId,
+      channelId: '',
       // Important! Origin of the embed page, ex: https://microsoft.sharepoint-df.com
       origin: MIP_HOST || '',
       onCommand: (command: ICommand): Promise<IErrorResult | ISuccessResult> => {

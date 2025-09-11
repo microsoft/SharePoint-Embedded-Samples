@@ -68,10 +68,6 @@ export declare interface IEmbedResultMessage extends IEmbedBaseMessage {
   data: IEmbedSuccessResult | IEmbedErrorResult;
 }
 
-export const ONE_UP_EMBED_FROM_MESSAGE_HEADER: string = '[OneDrive:From:Embed:example]';
-export const ONE_UP_EMBED_TO_MESSAGE_HEADER: string = '[OneDrive:To:Embed:example]';
-export const ONE_UP_EMBED_TO_MESSAGE_TEMPLATE: string = `${ONE_UP_EMBED_TO_MESSAGE_HEADER}{"conversationId":{1},"type":"acknowledge"}`;
-
 // eslint-disable-next-line @typescript-eslint/typedef
 export const TokenType = {
   MS_LOKI: 'MS_LOKI_TOKEN',
@@ -95,4 +91,22 @@ export type IErrorNotification = {
 export interface ITokenCommand {
   command: typeof EmbedMessageType.getToken;
   tokenType: TokenType;
+}
+
+export interface IMockData {
+  embedPageOrigin?: string;
+  embedUrl?: string;
+  channelId?: string;
+  clientId?: string;
+  hostOrigin?: string;
+  accessToken?: string;
+  mipToken?: string;
+  hostTheme?: string;
+  tokenExpires?: string;
+
+  downloadUrl?: string;
+}
+
+export interface IMockData {
+  [key: string]: string | undefined;
 }

@@ -1,0 +1,1 @@
+export const encodeEmbedOptions = (embedOptions: any) => encodeURIComponent(JSON.stringify(embedOptions));

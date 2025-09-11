@@ -26,7 +26,6 @@ import { IContainer } from '../../../common/schemas/ContainerSchemas';
 import { ContainersApiProvider } from '../providers/ContainersApiProvider';
 import { IDriveItem } from '../common/FileSchemas';
 import { GraphProvider } from '../providers/GraphProvider';
-import { GraphAuthProvider } from '../providers/GraphAuthProvider';
 import { getFileTypeIconProps } from '@fluentui/react-file-type-icons';
 import { Icon, Modal, Shimmer } from '@fluentui/react';
 import ContainerActionBar from './ContainerActionBar';
@@ -34,10 +33,11 @@ import { useLoaderData, useNavigate, useParams, useRevalidator } from 'react-rou
 import { ILoaderParams } from '../common/ILoaderParams';
 import { io } from 'socket.io-client';
 import { useContainer } from '../routes/App';
-import { hostTheme } from '../common/theme';
-import EmbedIFrameV2 from './EmbedIFrameV2';
+import { IMockData } from './../common/interface';
+import { encodeEmbedOptions } from './../utils/urlHelper';
 import { MipAuthProvider } from '../providers/MipAuthProvider';
-import { MIP_CHANNEL_ID, MIP_REACT_APP_URL } from '../common/Constants';
+import { MIP_HOST, MIP_REACT_APP_URL } from '../common/Constants';
+import EmbedIFrameV2Next from './EmbedIFrameV2Next';
 
 const containersApi = ContainersApiProvider.instance;
 const filesApi = GraphProvider.instance;
@@ -86,18 +86,26 @@ export async function loader({ params }: ILoaderParams): Promise<IContainerLoade
         driveItems: driveItems,
     }
 }
-
-export const channelId = MIP_CHANNEL_ID;
 export const hostOrigin = MIP_REACT_APP_URL;
-const getEmbedOptions = (embedOptions: any) => encodeURIComponent(JSON.stringify(embedOptions));
 
-// Get embed options
-const embedParam = getEmbedOptions({
-    af: false,
-    o: window.location.origin,
-    z: 'width',
-    mpmp: true // Allow MIP
+const embedOptions = encodeEmbedOptions({
+    id: 'Example', // Id of embed instance.
+    mpmp: true, // Allow mip,
+    htp: false, // No temp auth provided for PDF download, will post message "getToken" to host to retrieve the token
+    mpe: false, // Allow editing in MsPdf viewer
+    mpoe: false // Open MsPdf viewer in edit mode
 });
+
+export let mockData: IMockData = {
+  hostOrigin: 'http://localhost:8083',
+  clientId: 'sampleApp',
+  channelId: '0.44338640',
+  downloadUrl: '',
+  accessToken: '',
+  embedOptions,
+  embedPageOrigin: MIP_HOST
+};
+
 
 export const ContainerBrowser: React.FunctionComponent = () => {
     const { container, parent, driveItems } = useLoaderData() as IContainerLoader;
@@ -105,8 +113,6 @@ export const ContainerBrowser: React.FunctionComponent = () => {
     const { revalidate } = useRevalidator();
     const navigate = useNavigate();
 
-    // Generate a dynamic channel ID for embedding
-    //const channelId = `channel_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
     const [folderPath, setFolderPath] = useState<IDriveItem[]>([] as IDriveItem[]);
     const [selectedItem, setSelectedItem] = useState<IDriveItem | undefined>(undefined);
@@ -114,8 +120,6 @@ export const ContainerBrowser: React.FunctionComponent = () => {
     const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
     const [previewUrl, setPreviewUrl] = useState<URL | undefined>(undefined);
     const [previewFile, setPreviewFile] = useState<IDriveItem | undefined>(undefined);
-    const [previewContext, setPreviewContext] = useState<string>('');
-    const [authToken, setAuthToken] = useState<string>('');
     const { setSelectedContainer } = useContainer();
 
     useEffect(() => {
@@ -182,43 +186,18 @@ export const ContainerBrowser: React.FunctionComponent = () => {
             const url = await filesApi.getPreviewUrl(containerId, file.id);
             if (url) {
                 setPreviewUrl(url);
-                const context: {
-                    item: {
-                        name: string;
-                        [key: string]: any; // Allow for dynamic properties like '@content.downloadUrl'
-                    };
-                    theme: any;
-                    accessToken: string;
-                } = {
-                    item: {
-                        name: file.name,
-                    },
-                    theme: hostTheme,
-                    accessToken: ''
-                };
-
                 // If we have a download URL, add it to the context
                 if (file.downloadUrl) {
-                    context.item['@content.downloadUrl'] = file.downloadUrl;
+                    mockData.downloadUrl = file.downloadUrl;
                 }
-
-
                 // Get auth token
                 try {
                     const authProvider = MipAuthProvider.instance;
                     const token = await authProvider.getToken();
-                    setAuthToken(token);
-                    context.accessToken = token;
-                    setPreviewContext(JSON.stringify(context));
+                    mockData.accessToken = token;
                 } catch (error) {
                     console.error('Failed to get auth token:', error);
-                    setAuthToken('');
-
-                    // Set empty token in context
-                    context.accessToken = '';
-                    setPreviewContext(JSON.stringify(context));
                 }
-
             }
         } catch (error) {
             console.error('Failed to get preview URL:', error);
@@ -229,8 +208,6 @@ export const ContainerBrowser: React.FunctionComponent = () => {
         setIsPreviewOpen(false);
         setPreviewUrl(undefined);
         setPreviewFile(undefined);
-        setPreviewContext('');
-        setAuthToken('');
     }
 
     const getItemIcon = (driveItem: IDriveItem): JSX.Element => {
@@ -472,7 +449,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                             <>{previewFile.name}</>
                         )}
                     </h2>
-                    {previewUrl && previewContext && (
+                    {previewUrl && (
                         <div style={{ 
                             width: '90vw', 
                             height: '80vh', 
@@ -480,10 +457,9 @@ export const ContainerBrowser: React.FunctionComponent = () => {
                             justifyContent: 'center', 
                             alignItems: 'center' 
                         }}>
-                            <EmbedIFrameV2
-                                actionUrl={previewUrl.toString() + `&embed=${embedParam}` + `#channelId=${channelId}&origin=${hostOrigin}`}
-                                context={previewContext}
-                                authToken={authToken}
+                            <EmbedIFrameV2Next
+                                actionUrl={previewUrl.toString() + `&embed=${embedOptions}` + `#channelId=${mockData.channelId}&origin=${hostOrigin}`}
+                                mockData={mockData}
                             />
                         </div>
                     )}
