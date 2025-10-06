@@ -285,7 +285,6 @@ The complete implementation demonstrates production-ready patterns for integrati
 Your Azure app registration must include:
 
 - **Azure Rights Management Services**: `user_impersonation`
-- **Microsoft Graph**: `User.Read`, `FileStorageContainer.Selected`
 
 ## MIP Licensing Requirements
 
