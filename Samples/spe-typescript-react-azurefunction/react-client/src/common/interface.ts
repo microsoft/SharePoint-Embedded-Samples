@@ -1,5 +1,3 @@
-// Based on Embed.md in odsp-next
-import type { IErrorResult, ISuccessResult } from '@ms/utilities-cross-window';
 /**
  * Base interface for messages between the embed page and its host.
  */
@@ -78,15 +76,6 @@ export const TokenType = {
 } as const;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type TokenType = (typeof TokenType)[keyof typeof TokenType];
-
-export interface ITokenSuccessResult extends ISuccessResult {
-  token: string;
-  expires?: number;
-}
-
-export type IErrorNotification = {
-  notification: typeof EmbedMessageType.error;
-} & Pick<IErrorResult, Exclude<keyof IErrorResult, typeof EmbedMessageType.result>>;
 
 export interface ITokenCommand {
   command: typeof EmbedMessageType.getToken;

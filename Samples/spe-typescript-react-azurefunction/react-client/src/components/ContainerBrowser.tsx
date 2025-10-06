@@ -97,7 +97,6 @@ const embedOptions = encodeEmbedOptions({
 });
 
 export let mockData: IMockData = {
-  hostOrigin: 'http://localhost:8083',
   clientId: 'sampleApp',
   channelId: '0.44338640',
   downloadUrl: '',
