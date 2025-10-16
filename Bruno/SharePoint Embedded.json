@@ -3064,6 +3064,35 @@
           "type": "folder",
           "name": "Files",
           "filename": "Files",
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "oauth2",
+                "oauth2": {
+                  "grantType": "authorization_code",
+                  "callbackUrl": "http://localhost:8000",
+                  "authorizationUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/authorize",
+                  "accessTokenUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/token",
+                  "refreshTokenUrl": "",
+                  "clientId": "{{ClientID}}",
+                  "clientSecret": "{{ClientSecret}}",
+                  "scope": "FileStorageContainer.Selected offline_access",
+                  "state": "",
+                  "pkce": false,
+                  "credentialsPlacement": "body",
+                  "credentialsId": "credentials",
+                  "tokenPlacement": "header",
+                  "tokenHeaderPrefix": "Bearer",
+                  "tokenQueryKey": "access_token",
+                  "autoFetchToken": true,
+                  "autoRefreshToken": false
+                }
+              }
+            },
+            "meta": {
+              "name": "Files"
+            }
+          },
           "items": [
             {
               "type": "http",
@@ -3090,7 +3119,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3125,7 +3154,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3154,7 +3183,7 @@
                 "tests": "// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3183,7 +3212,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3224,7 +3253,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3258,10 +3287,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
+                  "mode": "inherit"
                 }
               }
             },
@@ -3313,10 +3339,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
+                  "mode": "inherit"
                 }
               }
             },
@@ -3362,10 +3385,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
+                  "mode": "inherit"
                 }
               }
             },
@@ -3393,7 +3413,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3421,7 +3441,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3449,7 +3469,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3483,7 +3503,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3511,10 +3531,7 @@
                 "tests": "",
                 "docs": "",
                 "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
+                  "mode": "inherit"
                 }
               }
             },
@@ -3543,7 +3560,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//         var json = JSON.parse(responseBody);\n//         postman.setEnvironmentVariable(\"FileId\", json.id);\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3577,10 +3594,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
+                  "mode": "inherit"
                 }
               }
             },
@@ -3608,7 +3622,7 @@
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//         var json = JSON.parse(responseBody);\n//         postman.setEnvironmentVariable(\"FileId\", json.id);\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                 "docs": "",
                 "auth": {
-                  "mode": "none"
+                  "mode": "inherit"
                 }
               }
             },
@@ -3647,7 +3661,7 @@
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                     "docs": "",
                     "auth": {
-                      "mode": "none"
+                      "mode": "inherit"
                     }
                   }
                 },
@@ -3681,7 +3695,7 @@
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                     "docs": "",
                     "auth": {
-                      "mode": "none"
+                      "mode": "inherit"
                     }
                   }
                 },
@@ -3715,7 +3729,7 @@
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                     "docs": "",
                     "auth": {
-                      "mode": "none"
+                      "mode": "inherit"
                     }
                   }
                 },
@@ -3744,7 +3758,7 @@
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//         var json = JSON.parse(responseBody);\n//         postman.setEnvironmentVariable(\"PermissionId\", json.value[0].id);\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                     "docs": "",
                     "auth": {
-                      "mode": "none"
+                      "mode": "inherit"
                     }
                   }
                 },
@@ -3773,7 +3787,7 @@
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                     "docs": "",
                     "auth": {
-                      "mode": "none"
+                      "mode": "inherit"
                     }
                   }
                 },
@@ -3802,7 +3816,7 @@
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//         var json = JSON.parse(responseBody);\n//         postman.setEnvironmentVariable(\"PermissionId\", json.value[0].id);\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
                     "docs": "",
                     "auth": {
-                      "mode": "none"
+                      "mode": "inherit"
                     }
                   }
                 }
