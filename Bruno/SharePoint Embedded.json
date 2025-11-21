@@ -10,7 +10,7 @@
       "settings": {},
       "tags": [],
       "request": {
-        "url": "https://graph.microsoft.com/beta/$metadata",
+        "url": "{{GraphURL}}/beta/$metadata",
         "method": "GET",
         "headers": [
           {
@@ -44,7 +44,7 @@
       "settings": {},
       "tags": [],
       "request": {
-        "url": "https://graph.microsoft.com/v1.0/$metadata",
+        "url": "{{GraphURL}}/v1.0/$metadata",
         "method": "GET",
         "headers": [
           {
@@ -98,7 +98,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -131,7 +131,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers",
                 "method": "POST",
                 "headers": [
                   {
@@ -171,7 +171,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -205,7 +205,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -239,7 +239,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -272,7 +272,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}",
                 "method": "GET",
                 "headers": [
                   {
@@ -311,7 +311,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "GET",
                 "headers": [
                   {
@@ -351,7 +351,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -385,7 +385,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers?$filter=containerTypeId eq {{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers?$filter=containerTypeId eq {{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -425,7 +425,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/deletedContainers?$filter=containerTypeId eq {{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/deletedContainers?$filter=containerTypeId eq {{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -533,7 +533,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -567,7 +567,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -601,7 +601,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -642,7 +642,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "PUT",
                 "headers": [],
                 "params": [],
@@ -674,7 +674,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -705,7 +705,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -736,7 +736,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -795,7 +795,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -834,7 +834,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -868,7 +868,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root/children",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root/children",
                 "method": "POST",
                 "headers": [
                   {
@@ -908,7 +908,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -942,7 +942,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
                 "method": "GET",
                 "headers": [
                   {
@@ -988,7 +988,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}",
                 "method": "GET",
                 "headers": [
                   {
@@ -1027,7 +1027,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/root/children",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/root/children",
                 "method": "GET",
                 "headers": [
                   {
@@ -1066,7 +1066,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1099,7 +1099,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1132,7 +1132,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1165,7 +1165,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
                 "method": "GET",
                 "headers": [
                   {
@@ -1204,7 +1204,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/me/drive/recent",
+                "url": "{{GraphURL}}/v1.0/me/drive/recent",
                 "method": "GET",
                 "headers": [
                   {
@@ -1243,7 +1243,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -1277,7 +1277,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root/search(q='{contoso}')",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root/search(q='{contoso}')",
                 "method": "GET",
                 "headers": [
                   {
@@ -1316,7 +1316,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
                 "method": "PUT",
                 "headers": [],
                 "params": [],
@@ -1354,7 +1354,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
                     "method": "DELETE",
                     "headers": [
                       {
@@ -1393,7 +1393,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
                     "method": "GET",
                     "headers": [
                       {
@@ -1432,7 +1432,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions",
                     "method": "GET",
                     "headers": [
                       {
@@ -1516,7 +1516,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -1544,7 +1544,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers",
                 "method": "POST",
                 "headers": [
                   {
@@ -1581,7 +1581,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -1610,7 +1610,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -1639,7 +1639,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/columns",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/columns",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1667,7 +1667,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1695,7 +1695,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}?$select=id,displayName,containerTypeId,status,description,customProperties&$expand=permissions",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}?$select=id,displayName,containerTypeId,status,description,customProperties&$expand=permissions",
                 "method": "GET",
                 "headers": [
                   {
@@ -1743,7 +1743,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "GET",
                 "headers": [
                   {
@@ -1778,7 +1778,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -1807,7 +1807,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers?$filter=containerTypeId eq {{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers?$filter=containerTypeId eq {{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -1842,7 +1842,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/deletedContainers?$filter=containerTypeId eq {{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/deletedContainers?$filter=containerTypeId eq {{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -1877,7 +1877,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -1906,7 +1906,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -1935,7 +1935,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -2000,7 +2000,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypes",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -2031,7 +2031,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -2059,7 +2059,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -2087,7 +2087,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypes",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -2115,7 +2115,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -2180,7 +2180,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "PUT",
                 "headers": [],
                 "params": [],
@@ -2211,7 +2211,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -2239,7 +2239,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -2269,7 +2269,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -2328,7 +2328,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -2366,7 +2366,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2401,7 +2401,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2436,7 +2436,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2471,7 +2471,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2506,7 +2506,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2546,7 +2546,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/search/query",
+                "url": "{{GraphURL}}/v1.0/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2584,7 +2584,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/search/query",
+                "url": "{{GraphURL}}/v1.0/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2622,7 +2622,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2657,7 +2657,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2695,7 +2695,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/search/query",
+                "url": "{{GraphURL}}/v1.0/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2733,7 +2733,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2768,7 +2768,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/search/query",
+                "url": "{{GraphURL}}/v1.0/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2806,7 +2806,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/search/query",
+                "url": "{{GraphURL}}/v1.0/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2844,7 +2844,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -2882,7 +2882,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -2911,7 +2911,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -2940,7 +2940,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -2969,7 +2969,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -3004,7 +3004,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -3039,7 +3039,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/search/query",
+                "url": "{{GraphURL}}/beta/search/query",
                 "method": "POST",
                 "headers": [
                   {
@@ -3110,7 +3110,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -3139,7 +3139,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root/children",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root/children",
                 "method": "POST",
                 "headers": [
                   {
@@ -3174,7 +3174,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/preview",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/preview",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -3203,7 +3203,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -3232,7 +3232,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
                 "method": "GET",
                 "headers": [
                   {
@@ -3273,7 +3273,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}",
                 "method": "GET",
                 "headers": [
                   {
@@ -3307,7 +3307,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items?$filter=true&$orderBy=listitem/fields/Modified",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items?$filter=true&$orderBy=listitem/fields/Modified",
                 "method": "GET",
                 "headers": [
                   {
@@ -3359,7 +3359,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/root/children?$orderBy=lastModifiedDateTime",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/root/children?$orderBy=lastModifiedDateTime",
                 "method": "GET",
                 "headers": [
                   {
@@ -3405,7 +3405,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -3433,7 +3433,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -3461,7 +3461,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -3489,7 +3489,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
                 "method": "GET",
                 "headers": [
                   {
@@ -3523,7 +3523,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/me/drive/recent",
+                "url": "{{GraphURL}}/v1.0/me/drive/recent",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -3551,7 +3551,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -3580,7 +3580,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root/search(q='Copy')",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root/search(q='Copy')",
                 "method": "GET",
                 "headers": [
                   {
@@ -3614,7 +3614,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
+                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
                 "method": "PUT",
                 "headers": [],
                 "params": [],
@@ -3647,7 +3647,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
                     "method": "DELETE",
                     "headers": [
                       {
@@ -3681,7 +3681,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
                     "method": "GET",
                     "headers": [
                       {
@@ -3715,7 +3715,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions",
                     "method": "GET",
                     "headers": [
                       {
@@ -3749,7 +3749,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
                     "method": "POST",
                     "headers": [],
                     "params": [],
@@ -3778,7 +3778,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                     "method": "POST",
                     "headers": [],
                     "params": [],
@@ -3807,7 +3807,7 @@
                   "settings": {},
                   "tags": [],
                   "request": {
-                    "url": "https://graph.microsoft.com/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
+                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
                     "method": "POST",
                     "headers": [],
                     "params": [],
@@ -3845,7 +3845,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/security/alerts?$filter=Category eq 'ransomware'&$top=5",
+                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=Category eq 'ransomware'&$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -3886,7 +3886,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/security/alerts?$filter=networkConnections/any(d:d/destinationAddress eq '{destination-address}')",
+                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=networkConnections/any(d:d/destinationAddress eq '{destination-address}')",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -3921,7 +3921,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/security/alerts?$filter=Status eq 'NewAlert'&$top=1",
+                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=Status eq 'NewAlert'&$top=1",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -3962,7 +3962,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/security/alerts?$filter=vendorInformation/provider eq 'ASC'&$top=5",
+                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=vendorInformation/provider eq 'ASC'&$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -4003,7 +4003,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/security/alerts?$filter=Severity eq 'High'&$top=5",
+                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=Severity eq 'High'&$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -4044,7 +4044,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/security/alerts",
+                "url": "{{GraphURL}}/v1.0/security/alerts",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4072,7 +4072,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/security/secureScoreControlProfiles?$top=5",
+                "url": "{{GraphURL}}/beta/security/secureScoreControlProfiles?$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -4107,7 +4107,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/v1.0/security/secureScores?$top=5",
+                "url": "{{GraphURL}}/v1.0/security/secureScores?$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -4142,7 +4142,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/security/securityActions/{{SecurityActionsId}}",
+                "url": "{{GraphURL}}/beta/security/securityActions/{{SecurityActionsId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4170,7 +4170,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/security/securityActions",
+                "url": "{{GraphURL}}/beta/security/securityActions",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4198,7 +4198,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/security/tiIndicators/{{TIIndicatorId}}",
+                "url": "{{GraphURL}}/beta/security/tiIndicators/{{TIIndicatorId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4226,7 +4226,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/security/tiIndicators",
+                "url": "{{GraphURL}}/beta/security/tiIndicators",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4254,7 +4254,7 @@
               "settings": {},
               "tags": [],
               "request": {
-                "url": "https://graph.microsoft.com/beta/security/labels/retentionLabels",
+                "url": "{{GraphURL}}/beta/security/labels/retentionLabels",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4292,7 +4292,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/{{custodianId}}/userSources",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/{{custodianId}}/userSources",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4321,7 +4321,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4350,7 +4350,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4379,7 +4379,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4408,7 +4408,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/applyHold",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/applyHold",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4437,7 +4437,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources/applyHold",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources/applyHold",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4466,7 +4466,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4494,7 +4494,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4522,7 +4522,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4550,7 +4550,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4578,7 +4578,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/{{custodianId}}/userSources",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/{{custodianId}}/userSources",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4606,7 +4606,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}",
                         "method": "PATCH",
                         "headers": [],
                         "params": [],
@@ -4642,7 +4642,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4671,7 +4671,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4700,7 +4700,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4729,7 +4729,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries/{{ediscoveryReviewSetQueryId}}",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries/{{ediscoveryReviewSetQueryId}}",
                         "method": "DELETE",
                         "headers": [],
                         "params": [],
@@ -4758,7 +4758,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/addToReviewSet",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/addToReviewSet",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4787,7 +4787,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches/{{ediscoverySearchId}}/estimateStatistics",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches/{{ediscoverySearchId}}/estimateStatistics",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4816,7 +4816,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/operations",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/operations",
                         "method": "GET",
                         "headers": [
                           {
@@ -4850,7 +4850,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches/{{ediscoverySearchId}}/lastEstimateStatisticsOperation",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches/{{ediscoverySearchId}}/lastEstimateStatisticsOperation",
                         "method": "GET",
                         "headers": [
                           {
@@ -4884,7 +4884,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries",
                         "method": "GET",
                         "headers": [
                           {
@@ -4918,7 +4918,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets",
                         "method": "GET",
                         "headers": [
                           {
@@ -4952,7 +4952,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches",
                         "method": "GET",
                         "headers": [
                           {
@@ -4986,7 +4986,7 @@
                       "settings": {},
                       "tags": [],
                       "request": {
-                        "url": "https://graph.microsoft.com/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries/{{ediscoveryReviewSetQueryId}}",
+                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries/{{ediscoveryReviewSetQueryId}}",
                         "method": "PATCH",
                         "headers": [],
                         "params": [],
@@ -5116,6 +5116,27 @@
           "value": "",
           "enabled": true,
           "secret": true,
+          "type": "text"
+        },
+        {
+          "name": "GallatinGraphURL",
+          "value": "https://microsoftgraph.chinacloudapi.cn",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        },
+        {
+          "name": "GraphURLBleu",
+          "value": "https://graph.svc.sovcloud.fr",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        },
+        {
+          "name": "GraphURL",
+          "value": "https://graph.microsoft.com",
+          "enabled": true,
+          "secret": false,
           "type": "text"
         }
       ],
