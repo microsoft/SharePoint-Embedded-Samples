@@ -36,7 +36,6 @@ export class GraphProvider {
     public async listContainers(): Promise<IContainer[]> {
         const response = await this._client
             .api('/storage/fileStorage/containers')
-            .version('beta')
             .filter(`containerTypeId eq ${this._containerTypeId}`)
             .get();
         return response.value as IContainer[];
@@ -56,13 +55,12 @@ export class GraphProvider {
 
     public async getContainer(id: string, loadColumns: boolean = true): Promise<IContainer> {
         const query = { 
-            $select: "id,displayName,containerTypeId,status,createdDateTime,description,customProperties,storageUsedInBytes,itemMajorVersionLimit,isItemVersioningEnabled",
+            $select: "id,displayName,containerTypeId,status,createdDateTime,description,customProperties,settings",
             $expand: "permissions,drive" 
         };
         const response = await this._client
             .api(`/storage/fileStorage/containers/${id}`)
             .query(query)
-            .version('beta')
             .get();
         if (loadColumns) {
             response.columns = await this.getContainerColumns(id);

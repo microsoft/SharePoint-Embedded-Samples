@@ -1,9 +1,13 @@
 
+export interface IContainerSettings {
+    isOcrEnabled?: boolean;
+    isItemVersioningEnabled?: boolean;
+    itemMajorVersionLimit?: number;
+}
+
 export interface IContainerClientCreateRequest {
     displayName: string;
     description?: string;
-    itemMajorVersionLimit?: number;
-    isItemVersioningEnabled?: boolean;
 }
 
 export interface IContainerServerCreateRequest extends IContainerClientCreateRequest {
@@ -20,7 +24,7 @@ export interface IContainer extends IContainerUpdateRequest {
     createdDateTime?: string;
     customProperties?: IContainerCustomProperties;
     permissions?: IContainerPermissions;
-    storageUsedInBytes?: number;
+    settings?: IContainerSettings;
     columns: IContainerColumn[];
     drive?: {
         webUrl: string;
