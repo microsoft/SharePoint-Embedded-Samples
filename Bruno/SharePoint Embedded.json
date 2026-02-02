@@ -9,8 +9,9 @@
       "seq": 2,
       "settings": {},
       "tags": [],
+      "examples": [],
       "request": {
-        "url": "{{GraphURL}}/beta/$metadata",
+        "url": "{{GraphUrl}}/beta/$metadata",
         "method": "GET",
         "headers": [
           {
@@ -43,8 +44,9 @@
       "seq": 1,
       "settings": {},
       "tags": [],
+      "examples": [],
       "request": {
-        "url": "{{GraphURL}}/v1.0/$metadata",
+        "url": "{{GraphUrl}}/v1.0/$metadata",
         "method": "GET",
         "headers": [
           {
@@ -74,10 +76,11 @@
       "type": "folder",
       "name": "Application",
       "filename": "Application",
+      "examples": [],
       "root": {
         "request": {
           "script": {
-            "req": "const axios = require('axios');\nconst uuid = require('uuid');\nconst { URLSearchParams } = require('url');\n\nconst SCOPES = {\n  'AppOnlyCertGraphToken': 'https://graph.microsoft.com/.default',\n  'AppOnlyCertSPOToken': bru.getEnvVar(\"RootSiteUrl\") + \"/.default\",\n};\n\nasync function ensureAccessToken(tokenName = 'AppOnlyCertGraphToken') {\n    console.log('Ensuring access token', tokenName);\n    let validToken = false;\n    const token = bru.getEnvVar(tokenName);\n\n    if (token) {\n        console.log('checking stored token');\n        try {\n            var tokenObj = KJUR.jws.JWS.parse(token);\n            var nbf = tokenObj.payloadObj.nbf;\n            var exp = tokenObj.payloadObj.exp;\n            var now = getTimeInSec();\n            if (nbf <= now && now < exp) {\n                validToken = true;\n            } else {\n                console.log(\"Stored access token is expired\");\n            }\n        } catch (e) {\n            console.log(\"Unable to parse stored access token\");\n        }\n\n    } else {\n        console.log(\"No access token found\");\n    }\n    if (!validToken) {\n        await acquireAccessToken(tokenName);\n    }\n}\n\nasync function acquireAccessToken(tokenName = 'AppOnlyCertGraphToken') {\n    console.log(\"Acquiring a new access token\", tokenName);\n    const jwt = getRequestJwt();\n\n    const tid = bru.getEnvVar('ConsumingTenantId');\n\n    const body = {\n      client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',\n      client_assertion: jwt,\n      client_id: bru.getEnvVar('ClientID'),\n      scope: SCOPES[tokenName] || 'https://graph.microsoft.com/.default',\n      grant_type: 'client_credentials',\n    };\n    const config = {\n            header: {\n                'Content-Type': 'application/x-www-form-urlencoded'\n            }\n        };\n\n    const tokenUrl = `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`;\n    \n    const params = new URLSearchParams(body);\n  \n    const response = await axios.post(tokenUrl, params, config);\n\n    var responseJson = response.data;\n    var token = responseJson.access_token;\n    bru.setEnvVar(tokenName, token);\n}\n\nfunction getRequestJwt() {\n    const header = {\n        'alg': 'RS256',\n        'typ': 'JWT',\n        'x5t': safeBase64EncodedThumbprint(bru.getEnvVar('CertThumbprint'))\n    };\n\n    const now = getTimeInSec();\n    const tid = bru.getEnvVar('ConsumingTenantId');\n    const payload = {\n        'aud': `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`,\n        'exp': now + 60 * 60,\n        'iss': bru.getEnvVar('ClientID'),\n        'jti': uuid.v4(),\n        'nbf': now,\n        'sub': bru.getEnvVar('ClientID'),\n        'iat': now\n    };\n\n    const encryptedPk = bru.getEnvVar('CertPrivateKey');\n    let decryptedPk = encryptedPk;\n    if (bru.getEnvVar('CertPassword')) {\n        decryptedPk = KEYUTIL.getKey(encryptedPk, bru.getEnvVar('CertPassword'));\n    }\n    const sHeader = JSON.stringify(header);\n    const sPayload = JSON.stringify(payload);\n\n    return KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, decryptedPk);\n}\n\nfunction getTimeInSec() {\n    return Math.floor(Date.now() / 1000);\n}\n\nfunction safeBase64EncodedThumbprint(thumbprint) {\n    const numCharIn128BitHexString = 128 / 8 * 2;\n    const numCharIn160BitHexString = 160 / 8 * 2;\n    const thumbprintSizes = {};\n    thumbprintSizes[numCharIn128BitHexString] = true;\n    thumbprintSizes[numCharIn160BitHexString] = true;\n    const thumbprintRegExp = /^[a-f\\d]*$/;\n\n    const hexString = thumbprint.toLowerCase().replace(/:/g, '').replace(/ /g, '');\n\n    if (!thumbprintSizes[hexString.length] || !thumbprintRegExp.test(hexString)) {\n        throw 'The thumbprint does not match a known format';\n    }\n\n    const base64 = (Buffer.from(hexString, 'hex')).toString('base64');\n    return base64.replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=/g, '');\n}\n\nglobalThis.navigator = {};\nglobalThis.window = {};\n\nif (bru.getEnvVar('jsrsasign-js')) {\n    // eval actually parses the library \n    let jsRsa = decodeURI(bru.getEnvVar('jsrsasign-js'))\n    eval(jsRsa);\n    await ensureAccessToken();\n} else {\n  console.log('downloading RSA library');\n  const axios = require('axios');\n  const response = await axios.get(\n    'https://kjur.github.io/jsrsasign/jsrsasign-all-min.js',\n  );\n  ///console.log(response.data);\n  console.log('Downloaded RSA library');\n  // Why encode and decode the RSA library?\n  // 1. Environments can't be loaded if they have new lines.\n  // 2. Bruno doesn't detect changes made to env vars through a script.\n  // 3. Therefore, changes made to env vars through a script are not saved.\n  // 4. The RSA library has new lines\n  // 5. if for some reason a user makes changes to the environment\n  //    then all current environment vars are saved, including the RSA libray,\n  //    which makes the environment file \"not loadable\"\n  // 6. Encoding converts the data into a single (very large) line\n  // 7. Problem solved  \n  let encodedJsRsa = encodeURI(response.data);\n  bru.setEnvVar('jsrsasign-js', encodedJsRsa);\n}\n"
+            "req": "const axios = require('axios');\nconst uuid = require('uuid');\nconst { URLSearchParams } = require('url');\n\nconst SCOPES = {\n  'AppOnlyCertGraphToken': 'https://graph.microsoft.com/.default',\n  'AppOnlyCertSPOToken': bru.getEnvVar(\"RootSiteUrl\") + \"/.default\",\n};\n\nasync function ensureAccessToken(tokenName) {\n    console.log('Ensuring access token', tokenName);\n    let validToken = false;\n    const token = bru.getEnvVar(tokenName);\n\n    if (token) {\n        console.log('checking stored token');\n        try {\n            var tokenObj = KJUR.jws.JWS.parse(token);\n            var nbf = tokenObj.payloadObj.nbf;\n            var exp = tokenObj.payloadObj.exp;\n            var now = getTimeInSec();\n            if (nbf <= now && now < exp) {\n                validToken = true;\n            } else {\n                console.log(\"Stored access token is expired\");\n            }\n        } catch (e) {\n            console.log(\"Unable to parse stored access token\");\n        }\n\n    } else {\n        console.log(\"No access token found\");\n    }\n    if (!validToken) {\n        await acquireAccessToken(tokenName);\n    }\n}\n\nasync function acquireAccessToken(tokenName = 'AppOnlyCertGraphToken') {\n    console.log(\"Acquiring a new access token\", tokenName);\n    const jwt = getRequestJwt();\n\n    const tid = bru.getEnvVar('ConsumingTenantId');\n\n    const body = {\n      client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',\n      client_assertion: jwt,\n      client_id: bru.getEnvVar('ClientID'),\n      scope: SCOPES[tokenName] || 'https://graph.microsoft.com/.default',\n      grant_type: 'client_credentials',\n    };\n    const config = {\n            header: {\n                'Content-Type': 'application/x-www-form-urlencoded'\n            }\n        };\n\n    const tokenUrl = `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`;\n    \n    const params = new URLSearchParams(body);\n  \n    const response = await axios.post(tokenUrl, params, config);\n\n    var responseJson = response.data;\n    var token = responseJson.access_token;\n    bru.setEnvVar(tokenName, token);\n}\n\nfunction getRequestJwt() {\n    const header = {\n        'alg': 'RS256',\n        'typ': 'JWT',\n        'x5t': safeBase64EncodedThumbprint(bru.getEnvVar('CertThumbprint'))\n    };\n\n    const now = getTimeInSec();\n    const tid = bru.getEnvVar('ConsumingTenantId');\n    const payload = {\n        'aud': `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`,\n        'exp': now + 60 * 60,\n        'iss': bru.getEnvVar('ClientID'),\n        'jti': uuid.v4(),\n        'nbf': now,\n        'sub': bru.getEnvVar('ClientID'),\n        'iat': now\n    };\n\n    const encryptedPk = bru.getEnvVar('CertPrivateKey');\n    let decryptedPk = encryptedPk;\n    if (bru.getEnvVar('CertPassword')) {\n        decryptedPk = KEYUTIL.getKey(encryptedPk, bru.getEnvVar('CertPassword'));\n    }\n    const sHeader = JSON.stringify(header);\n    const sPayload = JSON.stringify(payload);\n\n    return KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, decryptedPk);\n}\n\nfunction getTimeInSec() {\n    return Math.floor(Date.now() / 1000);\n}\n\nfunction safeBase64EncodedThumbprint(thumbprint) {\n    const numCharIn128BitHexString = 128 / 8 * 2;\n    const numCharIn160BitHexString = 160 / 8 * 2;\n    const thumbprintSizes = {};\n    thumbprintSizes[numCharIn128BitHexString] = true;\n    thumbprintSizes[numCharIn160BitHexString] = true;\n    const thumbprintRegExp = /^[a-f\\d]*$/;\n\n    const hexString = thumbprint.toLowerCase().replace(/:/g, '').replace(/ /g, '');\n\n    if (!thumbprintSizes[hexString.length] || !thumbprintRegExp.test(hexString)) {\n        throw 'The thumbprint does not match a known format';\n    }\n\n    const base64 = (Buffer.from(hexString, 'hex')).toString('base64');\n    return base64.replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=/g, '');\n}\n\nglobalThis.navigator = {};\nglobalThis.window = {};\n\nif (bru.getEnvVar('jsrsasign-js')) {\n    // eval actually parses the library \n    let jsRsa = decodeURI(bru.getEnvVar('jsrsasign-js'))\n    eval(jsRsa);\n} else {\n  console.log('downloading RSA library');\n  const axios = require('axios');\n  const response = await axios.get(\n    'https://kjur.github.io/jsrsasign/jsrsasign-all-min.js',\n  );\n  ///console.log(response.data);\n  console.log('Downloaded RSA library');\n  // Why encode and decode the RSA library?\n  // 1. Environments can't be loaded if they have new lines.\n  // 2. Bruno doesn't detect changes made to env vars through a script.\n  // 3. Therefore, changes made to env vars through a script are not saved.\n  // 4. The RSA library has new lines\n  // 5. if for some reason a user makes changes to the environment\n  //    then all current environment vars are saved, including the RSA libray,\n  //    which makes the environment file \"not loadable\"\n  // 6. Encoding converts the data into a single (very large) line\n  // 7. Problem solved  \n  let encodedJsRsa = encodeURI(response.data);\n  bru.setEnvVar('jsrsasign-js', encodedJsRsa);\n}\n\nawait ensureAccessToken('AppOnlyCertGraphToken');\nawait ensureAccessToken('AppOnlyCertSPOToken');"
           }
         },
         "meta": {
@@ -89,6 +92,7 @@
           "type": "folder",
           "name": "Containers",
           "filename": "Containers",
+          "examples": [],
           "items": [
             {
               "type": "http",
@@ -97,8 +101,9 @@
               "seq": 4,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -108,9 +113,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -130,8 +133,9 @@
               "seq": 3,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers",
                 "method": "POST",
                 "headers": [
                   {
@@ -148,9 +152,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "\nif (res.code === 201) {\n    var json = pm.response.json();\n    bru.setEnvVar(\"ContainerId\", res.data.id);\n}\n",
@@ -170,8 +172,9 @@
               "seq": 10,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -182,9 +185,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// \n// if (pm.response.code === 201) {\n//     var json = pm.response.json();\n//     postman.setEnvironmentVariable(\"PermissionId\", json.id);\n// }\n// ",
@@ -204,8 +205,9 @@
               "seq": 8,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -216,9 +218,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "\nif (res.code === 201) {\n    bru.setEnvVar(\"PermissionId\", response.data.id);\n}\n",
@@ -238,8 +238,9 @@
               "seq": 11,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -249,9 +250,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -271,8 +270,9 @@
               "seq": 6,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}",
                 "method": "GET",
                 "headers": [
                   {
@@ -288,9 +288,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -310,8 +308,9 @@
               "seq": 7,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "GET",
                 "headers": [
                   {
@@ -328,9 +327,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -350,8 +347,9 @@
               "seq": 15,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -362,9 +360,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// \n// if (pm.response.code === 204) {\n//     pm.environment.unset(\"SoftDeletedContainerId\");\n// }\n// ",
@@ -384,8 +380,9 @@
               "seq": 5,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers?$filter=containerTypeId eq {{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers?$filter=containerTypeId eq {{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -402,9 +399,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -424,8 +419,9 @@
               "seq": 14,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/deletedContainers?$filter=containerTypeId eq {{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/deletedContainers?$filter=containerTypeId eq {{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -442,9 +438,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -464,6 +458,7 @@
               "seq": 2,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
                 "url": "{{RootSiteUrl}}/_api/v2.1/storageContainerTypes/{{ContainerTypeId}}/applicationPermissions",
                 "method": "PUT",
@@ -476,9 +471,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertSPOToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -498,6 +491,7 @@
               "seq": 1,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
                 "url": "{{RootSiteUrl}}/_api/v2.1/storageContainerTypes/{{ContainerTypeId}}/applicationPermissions",
                 "method": "PUT",
@@ -510,9 +504,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertSPOToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -532,8 +524,9 @@
               "seq": 12,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -544,9 +537,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -566,8 +557,9 @@
               "seq": 13,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -578,9 +570,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// \n// if (pm.response.code === 204) {\n//     pm.environment.set(\"DeletedContainerId\", pm.environment.get(\"ContainerId\"));\n//     pm.environment.unset(\"ContainerId\");\n//     pm.environment.unset(\"PermissionId\");\n// }\n// ",
@@ -600,8 +590,9 @@
               "seq": 9,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -612,9 +603,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -633,6 +622,7 @@
           "type": "folder",
           "name": "ContainerTypeRegistration",
           "filename": "ContainerTypeRegistration",
+          "examples": [],
           "items": [
             {
               "type": "http",
@@ -641,8 +631,9 @@
               "seq": 3,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "PUT",
                 "headers": [],
                 "params": [],
@@ -673,8 +664,9 @@
               "seq": 6,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -704,8 +696,9 @@
               "seq": 5,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -735,8 +728,9 @@
               "seq": 2,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -766,6 +760,7 @@
               "seq": 7,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
                 "url": "{{RootSiteUrl}}/_api/v2.1/$metadata",
                 "method": "GET",
@@ -794,8 +789,9 @@
               "seq": 4,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -825,6 +821,7 @@
           "type": "folder",
           "name": "Files",
           "filename": "Files",
+          "examples": [],
           "items": [
             {
               "type": "http",
@@ -833,8 +830,9 @@
               "seq": 13,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -845,9 +843,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -867,8 +863,9 @@
               "seq": 5,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root/children",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/root/children",
                 "method": "POST",
                 "headers": [
                   {
@@ -885,9 +882,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -907,8 +902,9 @@
               "seq": 12,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -919,9 +915,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -941,8 +935,9 @@
               "seq": 7,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
                 "method": "GET",
                 "headers": [
                   {
@@ -965,9 +960,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -987,8 +980,9 @@
               "seq": 1,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}",
                 "method": "GET",
                 "headers": [
                   {
@@ -1004,9 +998,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1026,8 +1018,9 @@
               "seq": 2,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/root/children",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/root/children",
                 "method": "GET",
                 "headers": [
                   {
@@ -1043,9 +1036,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1065,8 +1056,9 @@
               "seq": 9,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1076,9 +1068,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1098,8 +1088,9 @@
               "seq": 10,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1109,9 +1100,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1131,8 +1120,9 @@
               "seq": 4,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1142,9 +1132,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1164,8 +1152,9 @@
               "seq": 6,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
                 "method": "GET",
                 "headers": [
                   {
@@ -1181,9 +1170,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1203,8 +1190,9 @@
               "seq": 14,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/me/drive/recent",
+                "url": "{{GraphUrl}}/v1.0/me/drive/recent",
                 "method": "GET",
                 "headers": [
                   {
@@ -1220,9 +1208,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "",
@@ -1242,8 +1228,9 @@
               "seq": 8,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -1254,9 +1241,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//         var json = JSON.parse(responseBody);\n//         postman.setEnvironmentVariable(\"FileId\", json.id);\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1276,8 +1261,9 @@
               "seq": 11,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root/search(q='{contoso}')",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/root/search(q='{contoso}')",
                 "method": "GET",
                 "headers": [
                   {
@@ -1293,9 +1279,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1315,8 +1299,9 @@
               "seq": 3,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
                 "method": "PUT",
                 "headers": [],
                 "params": [],
@@ -1326,9 +1311,7 @@
                   "multipartForm": [],
                   "file": []
                 },
-                "script": {
-                  "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                },
+                "script": {},
                 "vars": {},
                 "assertions": [],
                 "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//         var json = JSON.parse(responseBody);\n//         postman.setEnvironmentVariable(\"FileId\", json.id);\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1345,6 +1328,7 @@
               "type": "folder",
               "name": "Additive Permissions",
               "filename": "Additive Permissions",
+              "examples": [],
               "items": [
                 {
                   "type": "http",
@@ -1353,8 +1337,9 @@
                   "seq": 3,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
                     "method": "DELETE",
                     "headers": [
                       {
@@ -1370,9 +1355,7 @@
                       "multipartForm": [],
                       "file": []
                     },
-                    "script": {
-                      "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                    },
+                    "script": {},
                     "vars": {},
                     "assertions": [],
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1392,8 +1375,9 @@
                   "seq": 2,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
                     "method": "GET",
                     "headers": [
                       {
@@ -1409,9 +1393,7 @@
                       "multipartForm": [],
                       "file": []
                     },
-                    "script": {
-                      "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                    },
+                    "script": {},
                     "vars": {},
                     "assertions": [],
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1431,8 +1413,9 @@
                   "seq": 1,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions",
                     "method": "GET",
                     "headers": [
                       {
@@ -1448,9 +1431,7 @@
                       "multipartForm": [],
                       "file": []
                     },
-                    "script": {
-                      "req": "await ensureAccessToken('AppOnlyCertGraphToken');"
-                    },
+                    "script": {},
                     "vars": {},
                     "assertions": [],
                     "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
@@ -1473,11 +1454,42 @@
       "type": "folder",
       "name": "Delegated",
       "filename": "Delegated",
+      "examples": [],
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "oauth2",
+            "oauth2": {
+              "grantType": "authorization_code",
+              "callbackUrl": "http://localhost:8000",
+              "authorizationUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/authorize",
+              "accessTokenUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/token",
+              "refreshTokenUrl": "",
+              "clientId": "{{ClientID}}",
+              "clientSecret": "{{ClientSecret}}",
+              "scope": "FileStorageContainer.Selected offline_access",
+              "state": "",
+              "pkce": false,
+              "credentialsPlacement": "body",
+              "credentialsId": "credentials",
+              "tokenPlacement": "header",
+              "tokenHeaderPrefix": "Bearer",
+              "tokenQueryKey": "access_token",
+              "autoFetchToken": true,
+              "autoRefreshToken": true
+            }
+          }
+        },
+        "meta": {
+          "name": "Delegated"
+        }
+      },
       "items": [
         {
           "type": "folder",
-          "name": "Containers",
-          "filename": "Containers",
+          "name": "ContainerType",
+          "filename": "ContainerType",
+          "examples": [],
           "root": {
             "request": {
               "auth": {
@@ -1490,7 +1502,7 @@
                   "refreshTokenUrl": "",
                   "clientId": "{{ClientID}}",
                   "clientSecret": "{{ClientSecret}}",
-                  "scope": "FileStorageContainer.Selected offline_access",
+                  "scope": "FileStorageContainerType.Manage.All offline_access",
                   "state": "",
                   "pkce": false,
                   "credentialsPlacement": "body",
@@ -1501,6 +1513,173 @@
                   "autoFetchToken": true,
                   "autoRefreshToken": true
                 }
+              }
+            },
+            "meta": {
+              "name": "ContainerType"
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Create Container Type",
+              "filename": "Create.bru",
+              "seq": 3,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypes",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"name\": \"Test Trial Container\",\n  \"owningAppId\" : \"{{ClientID}}\",\n  \"billingClassification\": \"trial\",\n  \"settings\": {\n    \"isItemVersioningEnabled\": \"false\",\n    \"isSharingRestricted\": \"true\",\n    \"consumingTenantOverridables\": \"IsSearchEnabled,ItemMajorVersionLimit\"\n  }\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {
+                  "res": "let data = res.body\nbru.setEnvVar(\"ContainerTypeId\",data.id)\nbru.setEnvVar(\"ContainerTypeETag\",data.etag)"
+                },
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Delete Container Type",
+              "filename": "Delete.bru",
+              "seq": 6,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Container Type",
+              "filename": "Get.bru",
+              "seq": 5,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "List Container Type",
+              "filename": "List.bru",
+              "seq": 2,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypes",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Update Container Type",
+              "filename": "Update.bru",
+              "seq": 4,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"name\": \"Trial Test Hello World\",\n    \"settings\": {\n    \"urlTemplate\":\"randomPattern\",\n    \"isItemVersioningEnabled\": \"false\",\n    \"isSharingRestricted\": \"true\",\n    \"consumingTenantOverridables\": \"ItemMajorVersionLimit\"\n  },\n  \"etag\": \"{{ContainerTypeETag}}\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "Containers",
+          "filename": "Containers",
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
               }
             },
             "meta": {
@@ -1515,8 +1694,9 @@
               "seq": 2,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/activate",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -1543,8 +1723,9 @@
               "seq": 1,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers",
                 "method": "POST",
                 "headers": [
                   {
@@ -1580,8 +1761,9 @@
               "seq": 8,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -1609,8 +1791,9 @@
               "seq": 6,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -1638,8 +1821,9 @@
               "seq": 14,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/columns",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/columns",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1666,8 +1850,9 @@
               "seq": 9,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -1694,8 +1879,9 @@
               "seq": 3,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}?$select=id,displayName,containerTypeId,status,description,customProperties&$expand=permissions",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}?$select=id,displayName,containerTypeId,status,description,customProperties&$expand=permissions",
                 "method": "GET",
                 "headers": [
                   {
@@ -1742,8 +1928,9 @@
               "seq": 5,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions",
                 "method": "GET",
                 "headers": [
                   {
@@ -1777,8 +1964,9 @@
               "seq": 13,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/deletedContainers/{{SoftDeletedContainerId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -1806,8 +1994,9 @@
               "seq": 4,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers?$filter=containerTypeId eq {{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers?$filter=containerTypeId eq {{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -1841,8 +2030,9 @@
               "seq": 12,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/deletedContainers?$filter=containerTypeId eq {{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/deletedContainers?$filter=containerTypeId eq {{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -1876,8 +2066,9 @@
               "seq": 10,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/customProperties",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -1905,8 +2096,9 @@
               "seq": 11,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -1934,8 +2126,9 @@
               "seq": 7,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containers/{{ContainerId}}/permissions/{{PermissionId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -1960,188 +2153,9 @@
         },
         {
           "type": "folder",
-          "name": "ContainerType",
-          "filename": "ContainerType",
-          "root": {
-            "request": {
-              "auth": {
-                "mode": "oauth2",
-                "oauth2": {
-                  "grantType": "authorization_code",
-                  "callbackUrl": "http://localhost:8000",
-                  "authorizationUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/authorize",
-                  "accessTokenUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/token",
-                  "refreshTokenUrl": "",
-                  "clientId": "{{ClientID}}",
-                  "clientSecret": "{{ClientSecret}}",
-                  "scope": "FileStorageContainerType.Manage.All offline_access",
-                  "state": "",
-                  "pkce": false,
-                  "credentialsPlacement": "body",
-                  "credentialsId": "credentials",
-                  "tokenPlacement": "header",
-                  "tokenHeaderPrefix": "Bearer",
-                  "tokenQueryKey": "access_token",
-                  "autoFetchToken": true,
-                  "autoRefreshToken": true
-                }
-              }
-            },
-            "meta": {
-              "name": "ContainerType"
-            }
-          },
-          "items": [
-            {
-              "type": "http",
-              "name": "Create Container Type",
-              "filename": "Create.bru",
-              "seq": 3,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes",
-                "method": "POST",
-                "headers": [],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n  \"name\": \"Test Trial Container\",\n  \"owningAppId\" : \"{{ClientID}}\",\n  \"billingClassification\": \"trial\",\n  \"settings\": {\n    \"isItemVersioningEnabled\": \"false\",\n    \"isSharingRestricted\": \"true\",\n    \"consumingTenantOverridables\": \"IsSearchEnabled,ItemMajorVersionLimit\"\n  }\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {
-                  "res": "let data = res.body\nbru.setEnvVar(\"ContainerTypeId\",data.id)\nbru.setEnvVar(\"ContainerTypeETag\",data.etag)"
-                },
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "inherit"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Delete Container Type",
-              "filename": "Delete.bru",
-              "seq": 6,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
-                "method": "DELETE",
-                "headers": [],
-                "params": [],
-                "body": {
-                  "mode": "none",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "inherit"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Get Container Type",
-              "filename": "Get.bru",
-              "seq": 5,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
-                "method": "GET",
-                "headers": [],
-                "params": [],
-                "body": {
-                  "mode": "none",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "inherit"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "List Container Type",
-              "filename": "List.bru",
-              "seq": 2,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes",
-                "method": "GET",
-                "headers": [],
-                "params": [],
-                "body": {
-                  "mode": "none",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "inherit"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Update Container Type",
-              "filename": "Update.bru",
-              "seq": 4,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypes/{{ContainerTypeId}}",
-                "method": "PATCH",
-                "headers": [],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n  \"name\": \"Trial Test Hello World\",\n    \"settings\": {\n    \"urlTemplate\":\"randomPattern\",\n    \"isItemVersioningEnabled\": \"false\",\n    \"isSharingRestricted\": \"true\",\n    \"consumingTenantOverridables\": \"ItemMajorVersionLimit\"\n  },\n  \"etag\": \"{{ContainerTypeETag}}\"\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "inherit"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "type": "folder",
           "name": "ContainerTypeRegistration",
           "filename": "ContainerTypeRegistration",
+          "examples": [],
           "root": {
             "request": {
               "auth": {
@@ -2179,8 +2193,9 @@
               "seq": 3,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "PUT",
                 "headers": [],
                 "params": [],
@@ -2210,8 +2225,9 @@
               "seq": 6,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "DELETE",
                 "headers": [],
                 "params": [],
@@ -2238,8 +2254,9 @@
               "seq": 5,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -2268,8 +2285,9 @@
               "seq": 2,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -2296,6 +2314,7 @@
               "seq": 7,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
                 "url": "{{RootSiteUrl}}/_api/v2.1/$metadata",
                 "method": "GET",
@@ -2327,8 +2346,9 @@
               "seq": 4,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
+                "url": "{{GraphUrl}}/beta/storage/fileStorage/containerTypeRegistrations/{{ContainerTypeId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -2355,746 +2375,13 @@
         },
         {
           "type": "folder",
-          "name": "Search",
-          "filename": "Search",
-          "items": [
-            {
-              "type": "http",
-              "name": "Apply refined query passing the aggregationToken",
-              "filename": "Apply refined query passing the aggregationToken.bru",
-              "seq": 14,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"Requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregationFilters\": [\n                \"contentclass:\\\"ǂǂ5354535f4c6973744974656d5f446f63756d656e744c696272617279\\\"\",\n                \"FileType:\\\"ǂǂ646f6378\\\"\"                \n            ],\n            \"aggregations\": [\n                {\n                    \"field\": \"FileType\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"count\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                },\n                {\n                    \"field\": \"contentclass\",\n                    \"size\": 15,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsString\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                }\n            ]\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Page search results",
-              "filename": "Page search results.bru",
-              "seq": 9,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"from\": 0,\n            \"size\": 15\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Refine results with numeric aggregations",
-              "filename": "Refine results with numeric aggregations.bru",
-              "seq": 13,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"Requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregations\": [\n                {\n                    \"field\": \"Size\",\n                    \"size\": 15,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsNumber\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0,\n                        \"ranges\": [\n                            {\n                                \"to\": \"100\"\n                            },\n                            {\n                                \"from\": \"100\",\n                                \"to\": \"1000\"\n                            },\n                            {\n                                \"from\": \"1000\"\n                            }\n                        ]\n                    }\n                }\n            ]\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Refine results with string aggregations",
-              "filename": "Refine results with string aggregations.bru",
-              "seq": 12,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregations\": [\n                {\n                    \"field\": \"FileType\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"count\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                },\n                {\n                    \"field\": \"contentclass\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsString\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                }\n            ]\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Request spelling correction",
-              "filename": "Request spelling correction.bru",
-              "seq": 11,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  },
-                  {
-                    "name": "SdkVersion",
-                    "value": "postman-graph/v2.0",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n  \"requests\": [\n    {\n      \"entityTypes\": [\n        \"driveItem\"\n      ],\n      \"query\": {\n        \"queryString\": \"informatino\"\n      },\n      \"from\": 0,\n      \"size\": 5\n    }\n  ],\n  \"queryAlterationOptions\": {\n    \"enableSuggestion\": true,\n    \"enableModification\": true\n  }\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search by Container ID",
-              "filename": "Search by Container ID.bru",
-              "seq": 7,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/v1.0/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerId:{{ContainerId}}\"\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search by Title in Container Copy",
-              "filename": "Search by Title in Container Copy.bru",
-              "seq": 6,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/v1.0/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"*\"\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search containers by Custom Property Copy",
-              "filename": "Search containers by Custom Property Copy.bru",
-              "seq": 4,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"department:'marketing'\"\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search containers by Description Copy",
-              "filename": "Search containers by Description Copy.bru",
-              "seq": 3,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"Description:'pineapple'\"\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search containers by Title Copy",
-              "filename": "Search containers by Title Copy.bru",
-              "seq": 2,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/v1.0/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"*\"\n            },\n            \"sharePointOneDriveOptions\": {\n              \"includeHiddenContent\": true\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search containers by Title-Description-CT Copy",
-              "filename": "Search containers by Title-Description-CT Copy.bru",
-              "seq": 5,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"Title:'mango' AND Description:'project' AND ContainerTypeId:{{ContainerTypeId}}\"\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search containers within CT Copy",
-              "filename": "Search containers within CT Copy.bru",
-              "seq": 1,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/v1.0/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerTypeId:{{ContainerTypeId}}\"\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search containers within CT Copy2",
-              "filename": "Search containers within CT Copy2.bru",
-              "seq": 20,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/v1.0/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerTypeId:{{ContainerTypeId}}AND name:'Copy'\"\n            },\n            \"fields\": [\n              \"id\",\n              \"name\",\n              \"contentclass\",\n              \"title\",\n              \"weburl\",\n              \"created\",\n              \"lastmodifiedtime\",\n              \"lastmodifiedtimeforretention\"]\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search content in Container Copy",
-              "filename": "Search content in Container Copy.bru",
-              "seq": 8,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"*\"\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "bearer",
-                  "bearer": {
-                    "token": "{{AppOnlyCertGraphToken}}"
-                  }
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search with basic collapse",
-              "filename": "Search with basic collapse.bru",
-              "seq": 17,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"listItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"test\"\n            },\n            \"fields\": [\n                \"title\"\n            ],\n            \"collapseProperties\": [\n                {\n                    \"fields\": [\n                        \"title\"\n                    ],\n                    \"limit\": 3\n                }\n            ]\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search with compound collapse",
-              "filename": "Search with compound collapse.bru",
-              "seq": 18,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"listItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"cat\"\n            },\n            \"fields\": [\n                \"title\",\n                \"createdBy\"\n            ],\n            \"collapseProperties\": [\n                {\n                    \"fields\": [\n                        \"title\",\n                        \"createdBy\"\n                    ],\n                    \"limit\": 3\n                }\n            ]\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search with multi-level collapse",
-              "filename": "Search with multi-level collapse.bru",
-              "seq": 19,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"listItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"cat\"\n            },\n            \"fields\": [\n                \"title\",\n                \"createdBy\"\n            ],\n            \"collapseProperties\": [\n                {\n                    \"fields\": [\n                        \"title\"\n                    ],\n                    \"limit\": 3\n                },\n                {\n                    \"fields\": [\n                        \"createdBy\"\n                    ],\n                    \"limit\": 2\n                }\n            ]\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Search with queryTemplate",
-              "filename": "Search with queryTemplate.bru",
-              "seq": 16,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\",\n                \"queryTemplate\": \"({searchTerms})\"\n            }\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read.All, Sites.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Sort search results",
-              "filename": "Sort search results.bru",
-              "seq": 10,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"sortProperties\": [\n                {\n                    \"name\": \"lastModifiedDateTime\",\n                    \"isDescending\": \"true\" // default is false\n                }\n            ]\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            },
-            {
-              "type": "http",
-              "name": "Trim duplicated SharePoint search results",
-              "filename": "Trim duplicated SharePoint search results.bru",
-              "seq": 15,
-              "settings": {},
-              "tags": [],
-              "request": {
-                "url": "{{GraphURL}}/beta/search/query",
-                "method": "POST",
-                "headers": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json",
-                    "enabled": true
-                  }
-                ],
-                "params": [],
-                "body": {
-                  "mode": "json",
-                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"trimDuplicate\": true\n        }\n    ]\n}",
-                  "formUrlEncoded": [],
-                  "multipartForm": [],
-                  "file": []
-                },
-                "script": {},
-                "vars": {},
-                "assertions": [],
-                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read.All, Sites.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
-                "docs": "",
-                "auth": {
-                  "mode": "none"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "type": "folder",
           "name": "Files",
           "filename": "Files",
+          "examples": [],
           "root": {
             "request": {
               "auth": {
-                "mode": "oauth2",
-                "oauth2": {
-                  "grantType": "authorization_code",
-                  "callbackUrl": "http://localhost:8000",
-                  "authorizationUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/authorize",
-                  "accessTokenUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/token",
-                  "refreshTokenUrl": "",
-                  "clientId": "{{ClientID}}",
-                  "clientSecret": "{{ClientSecret}}",
-                  "scope": "FileStorageContainer.Selected offline_access",
-                  "state": "",
-                  "pkce": false,
-                  "credentialsPlacement": "body",
-                  "credentialsId": "credentials",
-                  "tokenPlacement": "header",
-                  "tokenHeaderPrefix": "Bearer",
-                  "tokenQueryKey": "access_token",
-                  "autoFetchToken": true,
-                  "autoRefreshToken": false
-                }
+                "mode": "inherit"
               }
             },
             "meta": {
@@ -3109,8 +2396,9 @@
               "seq": 13,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -3138,8 +2426,9 @@
               "seq": 5,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root/children",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/root/children",
                 "method": "POST",
                 "headers": [
                   {
@@ -3173,8 +2462,9 @@
               "seq": 14,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/preview",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/preview",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -3202,8 +2492,9 @@
               "seq": 12,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                 "method": "POST",
                 "headers": [],
                 "params": [],
@@ -3231,8 +2522,9 @@
               "seq": 7,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}?$select=SharePointIds",
                 "method": "GET",
                 "headers": [
                   {
@@ -3272,8 +2564,9 @@
               "seq": 1,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}",
                 "method": "GET",
                 "headers": [
                   {
@@ -3306,8 +2599,9 @@
               "seq": 16,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items?$filter=true&$orderBy=listitem/fields/Modified",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items?$filter=true&$orderBy=listitem/fields/Modified",
                 "method": "GET",
                 "headers": [
                   {
@@ -3358,8 +2652,9 @@
               "seq": 2,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/root/children?$orderBy=lastModifiedDateTime",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/root/children?$orderBy=lastModifiedDateTime",
                 "method": "GET",
                 "headers": [
                   {
@@ -3404,8 +2699,9 @@
               "seq": 9,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/thumbnails",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -3432,8 +2728,9 @@
               "seq": 10,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/versions",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -3460,8 +2757,9 @@
               "seq": 4,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -3488,8 +2786,9 @@
               "seq": 6,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{ItemId}}/children",
                 "method": "GET",
                 "headers": [
                   {
@@ -3522,8 +2821,9 @@
               "seq": 15,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/me/drive/recent",
+                "url": "{{GraphUrl}}/v1.0/me/drive/recent",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -3550,8 +2850,9 @@
               "seq": 8,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}",
                 "method": "PATCH",
                 "headers": [],
                 "params": [],
@@ -3579,8 +2880,9 @@
               "seq": 11,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root/search(q='Copy')",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/root/search(q='Copy')",
                 "method": "GET",
                 "headers": [
                   {
@@ -3613,8 +2915,9 @@
               "seq": 3,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
+                "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/root:/Ad Slogans.docx:/content",
                 "method": "PUT",
                 "headers": [],
                 "params": [],
@@ -3638,6 +2941,17 @@
               "type": "folder",
               "name": "Sharing",
               "filename": "Sharing",
+              "examples": [],
+              "root": {
+                "request": {
+                  "auth": {
+                    "mode": "inherit"
+                  }
+                },
+                "meta": {
+                  "name": "Sharing"
+                }
+              },
               "items": [
                 {
                   "type": "http",
@@ -3646,8 +2960,9 @@
                   "seq": 6,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
                     "method": "DELETE",
                     "headers": [
                       {
@@ -3680,8 +2995,9 @@
                   "seq": 5,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions/{{PermissionId}}",
                     "method": "GET",
                     "headers": [
                       {
@@ -3714,8 +3030,9 @@
                   "seq": 4,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/permissions",
                     "method": "GET",
                     "headers": [
                       {
@@ -3748,8 +3065,9 @@
                   "seq": 3,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
                     "method": "POST",
                     "headers": [],
                     "params": [],
@@ -3777,8 +3095,9 @@
                   "seq": 2,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/createLink",
                     "method": "POST",
                     "headers": [],
                     "params": [],
@@ -3806,8 +3125,9 @@
                   "seq": 1,
                   "settings": {},
                   "tags": [],
+                  "examples": [],
                   "request": {
-                    "url": "{{GraphURL}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
+                    "url": "{{GraphUrl}}/v1.0/drives/{{ContainerId}}/items/{{FileId}}/invite",
                     "method": "POST",
                     "headers": [],
                     "params": [],
@@ -3836,6 +3156,17 @@
           "type": "folder",
           "name": "Security",
           "filename": "Security",
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "Security"
+            }
+          },
           "items": [
             {
               "type": "http",
@@ -3844,8 +3175,9 @@
               "seq": 4,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=Category eq 'ransomware'&$top=5",
+                "url": "{{GraphUrl}}/v1.0/security/alerts?$filter=Category eq 'ransomware'&$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -3885,8 +3217,9 @@
               "seq": 5,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=networkConnections/any(d:d/destinationAddress eq '{destination-address}')",
+                "url": "{{GraphUrl}}/v1.0/security/alerts?$filter=networkConnections/any(d:d/destinationAddress eq '{destination-address}')",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -3920,8 +3253,9 @@
               "seq": 6,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=Status eq 'NewAlert'&$top=1",
+                "url": "{{GraphUrl}}/v1.0/security/alerts?$filter=Status eq 'NewAlert'&$top=1",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -3961,8 +3295,9 @@
               "seq": 3,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=vendorInformation/provider eq 'ASC'&$top=5",
+                "url": "{{GraphUrl}}/v1.0/security/alerts?$filter=vendorInformation/provider eq 'ASC'&$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -4002,8 +3337,9 @@
               "seq": 2,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/security/alerts?$filter=Severity eq 'High'&$top=5",
+                "url": "{{GraphUrl}}/v1.0/security/alerts?$filter=Severity eq 'High'&$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -4043,8 +3379,9 @@
               "seq": 1,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/security/alerts",
+                "url": "{{GraphUrl}}/v1.0/security/alerts",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4071,8 +3408,9 @@
               "seq": 8,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/security/secureScoreControlProfiles?$top=5",
+                "url": "{{GraphUrl}}/beta/security/secureScoreControlProfiles?$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -4106,8 +3444,9 @@
               "seq": 7,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/v1.0/security/secureScores?$top=5",
+                "url": "{{GraphUrl}}/v1.0/security/secureScores?$top=5",
                 "method": "GET",
                 "headers": [],
                 "params": [
@@ -4141,8 +3480,9 @@
               "seq": 12,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/security/securityActions/{{SecurityActionsId}}",
+                "url": "{{GraphUrl}}/beta/security/securityActions/{{SecurityActionsId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4169,8 +3509,9 @@
               "seq": 11,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/security/securityActions",
+                "url": "{{GraphUrl}}/beta/security/securityActions",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4197,8 +3538,9 @@
               "seq": 10,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/security/tiIndicators/{{TIIndicatorId}}",
+                "url": "{{GraphUrl}}/beta/security/tiIndicators/{{TIIndicatorId}}",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4225,8 +3567,9 @@
               "seq": 9,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/security/tiIndicators",
+                "url": "{{GraphUrl}}/beta/security/tiIndicators",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4253,8 +3596,9 @@
               "seq": 13,
               "settings": {},
               "tags": [],
+              "examples": [],
               "request": {
-                "url": "{{GraphURL}}/beta/security/labels/retentionLabels",
+                "url": "{{GraphUrl}}/beta/security/labels/retentionLabels",
                 "method": "GET",
                 "headers": [],
                 "params": [],
@@ -4278,11 +3622,33 @@
               "type": "folder",
               "name": "eDiscovery",
               "filename": "eDiscovery",
+              "examples": [],
+              "root": {
+                "request": {
+                  "auth": {
+                    "mode": "inherit"
+                  }
+                },
+                "meta": {
+                  "name": "eDiscovery"
+                }
+              },
               "items": [
                 {
                   "type": "folder",
                   "name": "Case Creation",
                   "filename": "Case Creation",
+                  "examples": [],
+                  "root": {
+                    "request": {
+                      "auth": {
+                        "mode": "inherit"
+                      }
+                    },
+                    "meta": {
+                      "name": "Case Creation"
+                    }
+                  },
                   "items": [
                     {
                       "type": "http",
@@ -4291,8 +3657,9 @@
                       "seq": 7,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/{{custodianId}}/userSources",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/{{custodianId}}/userSources",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4320,8 +3687,9 @@
                       "seq": 5,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4349,8 +3717,9 @@
                       "seq": 2,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4378,8 +3747,9 @@
                       "seq": 10,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4407,8 +3777,9 @@
                       "seq": 8,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/applyHold",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/applyHold",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4436,8 +3807,9 @@
                       "seq": 11,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources/applyHold",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources/applyHold",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4465,8 +3837,9 @@
                       "seq": 3,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4493,8 +3866,9 @@
                       "seq": 1,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4521,8 +3895,9 @@
                       "seq": 6,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4549,8 +3924,9 @@
                       "seq": 12,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/noncustodialDataSources",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4577,8 +3953,9 @@
                       "seq": 9,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/{{custodianId}}/userSources",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/custodians/{{custodianId}}/userSources",
                         "method": "GET",
                         "headers": [],
                         "params": [],
@@ -4605,8 +3982,9 @@
                       "seq": 4,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}",
                         "method": "PATCH",
                         "headers": [],
                         "params": [],
@@ -4633,6 +4011,17 @@
                   "type": "folder",
                   "name": "Workflow automation",
                   "filename": "Workflow automation",
+                  "examples": [],
+                  "root": {
+                    "request": {
+                      "auth": {
+                        "mode": "inherit"
+                      }
+                    },
+                    "meta": {
+                      "name": "Workflow automation"
+                    }
+                  },
                   "items": [
                     {
                       "type": "http",
@@ -4641,8 +4030,9 @@
                       "seq": 8,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4670,8 +4060,9 @@
                       "seq": 5,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4699,8 +4090,9 @@
                       "seq": 1,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4728,8 +4120,9 @@
                       "seq": 11,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries/{{ediscoveryReviewSetQueryId}}",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries/{{ediscoveryReviewSetQueryId}}",
                         "method": "DELETE",
                         "headers": [],
                         "params": [],
@@ -4757,8 +4150,9 @@
                       "seq": 7,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/addToReviewSet",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/addToReviewSet",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4786,8 +4180,9 @@
                       "seq": 3,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches/{{ediscoverySearchId}}/estimateStatistics",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches/{{ediscoverySearchId}}/estimateStatistics",
                         "method": "POST",
                         "headers": [],
                         "params": [],
@@ -4815,8 +4210,9 @@
                       "seq": 12,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/operations",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/operations",
                         "method": "GET",
                         "headers": [
                           {
@@ -4849,8 +4245,9 @@
                       "seq": 4,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches/{{ediscoverySearchId}}/lastEstimateStatisticsOperation",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches/{{ediscoverySearchId}}/lastEstimateStatisticsOperation",
                         "method": "GET",
                         "headers": [
                           {
@@ -4883,8 +4280,9 @@
                       "seq": 10,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries",
                         "method": "GET",
                         "headers": [
                           {
@@ -4917,8 +4315,9 @@
                       "seq": 6,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets",
                         "method": "GET",
                         "headers": [
                           {
@@ -4951,8 +4350,9 @@
                       "seq": 2,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/searches",
                         "method": "GET",
                         "headers": [
                           {
@@ -4985,8 +4385,9 @@
                       "seq": 9,
                       "settings": {},
                       "tags": [],
+                      "examples": [],
                       "request": {
-                        "url": "{{GraphURL}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries/{{ediscoveryReviewSetQueryId}}",
+                        "url": "{{GraphUrl}}/v1.0/security/cases/ediscoveryCases/{{ediscoveryCaseId}}/reviewSets/{{ediscoveryReviewSetId}}/queries/{{ediscoveryReviewSetQueryId}}",
                         "method": "PATCH",
                         "headers": [],
                         "params": [],
@@ -5010,6 +4411,752 @@
                   ]
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "Search",
+          "filename": "Search",
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "Search"
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Apply refined query passing the aggregationToken",
+              "filename": "Apply refined query passing the aggregationToken.bru",
+              "seq": 14,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"Requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregationFilters\": [\n                \"contentclass:\\\"ǂǂ5354535f4c6973744974656d5f446f63756d656e744c696272617279\\\"\",\n                \"FileType:\\\"ǂǂ646f6378\\\"\"                \n            ],\n            \"aggregations\": [\n                {\n                    \"field\": \"FileType\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"count\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                },\n                {\n                    \"field\": \"contentclass\",\n                    \"size\": 15,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsString\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                }\n            ]\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Page search results",
+              "filename": "Page search results.bru",
+              "seq": 9,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"from\": 0,\n            \"size\": 15\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Refine results with numeric aggregations",
+              "filename": "Refine results with numeric aggregations.bru",
+              "seq": 13,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"Requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregations\": [\n                {\n                    \"field\": \"Size\",\n                    \"size\": 15,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsNumber\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0,\n                        \"ranges\": [\n                            {\n                                \"to\": \"100\"\n                            },\n                            {\n                                \"from\": \"100\",\n                                \"to\": \"1000\"\n                            },\n                            {\n                                \"from\": \"1000\"\n                            }\n                        ]\n                    }\n                }\n            ]\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Refine results with string aggregations",
+              "filename": "Refine results with string aggregations.bru",
+              "seq": 12,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"aggregations\": [\n                {\n                    \"field\": \"FileType\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"count\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                },\n                {\n                    \"field\": \"contentclass\",\n                    \"size\": 20,\n                    \"bucketDefinition\": {\n                        \"sortBy\": \"keyAsString\",\n                        \"isDescending\": \"true\",\n                        \"minimumCount\": 0\n                    }\n                }\n            ]\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Request spelling correction",
+              "filename": "Request spelling correction.bru",
+              "seq": 11,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  },
+                  {
+                    "name": "SdkVersion",
+                    "value": "postman-graph/v2.0",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"requests\": [\n    {\n      \"entityTypes\": [\n        \"driveItem\"\n      ],\n      \"query\": {\n        \"queryString\": \"informatino\"\n      },\n      \"from\": 0,\n      \"size\": 5\n    }\n  ],\n  \"queryAlterationOptions\": {\n    \"enableSuggestion\": true,\n    \"enableModification\": true\n  }\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search by Container ID",
+              "filename": "Search by Container ID.bru",
+              "seq": 7,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/v1.0/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerId:{{ContainerId}}\"\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{AppOnlyCertGraphToken}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search by Title in Container Copy",
+              "filename": "Search by Title in Container Copy.bru",
+              "seq": 6,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/v1.0/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"*\"\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{AppOnlyCertGraphToken}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search containers by Custom Property Copy",
+              "filename": "Search containers by Custom Property Copy.bru",
+              "seq": 4,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"department:'marketing'\"\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search containers by Description Copy",
+              "filename": "Search containers by Description Copy.bru",
+              "seq": 3,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"Description:'pineapple'\"\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{AppOnlyCertGraphToken}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search containers by Title Copy",
+              "filename": "Search containers by Title Copy.bru",
+              "seq": 2,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/v1.0/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"*\"\n            },\n            \"sharePointOneDriveOptions\": {\n              \"includeHiddenContent\": true\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{AppOnlyCertGraphToken}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search containers by Title-Description-CT Copy",
+              "filename": "Search containers by Title-Description-CT Copy.bru",
+              "seq": 5,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"drive\"\n            ],\n            \"query\": {\n                \"queryString\": \"Title:'mango' AND Description:'project' AND ContainerTypeId:{{ContainerTypeId}}\"\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search containers within CT Copy",
+              "filename": "Search containers within CT Copy.bru",
+              "seq": 1,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/v1.0/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerTypeId:{{ContainerTypeId}}\"\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{AppOnlyCertGraphToken}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search containers within CT Copy2",
+              "filename": "Search containers within CT Copy2.bru",
+              "seq": 20,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/v1.0/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"ContainerTypeId:{{ContainerTypeId}}AND name:'Copy'\"\n            },\n            \"fields\": [\n              \"id\",\n              \"name\",\n              \"contentclass\",\n              \"title\",\n              \"weburl\",\n              \"created\",\n              \"lastmodifiedtime\",\n              \"lastmodifiedtimeforretention\"]\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{AppOnlyCertGraphToken}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search content in Container Copy",
+              "filename": "Search content in Container Copy.bru",
+              "seq": 8,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"*\"\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{AppOnlyCertGraphToken}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search with basic collapse",
+              "filename": "Search with basic collapse.bru",
+              "seq": 17,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"listItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"test\"\n            },\n            \"fields\": [\n                \"title\"\n            ],\n            \"collapseProperties\": [\n                {\n                    \"fields\": [\n                        \"title\"\n                    ],\n                    \"limit\": 3\n                }\n            ]\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search with compound collapse",
+              "filename": "Search with compound collapse.bru",
+              "seq": 18,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"listItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"cat\"\n            },\n            \"fields\": [\n                \"title\",\n                \"createdBy\"\n            ],\n            \"collapseProperties\": [\n                {\n                    \"fields\": [\n                        \"title\",\n                        \"createdBy\"\n                    ],\n                    \"limit\": 3\n                }\n            ]\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search with multi-level collapse",
+              "filename": "Search with multi-level collapse.bru",
+              "seq": 19,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"listItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"cat\"\n            },\n            \"fields\": [\n                \"title\",\n                \"createdBy\"\n            ],\n            \"collapseProperties\": [\n                {\n                    \"fields\": [\n                        \"title\"\n                    ],\n                    \"limit\": 3\n                },\n                {\n                    \"fields\": [\n                        \"createdBy\"\n                    ],\n                    \"limit\": 2\n                }\n            ]\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Search with queryTemplate",
+              "filename": "Search with queryTemplate.bru",
+              "seq": 16,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\",\n                \"queryTemplate\": \"({searchTerms})\"\n            }\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read.All, Sites.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Sort search results",
+              "filename": "Sort search results.bru",
+              "seq": 10,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"sortProperties\": [\n                {\n                    \"name\": \"lastModifiedDateTime\",\n                    \"isDescending\": \"true\" // default is false\n                }\n            ]\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.ReadWrite* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Trim duplicated SharePoint search results",
+              "filename": "Trim duplicated SharePoint search results.bru",
+              "seq": 15,
+              "settings": {},
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "{{GraphUrl}}/beta/search/query",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "enabled": true
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"requests\": [\n        {\n            \"entityTypes\": [\n                \"driveItem\"\n            ],\n            \"query\": {\n                \"queryString\": \"contoso\"\n            },\n            \"trimDuplicate\": true\n        }\n    ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "// try {\n//     if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\n//     {\n//         console.log(\"You need to run *On behalf of a User | Get User Access Token* request first.\");\n//     }\n//     else\n//     {\n//         if (pm.response.status === \"Forbidden\")\n//         {\n//             console.log(\"You need to add user delegated permissions in your application to at least *Files.Read.All, Sites.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *On behalf of a User | Get User Access Token* request to update access token. \");\n//         }\n//     }\n// }\n// catch (e) {\n//     console.log(e);\n// }\n// ",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
             }
           ]
         }
@@ -5119,21 +5266,21 @@
           "type": "text"
         },
         {
-          "name": "GallatinGraphURL",
+          "name": "GallatinGraphUrl",
           "value": "https://microsoftgraph.chinacloudapi.cn",
           "enabled": true,
           "secret": false,
           "type": "text"
         },
         {
-          "name": "GraphURLBleu",
+          "name": "GraphUrlBleu",
           "value": "https://graph.svc.sovcloud.fr",
           "enabled": true,
           "secret": false,
           "type": "text"
         },
         {
-          "name": "GraphURL",
+          "name": "GraphUrl",
           "value": "https://graph.microsoft.com",
           "enabled": true,
           "secret": false,
@@ -5146,29 +5293,10 @@
   "root": {
     "request": {
       "auth": {
-        "mode": "oauth2",
-        "oauth2": {
-          "grantType": "authorization_code",
-          "callbackUrl": "https://oauth.pstmn.io/v1/browser-callback",
-          "authorizationUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/authorize",
-          "accessTokenUrl": "https://login.microsoftonline.com/{{ConsumingTenantId}}/oauth2/v2.0/token",
-          "refreshTokenUrl": "",
-          "clientId": "{{ClientID}}",
-          "clientSecret": "{{ClientSecret}}",
-          "scope": "FileStorageContainer.Selected Files.Read.All Sites.Read.All",
-          "state": "",
-          "pkce": false,
-          "credentialsPlacement": "body",
-          "credentialsId": "credentials",
-          "tokenPlacement": "header",
-          "tokenHeaderPrefix": "Bearer",
-          "tokenQueryKey": "access_token",
-          "autoFetchToken": true,
-          "autoRefreshToken": false
-        }
+        "mode": "none"
       },
       "script": {
-        "req": "// Download required library\nif (!bru.getEnvVar('jsrsasign-js')) {\n  console.log('downloading RSA library');\n  const axios = require('axios');\n  const response = await axios.get(\n    'https://kjur.github.io/jsrsasign/jsrsasign-all-min.js',\n  );\n  ///console.log(response.data);\n  console.log('Downloaded RSA library');\n  // Why encode and decode the RSA library?\n  // 1. Environments can't be loaded if they have new lines.\n  // 2. Bruno doesn't detect changes made to env vars through a script.\n  // 3. Therefore, changes made to env vars through a script are not saved.\n  // 4. The RSA library has new lines\n  // 5. if for some reason a user makes changes to the environment\n  //    then all current environment vars are saved, including the RSA libray,\n  //    which makes the environment file \"not loadable\"\n  // 6. Encoding converts the data into a single (very large) line\n  // 7. Problem solved  \n  let encodedJsRsa = encodeURI(response.data);\n  bru.setEnvVar('jsrsasign-js', encodedJsRsa);\n}",
+        "req": "// Download required library\nif (!bru.getEnvVar('jsrsasign-js')) {\n  console.log('downloading RSA library');\n  const axios = require('axios');\n  const response = await axios.get(\n    'https://kjur.github.io/jsrsasign/jsrsasign-all-min.js',\n  );\n  ///console.log(response.data);\n  console.log('Downloaded RSA library');\n  // Why encode and decode the RSA library?\n  // 1. Environments can't be loaded if they have new lines.\n  // 2. Bruno doesn't detect changes made to env vars through a script.\n  // 3. Therefore, changes made to env vars through a script are not saved.\n  // 4. The RSA library has new lines\n  // 5. if for some reason a user makes changes to the environment\n  //    then all current environment vars are saved, including the RSA libray,\n  //    which makes the environment file \"not loadable\"\n  // 6. Encoding converts the data into a single (very large) line\n  // 7. Problem solved  \n  let encodedJsRsa = encodeURI(response.data);\n  bru.setEnvVar('jsrsasign-js', encodedJsRsa);\n}\n\nif (!bru.getEnvVar('GraphUrl') && !bru.getGlobalEnvVar('GraphUrl'))\n{\n  bru.setVar('GraphUrl', 'https://graph.microsoft.com')\n}",
         "res": "if (res.body.access_token) {\n  bru.setEnvVar(\"DelegatedGraphToken\", res.body.access_token);\n}"
       }
     }
