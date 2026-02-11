@@ -15,10 +15,10 @@
 ==============================================================#>
 <#
 .SYNOPSIS
-    This script generates a JWT token and accesses a token from a consumer tenant for registering a container type.
+    This script generates a JWT and accesses a token from a consumer tenant for registering a container type.
 
 .DESCRIPTION
-    This script is used to generate a JWT token using a private key certificate and then use that token to access an access token from a consumer tenant.
+    This script is used to generate a JWT using a private key certificate and then use that token to access an access token from a consumer tenant.
     It then registers the container type in the consumer tenant using the obtained access token.
 
 .PARAMETER ClientId
@@ -62,12 +62,12 @@ param(
 <#
 Here's a list of the steps performed by the script:
 
-1. Build the JWT token to retrieve the consumer tenant access token
+1. Build the JWT to retrieve the consumer tenant access token
     1. Transform the thumbprint provided to base64 format
     2. Build the JWT header
     3. Build the JWT payload
     4. Build the JWT signature
-    5. Combine the JWT header, payload, and signature to create the JWT token.
+    5. Combine the JWT header, payload, and signature to create the JWT.
     6. Get the access token from the consumer tenant.
 2. Register the container type in the consumer tenant.
 #>
@@ -159,7 +159,7 @@ $SubjectClaim = $ClientId
 
 
     # Combine the JWT and signature
-    Write-Host "Combined the JWT header, payload, and signature to create the JWT token."
+    Write-Host "Combined the JWT header, payload, and signature to create the JWT."
     $SignedToken= "$UnsignedToken.$SafeSignature"
 
 
@@ -209,4 +209,5 @@ $SubjectClaim = $ClientId
 Catch {
     Write-Host "Error occurred: $_"
     Exit 1
+
 }
