@@ -7,6 +7,11 @@ export class OboAuthProvider extends AuthProvider {
         super(_jwt.tid!, scopes);
     }
     public async getToken(): Promise<string> {
+        if (!this.client) {
+            throw new Error(
+                'OBO authentication requires AZURE_CLIENT_SECRET or certificate configuration.'
+            );
+        }
         const request: OnBehalfOfRequest = {
             oboAssertion: this._jwt.token,
             scopes: this.scopes
@@ -14,5 +19,4 @@ export class OboAuthProvider extends AuthProvider {
         const result = await this.client.acquireTokenOnBehalfOf(request);
         return result!.accessToken;
     }
-
 }

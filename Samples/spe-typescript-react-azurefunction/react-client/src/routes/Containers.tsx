@@ -1,20 +1,15 @@
-import { Form, Link, useActionData, useLoaderData, useNavigate, useSubmit } from "react-router-dom";
+import { Link, useLoaderData, useNavigate, useRevalidator } from "react-router-dom";
 import { ILoaderParams } from "../common/ILoaderParams";
-import { Breadcrumb, BreadcrumbButton, BreadcrumbItem, Button, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Input, Label, OnSelectionChangeData, TableCellLayout, TableColumnDefinition, Tag, createTableColumn } from "@fluentui/react-components";
+import { Breadcrumb, BreadcrumbButton, BreadcrumbItem, Button, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Input, Label, OnSelectionChangeData, TableCellLayout, TableColumnDefinition, createTableColumn } from "@fluentui/react-components";
+import { Delete20Filled } from "@fluentui/react-icons";
 import { useState } from "react";
 import { Spinner } from "@microsoft/mgt-react";
 import { ChatController } from "../providers/ChatController";
 import { ContainersApiProvider } from "../providers/ContainersApiProvider";
-import { IContainer, IContainerClientCreateRequest } from "../../../common/schemas/ContainerSchemas";
+import { IContainer } from "../../../common/schemas/ContainerSchemas";
 
 export async function loader({ params }: ILoaderParams): Promise<IContainer[]> {
     return await ContainersApiProvider.instance.list();
-}
-
-export async function action({ params, request }: ILoaderParams) {
-    const formData = await request.formData();
-    const container = Object.fromEntries(formData) as IContainerClientCreateRequest;
-    return await ContainersApiProvider.instance.create(container);
 }
 
 export const Containers: React.FunctionComponent = () => {
@@ -23,11 +18,11 @@ export const Containers: React.FunctionComponent = () => {
     const [description, setDescription] = useState<string>("");
     const [showCreateDialog, setShowCreateDialog] = useState<boolean>(false);
     const [showCreatingSpinner, setShowCreatingSpinner] = useState<boolean>(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
+    const [showDeletingSpinner, setShowDeletingSpinner] = useState<boolean>(false);
     const navigate = useNavigate();
     const containers = useLoaderData() as IContainer[];
-    const container = useActionData() as IContainer | undefined;
-
-    const submit = useSubmit();
+    const revalidator = useRevalidator();
 
     const onSelectionChange = (e: any, data: OnSelectionChangeData) => {
         const selectedIds = Array.from(data.selectedItems) as string[];
@@ -36,17 +31,39 @@ export const Containers: React.FunctionComponent = () => {
         const selectedContainers = containers.filter((container) => selectedIds.includes(container.id));
         ChatController.instance.selectedContainers = selectedContainers;
     }
-    
+
+    const deleteSelectedContainers = async () => {
+        setShowDeletingSpinner(true);
+        const failed: string[] = [];
+        for (const id of selectedItems) {
+            try {
+                await ContainersApiProvider.instance.delete(id);
+            } catch {
+                failed.push(id);
+            }
+        }
+        setSelectedItems([]);
+        setShowDeletingSpinner(false);
+        setShowDeleteDialog(false);
+        revalidator.revalidate();
+        if (failed.length > 0) {
+            alert(`Failed to delete ${failed.length} container${failed.length > 1 ? 's' : ''}.`);
+        }
+    };
+
     const submitCreateContainer = async () => {
         setShowCreatingSpinner(true);
-        const formData = new FormData();
-        formData.append("displayName", displayName);
-        formData.append("description", description);
-        await submit(formData, { method: "POST" });
-        setDisplayName("");
-        setDescription("");
-        setShowCreateDialog(false);
-        setShowCreatingSpinner(false);
+        try {
+            await ContainersApiProvider.instance.create({ displayName, description });
+            setDisplayName("");
+            setDescription("");
+            setShowCreateDialog(false);
+            revalidator.revalidate();
+        } catch {
+            alert('Failed to create container.');
+        } finally {
+            setShowCreatingSpinner(false);
+        }
     }
 
     const columns: TableColumnDefinition<IContainer>[] = [
@@ -100,7 +117,6 @@ export const Containers: React.FunctionComponent = () => {
                     </BreadcrumbItem>
                 </Breadcrumb>
             </div>
-            <Form>
             <Dialog open={showCreateDialog}>
                 <DialogTrigger disableButtonEnhancement>
                     <Button appearance="primary" onClick={() => setShowCreateDialog(true)}>Create Container</Button>
@@ -110,7 +126,7 @@ export const Containers: React.FunctionComponent = () => {
                     <DialogBody>
                     <DialogTitle>New Container</DialogTitle>
                     <DialogContent className="create-container-content">
-                        Create a new container 
+                        Create a new container
                         <Label>Display name</Label>
                         <Input
                             placeholder="Display name"
@@ -131,7 +147,7 @@ export const Containers: React.FunctionComponent = () => {
                             />
                     </DialogContent>
                     <DialogActions>
-                        <Button appearance="primary" type="submit" onClick={submitCreateContainer}>Create</Button>
+                        <Button appearance="primary" onClick={submitCreateContainer}>Create</Button>
                         <DialogTrigger disableButtonEnhancement>
                         <Button appearance="secondary" onClick={() => setShowCreateDialog(false)}>Cancel</Button>
                         </DialogTrigger>
@@ -143,8 +159,15 @@ export const Containers: React.FunctionComponent = () => {
                         <p>Creating container...</p>
                     </>)}
                 </DialogSurface>
-                </Dialog>
-            </Form>
+            </Dialog>
+            <Button
+                appearance="subtle"
+                icon={<Delete20Filled />}
+                disabled={selectedItems.length === 0}
+                onClick={() => setShowDeleteDialog(true)}
+            >
+                Delete
+            </Button>
             <h2>Recent</h2>
             <DataGrid
                 items={containers}
@@ -167,7 +190,7 @@ export const Containers: React.FunctionComponent = () => {
             </DataGridHeader>
             <DataGridBody<IContainer>>
                 {({ item, rowId }) => (
-                    <DataGridRow<IContainer> 
+                    <DataGridRow<IContainer>
                         key={rowId}
                         selectionCell={{checkboxIndicator: { "aria-label": "Select row" }}}
                     >
@@ -180,6 +203,26 @@ export const Containers: React.FunctionComponent = () => {
                 )}
             </DataGridBody>
         </DataGrid>
+            <Dialog open={showDeleteDialog}>
+                <DialogSurface>
+                    {!showDeletingSpinner && (
+                    <DialogBody>
+                        <DialogTitle>Delete Container{selectedItems.length > 1 ? 's' : ''}</DialogTitle>
+                        <DialogContent>
+                            <p>Are you sure you want to delete {selectedItems.length} container{selectedItems.length > 1 ? 's' : ''}? This action cannot be undone.</p>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button appearance="primary" onClick={deleteSelectedContainers}>Delete</Button>
+                            <Button appearance="secondary" onClick={() => setShowDeleteDialog(false)}>Cancel</Button>
+                        </DialogActions>
+                    </DialogBody>
+                    )}
+                    {showDeletingSpinner && (<>
+                        <Spinner />
+                        <p>Deleting container{selectedItems.length > 1 ? 's' : ''}...</p>
+                    </>)}
+                </DialogSurface>
+            </Dialog>
         </div>
     );
 }

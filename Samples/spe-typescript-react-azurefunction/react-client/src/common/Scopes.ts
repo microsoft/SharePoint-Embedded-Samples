@@ -9,25 +9,27 @@ export const GRAPH_SITES_READ_ALL = 'Sites.Read.All';
 export const GRAPH_PRESENCE_READ_ALL = 'Presence.Read.All';
 export const GRAPH_OPENID_CONNECT_BASIC = ["openid", "profile", "offline_access"];
 export const GRAPH_FILESTORAGECONTAINER_SELECTED= 'FileStorageContainer.Selected';
+export const GRAPH_FILESTORAGECONTAINERTYPEREG_SELECTED = 'FileStorageContainerTypeReg.Selected';
 
 // microsoft graph scopes array
 export const GRAPH_SCOPES = [
     GRAPH_USER_READ,
     GRAPH_USER_READ_ALL,
     GRAPH_FILES_READ_WRITE_ALL,
-    GRAPH_SITES_READ_ALL,
     GRAPH_PRESENCE_READ_ALL,
     GRAPH_FILESTORAGECONTAINER_SELECTED,
+    GRAPH_FILESTORAGECONTAINERTYPEREG_SELECTED,
     ...GRAPH_OPENID_CONNECT_BASIC
 ];
 
-// sample app API scopes
-export const SAMPLE_API_CONTAINER_MANAGE = `api://${Constants.REACT_APP_AZURE_SERVER_APP_ID}/Container.Manage`;
+// CCA/OBO mode: custom API scope (only used when REACT_APP_AZURE_SERVER_APP_ID is set)
+export const SAMPLE_API_CONTAINER_MANAGE = Constants.REACT_APP_AZURE_SERVER_APP_ID
+    ? `api://${Constants.REACT_APP_AZURE_SERVER_APP_ID}/Container.Manage`
+    : undefined;
 
-// sample app API scopes array
-export const SAMPLE_API_SCOPES = [
-    SAMPLE_API_CONTAINER_MANAGE
-];
+export const SAMPLE_API_SCOPES = SAMPLE_API_CONTAINER_MANAGE
+    ? [SAMPLE_API_CONTAINER_MANAGE]
+    : undefined;
 
 // sharepoint scopes
 export const SP_CONTAINER_SELECTED = `${Constants.SP_ROOT_SITE_URL}/Container.Selected`;

@@ -1,11 +1,10 @@
 
 import { IContainer, IContainerClientCreateRequest, IContainerUpdateRequest } from '../../../common/schemas/ContainerSchemas';
 import * as Scopes from '../common/Scopes';
-import { CustomAppApiAuthProvider } from './CustomAppApiAuthProvider';
+import { GraphAuthProvider } from './GraphAuthProvider';
 
 export class ContainersApiProvider {
     public readonly apiUrl: string = process.env.REACT_APP_SAMPLE_API_URL || 'http://localhost:7071/api';
-    public readonly apiScope: string = Scopes.SAMPLE_API_CONTAINER_MANAGE;
 
     public static readonly instance: ContainersApiProvider = new ContainersApiProvider();
     private _authProvider: { getToken: () => Promise<string> };
@@ -15,11 +14,20 @@ export class ContainersApiProvider {
     public set authProvider(value: { getToken: () => Promise<string> }) {
         this._authProvider = value;
     }
-    
+
     private constructor() {
-        this._authProvider = CustomAppApiAuthProvider.instance;
+        const graphAuth = GraphAuthProvider.instance;
+        if (Scopes.SAMPLE_API_SCOPES) {
+            // CCA mode: acquire custom API token for backend OBO exchange
+            this._authProvider = {
+                getToken: () => graphAuth.getToken(Scopes.SAMPLE_API_SCOPES!)
+            };
+        } else {
+            // PCA mode: send Graph token directly to backend
+            this._authProvider = graphAuth;
+        }
     }
-    
+
     public async list(): Promise<IContainer[]> {
         const request: RequestInit = {
             method: 'GET',
@@ -74,6 +82,17 @@ export class ContainersApiProvider {
             body: JSON.stringify(containerUpdate)
         };
         return await this._send(`/containers/${id}`, request) as IContainer;
+    }
+
+    public async delete(id: string): Promise<void> {
+        const request: RequestInit = {
+            method: 'DELETE',
+            headers: this._headers(await this.authProvider.getToken())
+        };
+        const response = await fetch(this._url(`/containers/${id}`), request);
+        if (!response.ok) {
+            throw new Error(`Request failed: ${response.statusText}`);
+        }
     }
 
     public async registerContainerType(): Promise<any> {

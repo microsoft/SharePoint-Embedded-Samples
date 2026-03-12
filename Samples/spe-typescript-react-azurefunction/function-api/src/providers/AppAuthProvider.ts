@@ -11,6 +11,12 @@ export class AppAuthProvider extends AuthProvider {
     }
 
     public async getToken(): Promise<string> {
+        if (!this.client) {
+            throw new Error(
+                'App-only authentication requires AZURE_CLIENT_SECRET or certificate configuration. ' +
+                'This operation cannot be performed without credentials.'
+            );
+        }
         const result = await this.client.acquireTokenByClientCredential({
             scopes: this.scopes
         });

@@ -29,7 +29,7 @@ export const Home: React.FunctionComponent = () => {
     let adminConsentLink = '';
     if (isSignedIn) {
         tenantId = Providers.globalProvider.getActiveAccount!()?.tenantId || '';
-        adminConsentLink = `https://login.microsoftonline.com/${tenantId}/adminconsent?client_id=${Constants.REACT_APP_AZURE_SERVER_APP_ID}&redirect_uri=${window.location.origin}`;
+        adminConsentLink = `https://login.microsoftonline.com/${tenantId}/adminconsent?client_id=${Constants.AZURE_CLIENT_ID}&redirect_uri=${window.location.origin}`;
     }
     
     return (

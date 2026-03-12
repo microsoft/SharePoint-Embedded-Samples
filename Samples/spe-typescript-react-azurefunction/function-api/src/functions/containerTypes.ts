@@ -1,42 +1,36 @@
-import { app, HttpFunctionOptions, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { OboAuthProvider } from "../providers/OboAuthProvider";
-import { GraphProvider } from "../providers/GraphProvider";
-import { IContainerClientCreateRequest, IContainerUpdateRequest } from "../../../common/schemas/ContainerSchemas";
-import { ApiError, InvalidAccessTokenError, MissingContainerDisplayNameError } from "../common/Errors";
-import { AppAuthProvider } from "../providers/AppAuthProvider";
+import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
+import { ApiError, InvalidAccessTokenError } from "../common/Errors";
 import { JwtProvider } from "../providers/JwtProvider";
+import { createUserAuthProvider } from "../providers/AuthFactory";
 
 export async function registerContainerType(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     try {
         const jwt = JwtProvider.fromAuthHeader(request.headers.get('Authorization'));
-        if (!jwt || !await jwt.authorize() || !jwt.tid) {
+        if (!jwt || !jwt.validate() || !jwt.tid) {
             throw new InvalidAccessTokenError();
         }
-        
-        const graph = new GraphProvider(new OboAuthProvider(jwt));
-        const spRootSiteUrl = await graph.getRootSiteUrl();
-        if (!spRootSiteUrl) {
-            throw new ApiError('Unable to fetch root site url');
-        }
-        const authProvider = new AppAuthProvider(jwt.tid, spRootSiteUrl);
+
+        const authProvider = createUserAuthProvider(jwt, ['FileStorageContainerTypeReg.Selected']);
         const token = await authProvider.getToken();
+
         const containerTypeId = process.env.SPE_CONTAINER_TYPE_ID!;
-        const registerApi = `${spRootSiteUrl}/_api/v2.1/storageContainerTypes/${containerTypeId}/applicationPermissions`;
-        const registerPayload = {
-            value: [
-                {
-                    appId: process.env.AZURE_CLIENT_ID,
-                    delegated: ['full'],
-                    appOnly: ['full']
-                },
-                {
-                    appId: process.env.AZURE_SPA_CLIENT_ID,
-                    delegated: ['full'],
-                    appOnly: ['full']
-                }
-            ]
-        };
-        
+        const registerApi = `https://graph.microsoft.com/v1.0/storage/fileStorage/containerTypeRegistrations/${containerTypeId}`;
+        const grants = [
+            {
+                appId: process.env.AZURE_CLIENT_ID,
+                delegatedPermissions: ['full'],
+                applicationPermissions: ['full']
+            }
+        ];
+        if (process.env.AZURE_SPA_CLIENT_ID && process.env.AZURE_SPA_CLIENT_ID !== process.env.AZURE_CLIENT_ID) {
+            grants.push({
+                appId: process.env.AZURE_SPA_CLIENT_ID,
+                delegatedPermissions: ['full'],
+                applicationPermissions: ['full']
+            });
+        }
+        const registerPayload = { applicationPermissionGrants: grants };
+
         const registerResponse = await fetch(registerApi, {
             method: 'PUT',
             headers: {

@@ -9,12 +9,6 @@
 			"enabled": true
 		},
 		{
-			"key": "ClientSecret",
-			"value": "",
-			"type": "secret",
-			"enabled": true
-		},
-		{
 			"key": "ConsumingTenantId",
 			"value": "",
 			"type": "default",
@@ -36,18 +30,6 @@
 			"key": "TenantName",
 			"value": "",
 			"type": "default",
-			"enabled": true
-		},
-		{
-			"key": "CertThumbprint",
-			"value": "",
-			"type": "default",
-			"enabled": true
-		},
-		{
-			"key": "CertPrivateKey",
-			"value": "",
-			"type": "secret",
 			"enabled": true
 		}
 	],

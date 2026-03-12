@@ -1,12 +1,12 @@
 import { app, HttpFunctionOptions, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { DriveItem } from "@microsoft/microsoft-graph-types";
-import { OboAuthProvider } from "../providers/OboAuthProvider";
 import { GraphProvider, IDriveProcessingItem } from "../providers/GraphProvider";
 import { IContainerClientCreateRequest, IContainerColumn, IContainerCustomProperties, IContainerUpdateRequest } from "../../../common/schemas/ContainerSchemas";
 import { ApiError, InvalidAccessTokenError, MissingContainerDisplayNameError, MissingContainerIdError } from "../common/Errors";
 import { AppAuthProvider } from "../providers/AppAuthProvider";
 import { AzureDocAnalysisProvider, IReceiptFields } from "../providers/AzureDocAnalysisProvider";
 import { JwtProvider } from "../providers/JwtProvider";
+import { createUserAuthProvider } from "../providers/AuthFactory";
 
 const processingStatusColumn = 'DocProcessingCompleted';
 const processingExclusionFilter = `listitem/fields/${processingStatusColumn} ne true`
@@ -27,10 +27,10 @@ export async function disableContainerProcessing(request: HttpRequest, context: 
             throw new MissingContainerIdError();
         }
         const jwt = JwtProvider.fromAuthHeader(request.headers.get('Authorization'));
-        if (!jwt || !await jwt.authorize() || !jwt.tid) {
+        if (!jwt || !jwt.validate() || !jwt.tid) {
             throw new InvalidAccessTokenError();
         }
-        const graph = new GraphProvider(new AppAuthProvider(jwt.tid));
+        const graph = new GraphProvider(createUserAuthProvider(jwt));
 
         const container = await graph.getContainer(containerId);
         if (!container) {
@@ -38,7 +38,7 @@ export async function disableContainerProcessing(request: HttpRequest, context: 
         }
 
         await graph.removeDriveSubscriptions(containerId);
-        
+
         const subscriptionPropertyId = 'docProcessingSubscriptionId';
         const subscriptionPropertyExpiry = 'docProcessingSubscriptionExpiry';
         let props = container.customProperties || {} as any;
@@ -65,10 +65,10 @@ export async function enableContainerProcessing(request: HttpRequest, context: I
             throw new MissingContainerIdError();
         }
         const jwt = JwtProvider.fromAuthHeader(request.headers.get('Authorization'));
-        if (!jwt || !await jwt.authorize() || !jwt.tid) {
+        if (!jwt || !jwt.validate() || !jwt.tid) {
             throw new InvalidAccessTokenError();
         }
-        const graph = new GraphProvider(new AppAuthProvider(jwt.tid));
+        const graph = new GraphProvider(createUserAuthProvider(jwt));
         const container = await graph.getContainer(containerId);
         if (!container) {
             throw new Error(`Container ${containerId} not found`);
@@ -103,7 +103,7 @@ export async function enableContainerProcessing(request: HttpRequest, context: I
         const notificationUrl = `https://${host}/api/onDriveChanged?tid=${jwt.tid}&driveId=${containerId}`;
         console.log(`Subscribing to drive changes at ${notificationUrl}`);
         const subscription = await graph.subscribeToDriveChanges(containerId, notificationUrl);
-        
+
         const subscriptionPropertyId = 'docProcessingSubscriptionId';
         const subscriptionPropertyExpiry = 'docProcessingSubscriptionExpiry';
         const props = container.customProperties || {} as IContainerCustomProperties;
@@ -136,16 +136,23 @@ export async function onDriveChanged(request: HttpRequest, context: InvocationCo
     }
     const tenantId = request.query.get('tid') || '';
     const driveId = request.query.get('driveId') || '';
-    
+
     console.log(`Going to process drive ${driveId} for tenant ${tenantId}`);
     if (tenantId && driveId) {
-        const graph = new GraphProvider(new AppAuthProvider(tenantId));
-        processDrive(graph, driveId).catch((e) => console.error("Failed to process drive: " + e));
+        try {
+            const authProvider = new AppAuthProvider(tenantId);
+            await authProvider.getToken();
+            const graph = new GraphProvider(authProvider);
+            processDrive(graph, driveId).catch((e) => console.error("Failed to process drive: " + e));
+        } catch {
+            console.warn('Webhook processing skipped: AZURE_CLIENT_SECRET or certificate not configured. ' +
+                'Configure credentials to enable drive change processing.');
+        }
     }
     if (validationToken) {
-        return { 
+        return {
             headers: { 'Content-Type': 'text/plain' },
-            body: validationToken 
+            body: validationToken
         };
     }
     return { };

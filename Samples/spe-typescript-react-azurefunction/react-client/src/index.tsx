@@ -14,9 +14,8 @@ import * as Scopes from './common/Scopes';
 import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons';
 import { initializeIcons } from "@fluentui/react/lib/Icons";
 import ErrorPage from './ErrorPage';
-import { CustomAppApiAuthProvider } from './providers/CustomAppApiAuthProvider';
 import { Home } from './routes/Home';
-import { Containers, loader as containersLoader, action as createContainerAction } from './routes/Containers';
+import { Containers, loader as containersLoader } from './routes/Containers';
 import { ContainerBrowser, loader as containerLoader } from './components/ContainerBrowser';
 import { GraphAuthProvider } from './providers/GraphAuthProvider';
 
@@ -25,7 +24,7 @@ initializeFileTypeIcons();
 initializeIcons();
 
 const provider = new Msal2Provider({
-  clientId: Constants.REACT_APP_AZURE_SERVER_APP_ID,
+  clientId: (Constants.REACT_APP_AZURE_SERVER_APP_ID || Constants.AZURE_CLIENT_ID)!,
   authority: Constants.AUTH_AUTHORITY,
   scopes: Scopes.GRAPH_SCOPES,
   redirectUri: window.location.origin,
@@ -36,9 +35,7 @@ Providers.globalProvider = provider;
 
 provider.onStateChanged(() => {
   if (provider.state === ProviderState.SignedOut) {
-    CustomAppApiAuthProvider.instance.client.clearCache();
     GraphAuthProvider.instance._client.clearCache();
-    
   }
 });
 
@@ -56,7 +53,6 @@ const router = createBrowserRouter([
         path: "/containers",
         element: <Containers />,
         loader: containersLoader,
-        action: createContainerAction,
       },
       {
         path: "/containers/:containerId/:itemId?",

@@ -2,7 +2,7 @@
 import * as Graph from '@microsoft/microsoft-graph-client';
 import axios,{ AxiosRequestConfig, AxiosResponse } from 'axios';
 import { DriveItem } from "@microsoft/microsoft-graph-types";
-import { AuthProvider } from './AuthProvider';
+import { IAuthProvider } from './AuthProvider';
 import { IContainer, IContainerClientCreateRequest, IContainerColumn, IContainerServerCreateRequest, IContainerUpdateRequest } from '../../../common/schemas/ContainerSchemas'
 import { Readable } from 'stream';
 
@@ -23,10 +23,10 @@ export interface IDriveItemFields {
 
 export class GraphProvider {
     private _client: Graph.Client;
-    private _authProvider: AuthProvider;
+    private _authProvider: IAuthProvider;
     private _containerTypeId: string = process.env.SPE_CONTAINER_TYPE_ID!;
 
-    public constructor(authProvider: AuthProvider) {
+    public constructor(authProvider: IAuthProvider) {
         this._authProvider = authProvider;
         this._client = Graph.Client.init({
             authProvider: authProvider.getAuthHandler(),
