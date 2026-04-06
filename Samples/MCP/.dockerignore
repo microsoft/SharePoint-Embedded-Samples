@@ -1,0 +1,9 @@
+node_modules
+dist
+infra
+.env
+.env.*
+*.md
+.git
+.gitignore
+deploy.sh

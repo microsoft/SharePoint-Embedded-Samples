@@ -1,0 +1,21 @@
+# Claude Code local config — machine-specific, not needed in repo
+.claude/
+
+# Environment variables — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+
+# Node
+node_modules/
+
+# Editor
+.vscode/settings.json
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
