@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm professional legal palette */
+    --background: 40 33% 98%;
+    --foreground: 220 20% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 20%;
+
+    /* Warm slate blue - professional & trustworthy */
+    --primary: 215 45% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Soft cream secondary */
+    --secondary: 40 30% 95%;
+    --secondary-foreground: 220 20% 25%;
+
+    /* Muted warm tones */
+    --muted: 40 20% 94%;
+    --muted-foreground: 220 10% 50%;
+
+    /* Warm coral accent */
+    --accent: 15 75% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 215 45% 35%;
+
+    --radius: 0.625rem;
+
+    /* Legal theme specific */
+    --legal-navy: 220 35% 20%;
+    --legal-navy-foreground: 0 0% 100%;
+    --legal-slate: 215 25% 30%;
+    --legal-gold: 40 70% 55%;
+    --legal-success: 155 50% 45%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 220 20% 30%;
+    --sidebar-primary: 215 45% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 30% 95%;
+    --sidebar-accent-foreground: 220 20% 25%;
+    --sidebar-border: 220 15% 90%;
+    --sidebar-ring: 215 45% 35%;
+  }
+
+  .dark {
+    --background: 220 25% 10%;
+    --foreground: 40 20% 95%;
+
+    --card: 220 25% 13%;
+    --card-foreground: 40 20% 95%;
+
+    --popover: 220 25% 13%;
+    --popover-foreground: 40 20% 95%;
+
+    --primary: 215 55% 55%;
+    --primary-foreground: 220 25% 10%;
+
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 40 20% 90%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 15 65% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 55% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 22%;
+    --input: 220 20% 22%;
+    --ring: 215 55% 55%;
+
+    --legal-navy: 220 30% 15%;
+    --legal-navy-foreground: 40 20% 95%;
+
+    --sidebar-background: 220 25% 12%;
+    --sidebar-foreground: 40 20% 90%;
+    --sidebar-primary: 215 55% 55%;
+    --sidebar-primary-foreground: 220 25% 10%;
+    --sidebar-accent: 220 20% 18%;
+    --sidebar-accent-foreground: 40 20% 90%;
+    --sidebar-border: 220 20% 20%;
+    --sidebar-ring: 215 55% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .legal-card {
+    @apply bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .legal-card-selected {
+    @apply bg-card rounded-lg border-2 border-primary shadow-md;
+  }
+
+  .legal-sidebar {
+    @apply bg-sidebar border-r border-sidebar-border;
+  }
+
+  .legal-header {
+    @apply bg-legal-navy text-legal-navy-foreground;
+  }
+
+  .legal-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .legal-badge-active {
+    @apply bg-legal-success/15 text-legal-success;
+  }
+
+  .legal-badge-pending {
+    @apply bg-legal-gold/15 text-legal-gold;
+  }
+}
+
+@layer utilities {
+  .gradient-legal {
+    background: linear-gradient(135deg, hsl(var(--legal-navy)) 0%, hsl(var(--legal-slate)) 100%);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
