@@ -1,73 +1,94 @@
-# Welcome to your Lovable project
+# LegalDocs Sample
 
-## Project info
+This sample is a React + TypeScript web app that demonstrates a legal-workflow experience built on SharePoint Embedded. It includes:
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+- Azure AD authentication with MSAL
+- Legal case containers and folder navigation
+- Document-centric workspace views
+- Copilot-style chat integration using the SharePoint Embedded Copilot Chat React SDK
 
-## How can I edit this code?
+## Project Overview
 
-There are several ways of editing your application.
+The app provides a Contoso legal dashboard where users can:
 
-**Use Lovable**
+- Sign in with Microsoft Entra ID
+- View existing legal case containers
+- Create new case containers
+- Browse case folders and documents
+- Use assistant panels for summaries, tools, reports, and Copilot interactions
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Key technologies:
 
-Changes made via Lovable will be committed automatically to this repo.
+- React 18 + TypeScript
+- Vite
+- MSAL Browser + MSAL React
+- Fluent UI + Tailwind CSS
+- Microsoft Graph APIs for SharePoint Embedded operations
 
-**Use your preferred IDE**
+## Requirements
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Before you run the sample, make sure you have:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js 18+ (or current LTS)
+- npm (comes with Node.js)
+- A Microsoft 365 tenant with SharePoint Embedded enabled
+- An Azure AD app registration for SPA sign-in
+- A valid SharePoint Embedded container type
 
-Follow these steps:
+## Setup
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. Install dependencies from the LegalDocs folder:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. Configure tenant and app values in `src/config/appConfig.ts`:
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+- `clientId`: Azure AD application (client) ID
+- `tenantId`: Microsoft Entra tenant ID
+- `containerTypeId`: SharePoint Embedded container type ID
+- `sharePointHostname`: SharePoint hostname for your tenant (for example: `https://contoso.sharepoint.com`)
+
+3. Verify API permissions and scopes in your app registration:
+
+- Microsoft Graph scopes used by the app include:
+  - `Files.Read.All`
+  - `Sites.Read.All`
+  - `FileStorageContainer.Selected`
+- SharePoint scope format used by the app:
+  - `{sharePointHostname}/Container.Selected`
+
+4. Ensure the local SDK package is available at:
+
+- `lib/microsoft-sharepointembedded-copilotchat-react-1.0.9.tgz`
+
+## Run the App
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Then open the local Vite URL shown in the terminal (usually `http://localhost:5173`).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Build and Preview
 
-**Use GitHub Codespaces**
+Create a production build:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+npm run build
+```
 
-## What technologies are used for this project?
+Preview the build locally:
 
-This project is built with:
+```bash
+npm run preview
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## License
 
-## How can I deploy this project?
+This project is licensed under the MIT License. See the root license file for details:
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- `../../LICENSE`
