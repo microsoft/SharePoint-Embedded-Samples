@@ -13,9 +13,18 @@ The app provides a Contoso legal dashboard where users can:
 
 - Sign in with Microsoft Entra ID
 - View existing legal case containers
+
+![alt text](./images/CaseOverview.png)
+
 - Create new case containers
 - Browse case folders and documents
 - Use assistant panels for summaries, tools, reports, and Copilot interactions
+
+![alt text](./images/AIOverview.png)
+
+- Share with internal and external users
+
+![alt text](./images/Share.png)
 
 Key technologies:
 
