@@ -68,9 +68,7 @@ npm install
 - SharePoint scope format used by the app:
   - `{sharePointHostname}/Container.Selected`
 
-4. Ensure the local SDK package is available at:
 
-- `lib/microsoft-sharepointembedded-copilotchat-react-1.0.9.tgz`
 
 ## Run the App
 
