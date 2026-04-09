@@ -3,6 +3,10 @@ This sample application simulates a common project management use case where doc
 
 View project dashboard information, navigate into the projects you have access and begin to collaborate with other project members, and experience full Microsoft Office collaboration right within your application.
 
+![alt text](./images/dashboard.png)
+
+![alt text](./images/projects.png)
+
 ## Getting started
 
 **Use your preferred IDE**
