@@ -1,0 +1,18 @@
+{
+  "name": "sp-embedded-webhook-listener",
+  "version": "1.0.0",
+  "description": "Webhook listener for SharePoint Embedded container",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "tunnel": "npx localtunnel --port 3000 --subdomain spwebhookdemo"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "localtunnel": "^2.0.2"
+  }
+}
