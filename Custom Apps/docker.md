@@ -24,19 +24,19 @@ Requirements:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *If you are in Windows you must be using WSL and clone the repo in the WSL filesystem. This is important, if you do it in the Windows filesystem it won’t work as expected.
 ![shell commands](./images/step1b.png)
 
-2. Copy the configuration files into the following raas-dev-kitchen folders.
+2. Copy the configuration files into the following sample folders.
 ```sh
-cp .env ~/projects/raas-dev-kitchen/Samples/raas-spa-azurefunction/packages/client-app/
+cp .env ~/projects/SharePoint-Embedded-Samples/Custom Apps/boilerplate-react-azurefunction/packages/client-app/
 
-cp appsettings.json ~/projects/raas-dev-kitchen/Samples/raas-asp.net-webservice/
+cp appsettings.json ~/projects/SharePoint-Embedded-Samples/Custom Apps/boilerplate-aspnet-webservice/
 
-cp local.settings.json ~/projects/raas-dev-kitchen/Samples/raas-spa-azurefunction/packages/azure-functions/
+cp local.settings.json ~/projects/SharePoint-Embedded-Samples/Custom Apps/boilerplate-react-azurefunction/packages/azure-functions/
 ```
 ![step2b](./images/step2b.png)
 
-3. Open the raas-dev-kitchen sample folders in VSCode. You can do this for each of the samples:
- ‘`raas-dev-kitchen/Samples/raas-asp.net-webservice/`’ and 
- ‘`raas-dev-kitchen/Samples/raas-spa-azurefunction`'
+3. Open the sample folders in VSCode. You can do this for each of the samples:
+ ‘`SharePoint-Embedded-Samples/Custom Apps/boilerplate-aspnet-webservice/`’ and 
+ ‘`SharePoint-Embedded-Samples/Custom Apps/boilerplate-react-azurefunction`’
 
 ![step3b](./images/step3b.png)
 
@@ -64,7 +64,7 @@ Go ahead and reopen in container. If you do not see this popup, you can always c
 
 ![step6b](./images/step6b.png)
 
-7.	For ‘raas-asp.net-webservice’:
+7.	For ‘boilerplate-aspnet-webservice’:
 
 a.	You will need to open the file `appsettings.json`.
 
@@ -87,7 +87,7 @@ c.	From the terminal you can start the sample service with ‘dotnet build’ en
 d.	Finally you can go to your local browser and access [https://localhost:57750](https://localhost:57750). You will need to accept the self-signed certificate before you can go to the demo. 
 
 
-8.	For ‘`raas-asp.net-webservice`’:
+8.	For ‘`boilerplate-react-azurefunction`’:
 
 a.	Once this sample opens in the devcontainer you should see on the left toolbar the azure functions icon. Please click on that.
 

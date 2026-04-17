@@ -21,4 +21,4 @@ Feel free to contribute by adding new collections or improving existing ones. Pl
 
 ## License
 
-This project is licensed under the [MIT License](../LICENSE).
+This project is licensed under the [MIT License](../../LICENSE).
