@@ -8,7 +8,7 @@ If you have not used Postman before, first create an [account](https://www.postm
 
 ## Set up SharePoint Embedded Postman Collection
 
-Download the [SharePoint Embedded Postman Collection]([https://github.com/microsoft/syntex-repository-services/blob/main/Postman/SyntexRepositoryServices.postman_collection.json](https://github.com/microsoft/SharePoint-Embedded-Samples/blob/main/Postman/SharePoint%20Embedded.postman_collection.json)) located within this directory.
+Download the [SharePoint Embedded Postman Collection](https://github.com/microsoft/SharePoint-Embedded-Samples/blob/main/tools/api-clients/Postman/SharePoint%20Embedded.postman_collection.json) located within this directory.
 
 In the top left-hand window, Click ☰, "File", "Import" and "Choose Files" to import the Postman Collection ```.json``` file that was just downloaded.
 
