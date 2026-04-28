@@ -15,12 +15,12 @@ const normalizeSharePointUrl = (url: string): string => {
 
 export const appConfig = {
   // Azure AD App Registration
-  clientId: "50cbacb0-e16f-4f63-a678-01359bfac87b",
-  tenantId: "fc14a141-120b-4368-b125-571da82b7865",
+  clientId: "<CLIENT_ID>",
+  tenantId: "<TENANT_ID>",
   
   // SharePoint Embedded
-  containerTypeId: "9162b1be-e7db-4b0d-bc1a-331df4dea97e",
-  sharePointHostname: "https://pucelikdemo.sharepoint.com",
+  containerTypeId: "<CONTAINER_TYPE_ID>",
+  sharePointHostname: "https://<TENANT>>.sharepoint.com",
   
   // Utility function for URL normalization
   normalizeSharePointUrl,
