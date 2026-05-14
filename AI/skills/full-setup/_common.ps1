@@ -3,6 +3,8 @@
 
 $ErrorActionPreference = "Stop"
 $GraphBase = "https://graph.microsoft.com"
+# User-Agent header identifies traffic from this skill in Graph telemetry.
+$SpeSkillUserAgent = "spe-agent-skills/1.0 (full-setup)"
 
 # Check execution policy and prompt for consent if restricted
 try {
@@ -39,9 +41,10 @@ function Invoke-GraphRequest {
         [int]$MaxRetries = 3
     )
     $params = @{
-        Uri     = $Uri
-        Method  = $Method
-        Headers = $Headers
+        Uri       = $Uri
+        Method    = $Method
+        Headers   = $Headers
+        UserAgent = $SpeSkillUserAgent
     }
     if ($Body) { $params.Body = $Body }
 
