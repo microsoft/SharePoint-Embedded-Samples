@@ -1,7 +1,9 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-    Step 7-8: Create container, upload proof file, generate preview link.
+    Stage 5: Create container, upload proof file, generate preview link.
+    Step 5.1 — Create and activate the container.
+    Step 5.2 — Upload proof file, grant owner permission, generate preview URL.
 .PARAMETER ContainerName
     Display name for the container. Default: "My First Container"
 #>
@@ -19,8 +21,8 @@ $containerTypeId = $spe["CONTAINER_TYPE_ID"]
 $speHeaders = Get-SpeHeaders
 $bootstrapHeaders = Get-BootstrapHeaders
 
-# ── Step 7: Create and activate container ─────────────────────────────────────
-Write-Host "`n=== Step 7: First Container ===" -ForegroundColor Cyan
+# ── Stage 5, Step 5.1: Create and activate container ─────────────────────────
+Write-Host "`n=== Stage 5 — Step 5.1: First Container ===" -ForegroundColor Cyan
 
 $container = $null
 try {
@@ -82,8 +84,8 @@ if ($container.status -ne "active") {
     }
 }
 
-# ── Step 8: Upload proof file, grant access, generate preview ─────────────────
-Write-Host "`n=== Step 8: Proof File & Preview Link ===" -ForegroundColor Cyan
+# ── Stage 5, Step 5.2: Upload proof file, grant access, generate preview ──────
+Write-Host "`n=== Stage 5 — Step 5.2: Proof File & Preview Link ===" -ForegroundColor Cyan
 
 $drive = Invoke-GraphRequest -Uri "$GraphBase/v1.0/storage/fileStorage/containers/$containerId/drive" -Headers $speHeaders
 $driveId = $drive.id

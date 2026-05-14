@@ -43,26 +43,26 @@ function Pause-Step {
     }
 }
 
-# Step 1: Azure CLI auth
+# Stage 1: Azure CLI auth
 & "$scriptDir\01-auth.ps1"
 Pause-Step "Entra App Registration"
 
-# Step 2-3: Create app + permissions
+# Stage 2: Create app + permissions (Steps 2.1–2.2)
 & "$scriptDir\02-app.ps1" -AppDisplayName $AppDisplayName
 Pause-Step "Device Code Authentication"
 
-# Step 4: SPE token via device code
+# Stage 3: SPE token via device code
 & "$scriptDir\03-token.ps1"
 Pause-Step "Container Type"
 
-# Step 5-6: Container type + registration
+# Stage 4: Container type + registration (Steps 4.1–4.2)
 & "$scriptDir\04-container-type.ps1" -ContainerTypeName $ContainerTypeName -BillingClassification $BillingClassification
 Pause-Step "Container + Proof File"
 
-# Step 7-8: Container + upload + preview
+# Stage 5: Container + upload + preview (Steps 5.1–5.2)
 & "$scriptDir\05-container.ps1" -ContainerName $ContainerName
 
-# Step 9: Cleanup (optional)
+# Stage 6 (optional): Cleanup
 if (-not $SkipCleanup) {
     Write-Host ""
     $cleanup = Read-Host "  Clean up resources? Deletes container type + app (y/n)"

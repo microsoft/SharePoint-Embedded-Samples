@@ -1,7 +1,9 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-    Step 2-3: Create Entra app registration and add SPE API permissions.
+    Stage 2: Create Entra app registration and add SPE API permissions.
+    Step 2.1 — Create or reuse the Entra app.
+    Step 2.2 — Set delegated Graph/SPE API permissions.
 .PARAMETER AppDisplayName
     Display name for the app registration. Default: "My SPE App"
 #>
@@ -17,8 +19,8 @@ $tenantId = $spe["TENANT_ID"]
 $headers = Get-BootstrapHeaders
 $portalBase = "https://portal.azure.com/$tenantId/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade"
 
-# ── Step 2: Create or find Entra app ──────────────────────────────────────────
-Write-Host "`n=== Step 2: Entra App Registration ===" -ForegroundColor Cyan
+# ── Stage 2, Step 2.1: Create or find Entra app ──────────────────────────────
+Write-Host "`n=== Stage 2 — Step 2.1: Entra App Registration ===" -ForegroundColor Cyan
 
 $app = $null
 
@@ -81,8 +83,8 @@ if ($needsPatch) {
     Write-Host "  Updated app: publicClient redirect URI and settings configured" -ForegroundColor Green
 }
 
-# ── Step 3: Add API permissions ───────────────────────────────────────────────
-Write-Host "`n=== Step 3: API Permissions ===" -ForegroundColor Cyan
+# ── Stage 2, Step 2.2: Add API permissions ────────────────────────────────────
+Write-Host "`n=== Stage 2 — Step 2.2: API Permissions ===" -ForegroundColor Cyan
 
 $permBody = @{
     requiredResourceAccess = @(

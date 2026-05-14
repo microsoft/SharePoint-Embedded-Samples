@@ -12,22 +12,21 @@ AI agent skills for SharePoint Embedded — from initial setup to day-2 operatio
 | Skill | When to Use |
 |-------|-------------|
 | [full-setup/](full-setup/SKILL.md) | First-time environment setup (Entra app, container type, container) |
-| [container-management/](container-management/SKILL.md) | Day-2 container operations (list, inspect, archive, delete, permissions) |
-| [content-operations/](content-operations/SKILL.md) | File and folder operations inside containers |
-| [billing-setup/](billing-setup/SKILL.md) | Production billing configuration |
+
+> Day-2 management, content operations, and billing-configuration skills are tracked on the roadmap and will be added in follow-up PRs.
 
 ## Quick Start
 
 Give an agent this prompt:
 
 ```
-Read Skills/full-setup/SKILL.md and run the SPE setup scripts to set up SharePoint Embedded on my tenant.
+Read skills/full-setup/SKILL.md and run the SPE setup scripts to set up SharePoint Embedded on my tenant.
 ```
 
 Or run it yourself:
 
 ```powershell
-cd Skills/full-setup
+cd skills/full-setup
 .\spe-setup.ps1
 ```
 
@@ -35,7 +34,7 @@ cd Skills/full-setup
 
 - Azure CLI (`az --version`)
 - PowerShell 5.1+ or 7+
-- Tenant admin access (Global Admin or Application Admin)
+- **Application Administrator** role on the tenant (sufficient to create the Entra app registration and consent to the delegated SPE permissions during interactive sign-in). Global Administrator also works but is not required.
 
 ## Auth Architecture
 

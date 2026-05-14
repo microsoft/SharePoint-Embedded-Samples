@@ -1,7 +1,9 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-    Step 5-6: Create container type and register on tenant.
+    Stage 4: Create container type and register on tenant.
+    Step 4.1 — Create or reuse the container type.
+    Step 4.2 — Register the container type on the tenant.
 .PARAMETER ContainerTypeName
     Name for the container type. Default: "My Container Type"
 .PARAMETER BillingClassification
@@ -19,8 +21,8 @@ $spe = Assert-EnvKeys @("TENANT_ID", "CLIENT_ID")
 $appId = $spe["CLIENT_ID"]
 $speHeaders = Get-SpeHeaders
 
-# ── Step 5: Create or find container type ─────────────────────────────────────
-Write-Host "`n=== Step 5: Container Type ===" -ForegroundColor Cyan
+# ── Stage 4, Step 4.1: Create or find container type ─────────────────────────
+Write-Host "`n=== Stage 4 — Step 4.1: Container Type ===" -ForegroundColor Cyan
 
 $ctList = Invoke-GraphRequest -Uri "$GraphBase/v1.0/storage/fileStorage/containerTypes" -Headers $speHeaders
 $ct = $ctList.value | Where-Object { $_.owningAppId -eq $appId } | Select-Object -First 1
@@ -43,8 +45,8 @@ if ($ct) {
 # IMPORTANT: Graph response field is "id" NOT "containerTypeId"
 $containerTypeId = $ct.id
 
-# ── Step 6: Register container type on tenant ─────────────────────────────────
-Write-Host "`n=== Step 6: Container Type Registration ===" -ForegroundColor Cyan
+# ── Stage 4, Step 4.2: Register container type on tenant ─────────────────────
+Write-Host "`n=== Stage 4 — Step 4.2: Container Type Registration ===" -ForegroundColor Cyan
 
 # PUT is idempotent - always call to ensure permissions are correct
 # CRITICAL: Must include applicationPermissionGrants or container creation fails
