@@ -7,7 +7,7 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@azure/msal-node": "^1.14.5",
+    "@azure/msal-node": "^5.2.2",
     "@microsoft/microsoft-graph-client": "^3.0.4",
     "isomorphic-fetch": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
