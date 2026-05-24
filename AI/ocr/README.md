@@ -209,7 +209,7 @@ private static async analyzeReceiptStream(stream: Readable): Promise<any> {
     }
 ```
 
-Create method `removeUnwantedFields` to remove the undesireable fields in ACS’s repsonse.
+Create method `removeUnwantedFields` to remove the undesireable fields in ACS’s response.
 ```ts 
 private static removeUnwantedFields(fields: any) {
         for (const prop in fields) {
