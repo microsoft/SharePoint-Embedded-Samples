@@ -5,7 +5,6 @@ This sample is a React + TypeScript web app that demonstrates a legal-workflow e
 - Azure AD authentication with MSAL
 - Legal case containers and folder navigation
 - Document-centric workspace views
-- Copilot-style chat integration using the SharePoint Embedded Copilot Chat React SDK
 
 ## Project Overview
 
@@ -18,7 +17,7 @@ The app provides a Contoso legal dashboard where users can:
 
 - Create new case containers
 - Browse case folders and documents
-- Use assistant panels for summaries, tools, reports, and Copilot interactions
+- Use assistant panels for summaries, tools, and reports
 
 ![alt text](./images/AIOverview.png)
 
@@ -57,7 +56,6 @@ npm install
 - `clientId`: Azure AD application (client) ID
 - `tenantId`: Microsoft Entra tenant ID
 - `containerTypeId`: SharePoint Embedded container type ID
-- `sharePointHostname`: SharePoint hostname for your tenant (for example: `https://contoso.sharepoint.com`)
 
 3. Verify API permissions and scopes in your app registration:
 
@@ -65,8 +63,6 @@ npm install
   - `Files.Read.All`
   - `Sites.Read.All`
   - `FileStorageContainer.Selected`
-- SharePoint scope format used by the app:
-  - `{sharePointHostname}/Container.Selected`
 
 
 
