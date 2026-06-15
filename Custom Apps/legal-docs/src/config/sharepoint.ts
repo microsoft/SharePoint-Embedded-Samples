@@ -5,9 +5,6 @@ export const SHAREPOINT_CONFIG = {
   CLIENT_ID: "<CLIENT_ID>",
   TENANT_ID: "<TENANT_ID>",
   CONTAINER_TYPE_ID: "<CONTAINER_TYPE_ID>",
-  // SharePoint hostname for Copilot API authentication (must include https://)
-  // Use tenant name format: https://{tenant}.sharepoint.com
-  SHAREPOINT_HOSTNAME: "https://<TENANT>.sharepoint.com",
 } as const;
 
 // MSAL Configuration
@@ -28,37 +25,9 @@ export const MSAL_CONFIG = {
 export const GRAPH_ENDPOINT = "https://graph.microsoft.com/v1.0";
 export const GRAPH_BETA_ENDPOINT = "https://graph.microsoft.com/beta";
 
-// Scopes for Copilot - using SharePoint Container.Selected as per SDK documentation
-// The SDK requires this scope pattern: {hostname}/Container.Selected
-export const COPILOT_SCOPES = [`${SHAREPOINT_CONFIG.SHAREPOINT_HOSTNAME}/Container.Selected`];
-
-// Graph API scopes for search-based Copilot functionality
-// Used when calling Graph API endpoints directly (current implementation)
+// Graph API scopes
 export const GRAPH_SEARCH_SCOPES = [
   "https://graph.microsoft.com/Files.Read.All",
   "https://graph.microsoft.com/Sites.Read.All",
 ];
 
-// SharePoint-specific scopes for container access
-export const SHAREPOINT_CONTAINER_SCOPES = [`${SHAREPOINT_CONFIG.SHAREPOINT_HOSTNAME}/Container.Selected`];
-
-// Copilot Chat Auth Provider Interface (matches SDK's IChatEmbeddedApiAuthProvider)
-export interface IChatEmbeddedApiAuthProvider {
-  hostname: string;
-  getToken(): Promise<string>;
-}
-
-// Copilot Chat Launch Configuration (matches SDK's ChatLaunchConfig)
-export interface ChatLaunchConfig {
-  header?: string;
-  zeroQueryPrompts?: {
-    headerText: string;
-    promptSuggestionList?: Array<{
-      suggestionText: string;
-    }>;
-  };
-  suggestedPrompts?: string[];
-  instruction?: string;
-  locale?: string;
-  chatInputPlaceholder?: string;
-}

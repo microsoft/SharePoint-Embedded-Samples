@@ -14,7 +14,6 @@ interface AuthContextType {
   login: () => Promise<void>;
   logout: () => void;
   getAccessToken: (resource?: string) => Promise<string | null>;
-  getSharePointToken: (hostname: string) => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -148,20 +147,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     }
   };
-  
-  // Get a token specifically for SharePoint
-  const getSharePointToken = async (hostname: string): Promise<string | null> => {
-    try {
-      // Extract the hostname without protocol
-      const domain = hostname.replace(/^https?:\/\//, '');
-      
-      // Use the SharePoint Online scope format with the specific domain
-      return await getAccessToken(`https://${domain}`);
-    } catch (error) {
-      console.error('Failed to get SharePoint token:', error);
-      return null;
-    }
-  };
 
   return (
     <AuthContext.Provider value={{ 
@@ -169,8 +154,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       user,
       login, 
       logout, 
-      getAccessToken,
-      getSharePointToken
+      getAccessToken
     }}>
       {children}
     </AuthContext.Provider>
