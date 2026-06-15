@@ -4,7 +4,6 @@ import { Breadcrumb, BreadcrumbButton, BreadcrumbItem, Button, DataGrid, DataGri
 import { Delete20Filled } from "@fluentui/react-icons";
 import { useState } from "react";
 import { Spinner } from "@microsoft/mgt-react";
-import { ChatController } from "../providers/ChatController";
 import { ContainersApiProvider } from "../providers/ContainersApiProvider";
 import { IContainer } from "../../../common/schemas/ContainerSchemas";
 
@@ -27,9 +26,6 @@ export const Containers: React.FunctionComponent = () => {
     const onSelectionChange = (e: any, data: OnSelectionChangeData) => {
         const selectedIds = Array.from(data.selectedItems) as string[];
         setSelectedItems(selectedIds);
-
-        const selectedContainers = containers.filter((container) => selectedIds.includes(container.id));
-        ChatController.instance.selectedContainers = selectedContainers;
     }
 
     const deleteSelectedContainers = async () => {

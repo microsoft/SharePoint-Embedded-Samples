@@ -7,7 +7,7 @@ Runnable sample applications demonstrating SharePoint Embedded integration patte
 | [boilerplate-react-azurefunction](./boilerplate-react-azurefunction) | React + Azure Functions | Reference boilerplate: SPA with an Azure Functions OBO proxy |
 | [boilerplate-aspnet-webservice](./boilerplate-aspnet-webservice) | C# / ASP.NET Core | Reference boilerplate: server-side MVC app with tenant onboarding |
 | [boilerplate-typescript-react](./boilerplate-typescript-react) | TypeScript + React + Azure Functions | TypeScript variant of the React boilerplate |
-| [legal-docs](./legal-docs) | React + Fluent UI + Copilot SDK | Legal case management with AI-assisted document review |
+| [legal-docs](./legal-docs) | React + Fluent UI | Legal case management sample |
 | [project-management](./project-management) | React + Vite + Tailwind + shadcn-ui | Project collaboration app |
 | [webhook](./webhook) | Node.js | Minimal Graph API change notification listener |
 

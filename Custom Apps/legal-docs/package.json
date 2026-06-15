@@ -15,7 +15,6 @@
     "@azure/msal-react": "^3.0.23",
     "@fluentui/react": "^8.125.3",
     "@hookform/resolvers": "^3.10.0",
-    "@microsoft/sharepointembedded-copilotchat-react": "file:lib/microsoft-sharepointembedded-copilotchat-react-1.0.9.tgz",
     "@playwright/test": "^1.57.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
