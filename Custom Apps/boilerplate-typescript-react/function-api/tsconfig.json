@@ -11,6 +11,7 @@
     ],
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "skipLibCheck": true,
     "strict": true,
     "sourceMap": true,
     "outDir": "./dist",

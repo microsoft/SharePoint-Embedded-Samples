@@ -15,14 +15,14 @@
     "publish-settings": "func azure functionapp publish {{AZURE_FUNCTION_APP_NAME}} --publish-settings-only"
   },
   "dependencies": {
-    "@azure/ai-form-recognizer": "^5.0.0",
-    "@azure/functions": "^4.0.0",
-    "@azure/msal-node": "^2.6.4",
+    "@azure/ai-form-recognizer": "^5.1.0",
+    "@azure/functions": "^4.8.2",
+    "@azure/msal-node": "^2.16.3",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@microsoft/microsoft-graph-types": "^2.40.0",
-    "@types/jsonwebtoken": "^9.0.6",
-    "axios": "^1.6.8",
-    "jsonwebtoken": "^9.0.2",
+    "@microsoft/microsoft-graph-types": "^2.43.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "axios": "^1.18.1",
+    "jsonwebtoken": "^9.0.3",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
