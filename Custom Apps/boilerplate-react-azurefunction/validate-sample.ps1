@@ -10,13 +10,13 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-. (Join-Path $PSScriptRoot '..\..\Tools\powershell\SampleValidation.ps1')
+. (Join-Path $PSScriptRoot '../../Tools/powershell/SampleValidation.ps1')
 
-$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$toolRoot = Join-Path $repoRoot 'Tools\sample-validation'
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+$toolRoot = Join-Path $repoRoot 'Tools/sample-validation'
 $appRoot = $PSScriptRoot
-$clientRoot = Join-Path $appRoot 'packages\client-app'
-$functionsRoot = Join-Path $appRoot 'packages\azure-functions'
+$clientRoot = Join-Path $appRoot 'packages/client-app'
+$functionsRoot = Join-Path $appRoot 'packages/azure-functions'
 $clientEnvPath = Join-Path $clientRoot '.env'
 $localSettingsPath = Join-Path $functionsRoot 'local.settings.json'
 $handles = @()

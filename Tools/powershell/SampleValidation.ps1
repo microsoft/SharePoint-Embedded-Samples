@@ -232,7 +232,15 @@ function Wait-ForHttpEndpoint {
         }
 
         try {
-            $response = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 5 -MaximumRedirection 0
+            $invokeWebRequestArguments = @{
+                Uri                = $Url
+                TimeoutSec         = 5
+                MaximumRedirection = 0
+            }
+            if ((Get-Command Invoke-WebRequest).Parameters.ContainsKey('UseBasicParsing')) {
+                $invokeWebRequestArguments['UseBasicParsing'] = $true
+            }
+            $response = Invoke-WebRequest @invokeWebRequestArguments
             if ($AllowedStatusCodes -contains [int]$response.StatusCode) {
                 return $response
             }
@@ -301,7 +309,7 @@ function Ensure-BrowserTooling {
         [switch]$SkipInstall
     )
 
-    $playwrightPath = Join-Path $ToolRoot 'node_modules\playwright'
+    $playwrightPath = Join-Path $ToolRoot 'node_modules/playwright'
     if (-not (Test-Path $playwrightPath)) {
         if ($SkipInstall) {
             Write-Host 'Shared browser validation tooling is missing; installing it even though -SkipInstall was specified.' -ForegroundColor Yellow

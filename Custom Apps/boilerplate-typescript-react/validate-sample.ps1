@@ -10,10 +10,10 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-. (Join-Path $PSScriptRoot '..\..\Tools\powershell\SampleValidation.ps1')
+. (Join-Path $PSScriptRoot '../../Tools/powershell/SampleValidation.ps1')
 
-$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$toolRoot = Join-Path $repoRoot 'Tools\sample-validation'
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+$toolRoot = Join-Path $repoRoot 'Tools/sample-validation'
 $appRoot = $PSScriptRoot
 $functionApiRoot = Join-Path $appRoot 'function-api'
 $clientRoot = Join-Path $appRoot 'react-client'

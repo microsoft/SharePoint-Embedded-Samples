@@ -10,7 +10,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-. (Join-Path $PSScriptRoot '..\..\Tools\powershell\SampleValidation.ps1')
+. (Join-Path $PSScriptRoot '../../Tools/powershell/SampleValidation.ps1')
 
 $appRoot = $PSScriptRoot
 $packageRoot = Join-Path $appRoot 'src'
@@ -44,7 +44,17 @@ try {
         }
 
         try {
-            $response = Invoke-WebRequest -Method Post -Uri $validationUrl -UseBasicParsing -TimeoutSec 5 -ContentType 'application/json' -Body '{}'
+            $invokeWebRequestArguments = @{
+                Method      = 'Post'
+                Uri         = $validationUrl
+                TimeoutSec  = 5
+                ContentType = 'application/json'
+                Body        = '{}'
+            }
+            if ((Get-Command Invoke-WebRequest).Parameters.ContainsKey('UseBasicParsing')) {
+                $invokeWebRequestArguments['UseBasicParsing'] = $true
+            }
+            $response = Invoke-WebRequest @invokeWebRequestArguments
             if ([string]$response.Content -eq $validationToken) {
                 $validated = $true
                 break

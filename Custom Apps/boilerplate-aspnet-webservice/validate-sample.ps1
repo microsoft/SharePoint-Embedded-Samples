@@ -10,7 +10,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-. (Join-Path $PSScriptRoot '..\..\Tools\powershell\SampleValidation.ps1')
+. (Join-Path $PSScriptRoot '../../Tools/powershell/SampleValidation.ps1')
 
 $appRoot = $PSScriptRoot
 $appSettingsPath = Join-Path $appRoot 'appsettings.json'
