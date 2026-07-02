@@ -30,12 +30,37 @@ function Resolve-CommandPath {
         return $Name
     }
 
-    $command = Get-Command $Name -ErrorAction Stop
-    if ($null -ne $command.Source -and $command.Source.Length -gt 0) {
-        return $command.Source
+    $commands = @(Get-Command $Name -All -ErrorAction Stop)
+
+    # Start-LoggedProcess launches commands through Start-Process, which (when output is
+    # redirected) uses the OS CreateProcess API. CreateProcess cannot execute PowerShell
+    # script shims (.ps1) and, on Windows, cannot execute the extensionless shell-script
+    # shims that npm/npx ship. Get-Command returns the .ps1 shim first by precedence, so
+    # prefer a directly executable form (.cmd/.exe/...) that both the call operator and
+    # Start-Process can launch.
+    $executableExtensions = @('.exe', '.cmd', '.bat', '.com')
+
+    $preferred = $commands | Where-Object {
+        $_.CommandType -eq 'Application' -and
+        $_.Source -and
+        $executableExtensions -contains [System.IO.Path]::GetExtension($_.Source).ToLowerInvariant()
+    } | Select-Object -First 1
+
+    if ($null -eq $preferred) {
+        # On non-Windows platforms the Application form is typically an extensionless
+        # executable or a shebang script that CreateProcess can exec directly.
+        $preferred = $commands | Where-Object { $_.CommandType -eq 'Application' } | Select-Object -First 1
     }
 
-    return $command.Name
+    if ($null -eq $preferred) {
+        $preferred = $commands | Select-Object -First 1
+    }
+
+    if ($null -ne $preferred.Source -and $preferred.Source.Length -gt 0) {
+        return $preferred.Source
+    }
+
+    return $preferred.Name
 }
 
 function Invoke-ExternalCommand {
