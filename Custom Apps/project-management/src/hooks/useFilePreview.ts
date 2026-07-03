@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { sharePointService, FileItem } from '@/services/sharePointService';
 import { searchService } from '@/services/searchService';
 import { toast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 export const useFilePreview = (containerId: string | undefined) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -59,11 +60,11 @@ export const useFilePreview = (containerId: string | undefined) => {
       
       console.log('Received preview URL:', url);
       setPreviewUrl(url);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error getting file preview:', error);
       toast({
         title: "Error",
-        description: "Failed to get file preview: " + (error.message || "Unknown error"),
+        description: `Failed to get file preview: ${getErrorMessage(error, 'Unknown error')}`,
         variant: "destructive",
       });
       setIsPreviewOpen(false);

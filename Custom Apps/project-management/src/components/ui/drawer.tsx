@@ -4,6 +4,16 @@ import { Drawer as DrawerPrimitive } from "vaul"
 
 import { cn } from "@/lib/utils"
 
+function containsDrawerTitle(children: React.ReactNode): boolean {
+  return React.Children.toArray(children).some((child) => {
+    if (!React.isValidElement<{ children?: React.ReactNode }>(child)) {
+      return false
+    }
+
+    return child.type === DrawerTitle || containsDrawerTitle(child.props.children)
+  })
+}
+
 const Drawer = ({ shouldScaleBackground = false, ...props }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
   <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
 )
@@ -32,14 +42,7 @@ const DrawerContent = React.forwardRef<
       {...props}
     >
       <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
-      {!React.Children.toArray(children).some(
-        child =>
-          React.isValidElement(child) &&
-          (child.type === DrawerTitle ||
-            (React.isValidElement((child as any).props?.children) && (child as any).props.children.type === DrawerTitle) ||
-            (Array.isArray((child as any).props?.children) &&
-              (child as any).props.children.some((c: unknown) => React.isValidElement(c) && c.type === DrawerTitle)))
-      ) && (
+      {!containsDrawerTitle(children) && (
         <VisuallyHidden>
           <DrawerPrimitive.Title>Drawer</DrawerPrimitive.Title>
         </VisuallyHidden>

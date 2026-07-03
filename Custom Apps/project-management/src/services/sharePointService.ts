@@ -96,7 +96,7 @@ export class SharePointService {
       console.log('Files data:', data);
 
       // Transform the response to include the required properties
-      const files = (data.value || []).map((item: any) => ({
+      const files = ((data.value || []) as FileItem[]).map((item) => ({
         ...item,
         isFolder: !!item.folder,
         createdByName: item.createdBy?.user?.displayName || 'Unknown',

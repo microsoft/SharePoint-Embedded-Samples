@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { toast } from '@/hooks/use-toast';
 import { sharePointService } from '../services/sharePointService';
 import { useAuth } from '../context/AuthContext';
+import { getErrorMessage } from '@/lib/utils';
 
 interface CreateContainerFormProps {
   onSuccess: (containerId?: string) => void;
@@ -67,11 +68,11 @@ export const CreateContainerForm: React.FC<CreateContainerFormProps> = ({ onSucc
       
       // Pass the new container ID to the parent component
       onSuccess(newContainer.id);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error creating container:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to create container",
+        description: getErrorMessage(error, 'Failed to create container'),
         variant: "destructive",
       });
     } finally {

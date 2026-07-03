@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useCopilotSite } from '@/hooks/useCopilotSite';
 import CopilotDesktopView from './CopilotDesktopView';
 import { toast } from '@/hooks/use-toast';
@@ -22,20 +22,17 @@ const CopilotChatContainer: React.FC<CopilotChatContainerProps> = ({ containerId
   const [chatKey, setChatKey] = useState(0);
   
   // Validate and normalize containerId
-  const normalizedContainerId = containerId && typeof containerId === 'string' 
-    ? (containerId.startsWith('b!') ? containerId : `b!${containerId}`)
-    : '';
-  
-  // Don't proceed if we don't have a valid container ID
-  if (!normalizedContainerId) {
-    console.error('CopilotChatContainer: Invalid containerId provided:', containerId);
-    return null;
-  }
+  const normalizedContainerId = useMemo(() => {
+    if (!containerId || typeof containerId !== 'string') {
+      return '';
+    }
+
+    return containerId.startsWith('b!') ? containerId : `b!${containerId}`;
+  }, [containerId]);
   
   const {
     isLoading,
     error,
-    siteUrl,
     siteName,
     sharePointHostname,
   } = useCopilotSite(normalizedContainerId);
@@ -54,7 +51,7 @@ const CopilotChatContainer: React.FC<CopilotChatContainerProps> = ({ containerId
   }, []);
   
   // Create auth provider for Copilot chat with better error handling
-  const authProvider = React.useMemo((): IChatEmbeddedApiAuthProvider => {
+  const authProvider = useMemo((): IChatEmbeddedApiAuthProvider => {
     return {
       hostname: safeSharePointHostname,
       getToken: async () => {
@@ -84,7 +81,7 @@ const CopilotChatContainer: React.FC<CopilotChatContainerProps> = ({ containerId
   }, [safeSharePointHostname, getSharePointToken, handleError, isAuthenticated]);
   
   // Create chat theme config
-  const chatTheme = React.useMemo(() => ({
+  const chatTheme = useMemo(() => ({
     useDarkMode: false,
     customTheme: {
       themePrimary: '#4854EE',
@@ -113,7 +110,7 @@ const CopilotChatContainer: React.FC<CopilotChatContainerProps> = ({ containerId
   }), []);
   
   // Create chat configuration with instruction to ensure prompt visibility
-  const chatConfig = React.useMemo((): ChatLaunchConfig => ({
+  const chatConfig = useMemo((): ChatLaunchConfig => ({
     header: `SharePoint Embedded - ${safeSiteName}`,
     theme: chatTheme,
     instruction: "You are a helpful assistant that helps users find and summarize information related to their files and documents.",
@@ -143,6 +140,11 @@ const CopilotChatContainer: React.FC<CopilotChatContainerProps> = ({ containerId
     console.log('Copilot chat API is ready');
     setChatApi(api);
   }, [handleError]);
+
+  if (!normalizedContainerId) {
+    console.error('CopilotChatContainer: Invalid containerId provided:', containerId);
+    return null;
+  }
 
   return (
     <CopilotDesktopView

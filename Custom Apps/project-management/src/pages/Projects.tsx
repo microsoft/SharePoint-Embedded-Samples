@@ -40,6 +40,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { ConfigAlert } from '../components/ConfigAlert';
 import { useContainerDetails } from '../hooks/useContainerDetails';
 import { CreateContainerForm } from '../components/CreateContainerForm';
+import { getErrorMessage } from '@/lib/utils';
 
 interface Project {
   id: string;
@@ -58,7 +59,7 @@ interface Project {
 
 const ProjectDetails = ({ project }: { project: Project }) => {
   // If we already have webUrl from search, we can use it directly
-  const containerDetailsHook = project.webUrl ? null : useContainerDetails(project.id);
+  const containerDetailsHook = useContainerDetails(project.webUrl ? undefined : project.id);
   const projectUrl = project.webUrl || (containerDetailsHook?.containerDetails?.webUrl || '');
 
   return (
@@ -200,11 +201,12 @@ const Projects = () => {
         });
         
         setProjects(enhancedProjects);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error from search API:', error);
+        const errorMessage = getErrorMessage(error, 'Failed to fetch projects');
         
         // Check if it's a permissions error (403)
-        if (error.message && error.message.includes('403')) {
+        if (errorMessage.includes('403')) {
           setPermissionError(true);
           toast({
             title: "Permission Error",
@@ -215,9 +217,9 @@ const Projects = () => {
           throw error; // Re-throw if it's not a permissions error
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching projects:', error);
-      setError(error.message);
+      setError(getErrorMessage(error, 'Failed to fetch projects'));
       toast({
         title: "Error",
         description: "Failed to fetch projects",

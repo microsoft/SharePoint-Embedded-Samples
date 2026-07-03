@@ -6,8 +6,8 @@ interface ApiCall {
   timestamp: string;
   method: string;
   url: string;
-  request?: any;
-  response?: any;
+  request?: unknown;
+  response?: unknown;
   status?: number;
 }
 

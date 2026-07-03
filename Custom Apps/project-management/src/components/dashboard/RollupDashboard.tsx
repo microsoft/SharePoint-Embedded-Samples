@@ -12,9 +12,29 @@ import {
   Tooltip,
   Cell,
   Legend,
-  CartesianGrid
+  CartesianGrid,
+  type LegendProps,
 } from 'recharts';
-import { ChartContainer, ChartTooltip, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
+import { type NameType, type ValueType } from 'recharts/types/component/DefaultTooltipContent';
+import { ChartContainer } from "@/components/ui/chart";
+
+interface StatusChartDatum {
+  name: string;
+  value: number;
+  count: number;
+}
+
+interface TaskTypeChartDatum {
+  name: string;
+  tasks: number;
+  color: string;
+}
+
+interface ChartTooltipPayload<TPayload> {
+  name?: string;
+  value?: number;
+  payload: TPayload;
+}
 
 const mockRollupData = {
   summary: {
@@ -40,7 +60,13 @@ const mockRollupData = {
 const COLORS = ['#00C49F', '#FFBB28', '#FF8042'];
 const TASK_COLORS = ['#8B5CF6', '#06B6D4', '#10B981'];
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: ChartTooltipPayload<StatusChartDatum>[];
+}) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
@@ -58,7 +84,15 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const TaskTypeTooltip = ({ active, payload, label }: any) => {
+const TaskTypeTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: ChartTooltipPayload<TaskTypeChartDatum>[];
+  label?: string | number;
+}) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
@@ -182,9 +216,9 @@ export function RollupDashboard() {
                     <Legend 
                       verticalAlign="bottom" 
                       height={36}
-                      formatter={(value, entry: any) => (
+                      formatter={(value: ValueType, _name: NameType, entry: LegendProps['payload'][number]) => (
                         <span style={{ color: entry.color }}>
-                          {value} ({entry.payload.count} projects)
+                          {String(value)} ({(entry.payload as StatusChartDatum).count} projects)
                         </span>
                       )}
                     />

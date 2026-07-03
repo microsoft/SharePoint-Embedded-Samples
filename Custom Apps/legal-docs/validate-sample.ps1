@@ -44,12 +44,7 @@ try {
     Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build') -WorkingDirectory $appRoot -Environment $nodeEnvironment
 
     Write-Step 'Linting app'
-    try {
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'lint') -WorkingDirectory $appRoot -Environment $nodeEnvironment
-    }
-    catch {
-        Write-Host "Lint reported existing issues and will not block runtime validation: $($_.Exception.Message)" -ForegroundColor Yellow
-    }
+    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'lint') -WorkingDirectory $appRoot -Environment $nodeEnvironment
 
     Write-Host 'No automated test script is defined for this sample.' -ForegroundColor Yellow
 

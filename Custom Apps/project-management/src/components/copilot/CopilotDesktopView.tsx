@@ -37,15 +37,12 @@ const CopilotDesktopView: React.FC<CopilotDesktopViewProps> = ({
   isAuthenticated = true,
   chatApi
 }) => {
-  // Early return if not authenticated
-  if (!isAuthenticated) {
-    console.log('CopilotDesktopView: Not rendering because not authenticated');
-    return null;
-  }
-  
   // Open the chat when the component is opened and we have a valid chat API
   useEffect(() => {
-    if (isOpen && chatApi) {
+    if (!isAuthenticated || !isOpen || !chatApi) {
+      return;
+    }
+
       console.log('Component opened, attempting to open chat...', containerId);
       
       const openChatOnOpen = async () => {
@@ -82,8 +79,12 @@ const CopilotDesktopView: React.FC<CopilotDesktopViewProps> = ({
       };
       
       openChatOnOpen();
-    }
   }, [isOpen, chatApi, chatConfig, onError, containerId]);
+
+  if (!isAuthenticated) {
+    console.log('CopilotDesktopView: Not rendering because not authenticated');
+    return null;
+  }
   
   // Reset chat when requested
   const handleResetChat = () => {
@@ -102,7 +103,7 @@ const CopilotDesktopView: React.FC<CopilotDesktopViewProps> = ({
               <h2 className="text-lg font-semibold">SharePoint Embedded Copilot</h2>
               <p className="text-sm text-muted-foreground">Connected to: {siteName || 'SharePoint Site'}</p>
             </div>
-            {onResetChat && isAuthenticated && (
+            {onResetChat && (
               <Button onClick={handleResetChat} size="sm" variant="ghost" className="gap-1">
                 <RefreshCw size={14} />
                 <span className="sr-only md:not-sr-only md:inline-block">Refresh</span>
