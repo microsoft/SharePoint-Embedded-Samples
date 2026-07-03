@@ -1,26 +1,25 @@
 import {
     Request,
     Response
-  } from "restify";
+  } from "express";
 import { ReceiptProcessor } from "./ReceiptProcessor";
 
 require('isomorphic-fetch');
 
   export const onReceiptAdded = async (req: Request, res: Response) => {
-    
     const validationToken = req.query['validationToken'];
     if (validationToken) {
-        res.send(200, validationToken, {"Content-Type":"text/plain"});
+      res.status(200).type('text/plain').send(String(validationToken));
         return;
     }
 
     const driveId = req.query['driveId'];
     if (!driveId) {
-        res.send(200, "Notification received without driveId, ignoring", {"Content-Type":"text/plain"});
+      res.status(200).type('text/plain').send("Notification received without driveId, ignoring");
         return;
     }
 
-    ReceiptProcessor.processDrive(driveId)
-    res.send(200, "");
+    void ReceiptProcessor.processDrive(String(driveId));
+    res.status(200).send("");
     return;
   }

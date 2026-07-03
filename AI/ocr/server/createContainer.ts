@@ -1,13 +1,13 @@
 import {
   Request,
   Response
-} from "restify";
+} from "express";
 import { GraphProvider } from "./GraphProvider";
 require('isomorphic-fetch');
 
 export const createContainer = async (req: Request, res: Response) => {
   if (!req.headers.authorization) {
-    res.send(401, { message: 'No access token provided.' });
+    res.status(401).send({ message: 'No access token provided.' });
     return;
   }
 
@@ -23,10 +23,10 @@ export const createContainer = async (req: Request, res: Response) => {
 
     const graphResponse = await GraphProvider.graphClient.api(`storage/fileStorage/containers`).post(containerRequestData);
 
-    res.send(200, graphResponse);
+    res.status(200).send(graphResponse);
     return;
   } catch (error: any) {
-    res.send(500, { message: `Failed to create container: ${error.message}` });
+    res.status(500).send({ message: `Failed to create container: ${error.message}` });
     return;
   }
 }

@@ -1,6 +1,7 @@
 import React, {
   useState,
   useEffect,
+  useCallback,
   useRef
 } from 'react';
 import { Providers } from "@microsoft/mgt-element";
@@ -57,7 +58,6 @@ const useStyles = makeStyles({
 export const Files = (props: IFilesProps) => {
   const [driveItems, setDriveItems] = useState<IDriveItemExtended[]>([]);
   const [selectedRows, setSelectedRows] = useState<Set<SelectionItemId>>(new Set<TableRowId>([1]));
-  const downloadLinkRef = useRef<HTMLAnchorElement>(null);
   const [folderId, setFolderId] = useState<string>('root');
   const [folderName, setFolderName] = useState<string>('');
   const [creatingFolder, setCreatingFolder] = useState<boolean>(false);
@@ -67,13 +67,7 @@ export const Files = (props: IFilesProps) => {
 
   // BOOKMARK 1 - constants & hooks
 
-  useEffect(() => {
-    (async () => {
-      loadItems();
-    })();
-  }, [props]);
-
-  const loadItems = async (itemId?: string) => {
+  const loadItems = useCallback(async (itemId?: string) => {
     try {
       const graphClient = Providers.globalProvider.graph.client;
       const driveId = props.container.id;
@@ -96,15 +90,27 @@ export const Files = (props: IFilesProps) => {
     } catch (error: any) {
       console.error(`Failed to load items: ${error.message}`);
     }
-  };
+  }, [props.container.id]);
+
+  useEffect(() => {
+    loadItems();
+  }, [loadItems]);
 
   const onSelectionChange: DataGridProps["onSelectionChange"] = (event: React.MouseEvent | React.KeyboardEvent, data: OnSelectionChangeData): void => {
     setSelectedRows(data.selectedItems);
   }
-  const onDownloadItemClick = (downloadUrl: string) => {
-    const link = downloadLinkRef.current;
-    link!.href = downloadUrl;
-    link!.click();
+  const onDownloadItemClick = (downloadUrl: string, fileName?: string) => {
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    if (fileName) {
+      link.download = fileName;
+    }
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   const onFolderCreateClick = async () => {
@@ -243,7 +249,7 @@ export const Files = (props: IFilesProps) => {
             <Button aria-label="Download"
               disabled={!selectedRows.has(driveItem.id as string)}
               icon={<SaveRegular />}
-              onClick={() => onDownloadItemClick(driveItem.downloadUrl)}>Download</Button>
+              onClick={() => onDownloadItemClick(driveItem.downloadUrl, driveItem.name ?? undefined)}>Download</Button>
 
             <Button aria-label="Delete"
               icon={<DeleteRegular />}
@@ -279,7 +285,6 @@ export const Files = (props: IFilesProps) => {
   return (
     <div>
       <input ref={uploadFileRef} type="file" onChange={onUploadFileSelected} style={{ display: 'none' }} />
-      <a ref={downloadLinkRef} href="" target="_blank" style={{ display: 'none' }} />
 
       <Toolbar>
         <ToolbarButton vertical icon={<AddRegular />} onClick={() => setNewFolderDialogOpen(true)}>New Folder</ToolbarButton>
