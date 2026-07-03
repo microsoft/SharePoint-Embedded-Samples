@@ -15,11 +15,11 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $toolRoot = Join-Path $repoRoot 'Tools/sample-validation'
 $appRoot = $PSScriptRoot
+$nodeEnvironment = Get-ValidationNodeEnvironment
 $runtimeHandle = $null
 
 function Test-LegalDocsNodeSupported {
-    $nodeVersionText = (& (Resolve-CommandPath -Name 'node') '--version').Trim()
-    $nodeVersion = [Version]($nodeVersionText.TrimStart('v'))
+    $nodeVersion = Get-ValidationNodeVersion
     return (($nodeVersion.Major -eq 20 -and $nodeVersion -ge [Version]'20.19.0') -or $nodeVersion -ge [Version]'22.12.0')
 }
 
@@ -31,20 +31,21 @@ try {
 
     if (-not (Test-LegalDocsNodeSupported)) {
         Write-Host 'Skipping legal-docs validation because the current Node.js runtime is below Vite 8 requirements (20.19+ or 22.12+).' -ForegroundColor Yellow
+        Write-ValidationSummary -Status 'SKIP_ENV' -Message 'Validation skipped because legal-docs requires Node 20.19+ or 22.12+. Set VALIDATION_NODE_COMMAND to a compatible Node executable to run it.'
         return
     }
 
     if (-not $SkipInstall) {
         Write-Step 'Installing dependencies'
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $appRoot
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $appRoot -Environment $nodeEnvironment
     }
 
     Write-Step 'Building app'
-    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build') -WorkingDirectory $appRoot
+    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build') -WorkingDirectory $appRoot -Environment $nodeEnvironment
 
     Write-Step 'Linting app'
     try {
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'lint') -WorkingDirectory $appRoot
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'lint') -WorkingDirectory $appRoot -Environment $nodeEnvironment
     }
     catch {
         Write-Host "Lint reported existing issues and will not block runtime validation: $($_.Exception.Message)" -ForegroundColor Yellow
@@ -54,7 +55,7 @@ try {
 
     Write-Step 'Starting preview server'
     $logPath = New-ValidationLogPath -WorkingDirectory $appRoot -Name 'legal-docs'
-    $runtimeHandle = Start-LoggedProcess -FilePath 'npx' -Arguments @('vite', 'preview', '--host', '127.0.0.1', '--port', '4173') -WorkingDirectory $appRoot -LogPath $logPath
+    $runtimeHandle = Start-LoggedProcess -FilePath 'npx' -Arguments @('vite', 'preview', '--host', '127.0.0.1', '--port', '4173') -WorkingDirectory $appRoot -LogPath $logPath -Environment $nodeEnvironment
     [void](Wait-ForHttpEndpoint -Url 'http://127.0.0.1:4173' -TimeoutSec $TimeoutSec -AllowedStatusCodes @(200) -ProcessHandle $runtimeHandle)
 
     if ($SkipBrowser) {
@@ -66,6 +67,11 @@ try {
     }
 
     Write-Host 'Legal docs sample validation completed.' -ForegroundColor Green
+    Write-ValidationSummary -Status 'PASS' -Message 'Build, preview startup, and browser smoke checks passed.'
+}
+catch {
+    Write-ValidationSummary -Status 'FAIL' -Message $_.Exception.Message
+    throw
 }
 finally {
     if ($null -ne $runtimeHandle -and -not $KeepProcesses) {

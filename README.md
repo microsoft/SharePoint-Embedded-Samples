@@ -29,6 +29,10 @@ Run the script from the sample root in PowerShell, for example:
 
 Samples that require local tenant configuration will automatically downgrade to build-only or startup-only validation when their expected `.env`, `local.settings.json`, or `appsettings.json` files are missing.
 
+Each script ends with a standardized summary line such as `VALIDATION_RESULT: PASS`, `VALIDATION_RESULT: SKIP_CONFIG`, or `VALIDATION_RESULT: SKIP_ENV` so the outcome is easy to parse.
+
+If a sample needs a newer Node.js runtime than the machine default, set `VALIDATION_NODE_COMMAND` to a compatible `node.exe` path before running the validator. This is especially useful for Vite-based samples that require a newer Node release than older CRA-based samples.
+
 ## AI
 
 Samples and assets for integrating SharePoint Embedded with AI tools and services.

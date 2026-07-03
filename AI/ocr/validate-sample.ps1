@@ -17,6 +17,7 @@ $toolRoot = Join-Path $repoRoot 'Tools/sample-validation'
 $appRoot = $PSScriptRoot
 $envFile = Join-Path $appRoot '.env'
 $constantsFile = Join-Path $appRoot 'src/common/constants.ts'
+$nodeEnvironment = Get-ValidationNodeEnvironment
 $handles = @()
 
 function Test-OcrFrontendConfigured {
@@ -45,42 +46,43 @@ try {
 
     if (-not $SkipInstall) {
         Write-Step 'Installing dependencies'
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $appRoot
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $appRoot -Environment $nodeEnvironment
     }
 
     Write-Step 'Building backend'
-    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build:backend') -WorkingDirectory $appRoot
+    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build:backend') -WorkingDirectory $appRoot -Environment $nodeEnvironment
 
     Write-Step 'Building frontend'
-    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build-cre') -WorkingDirectory $appRoot
+    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build-cre') -WorkingDirectory $appRoot -Environment $nodeEnvironment
 
     if ($SkipTests) {
         Write-Host 'Skipping frontend tests because -SkipTests was specified.' -ForegroundColor Yellow
     }
     else {
         Write-Step 'Running frontend tests'
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'test-cre', '--', '--watchAll=false') -WorkingDirectory $appRoot -Environment @{ CI = 'true' }
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'test-cre', '--', '--watchAll=false') -WorkingDirectory $appRoot -Environment (Merge-EnvironmentTables @($nodeEnvironment, @{ CI = 'true' }))
     }
 
     if (-not (Test-Path $envFile)) {
         Write-Host 'Skipping runtime smoke checks because .env is missing.' -ForegroundColor Yellow
-        Write-Host 'Build and test validation completed.' -ForegroundColor Green
+        Write-ValidationSummary -Status 'SKIP_CONFIG' -Message 'Build and tests passed; runtime smoke skipped because .env is missing.'
         return
     }
 
     Write-Step 'Starting backend'
     $backendLog = New-ValidationLogPath -WorkingDirectory $appRoot -Name 'ocr-backend'
-    $backendHandle = Start-LoggedProcess -FilePath 'npm' -Arguments @('run', 'start:backend') -WorkingDirectory $appRoot -LogPath $backendLog -Environment @{ PORT = '3001' }
+    $backendHandle = Start-LoggedProcess -FilePath 'npm' -Arguments @('run', 'start:backend') -WorkingDirectory $appRoot -LogPath $backendLog -Environment (Merge-EnvironmentTables @($nodeEnvironment, @{ PORT = '3001' }))
     $handles += $backendHandle
     [void](Wait-ForHttpEndpoint -Url 'http://127.0.0.1:3001/api/echo' -TimeoutSec $TimeoutSec -AllowedStatusCodes @(200) -ProcessHandle $backendHandle)
 
     if (-not (Test-OcrFrontendConfigured -ConstantsPath $constantsFile)) {
         Write-Host 'Skipping frontend runtime smoke because src/common/constants.ts does not contain a configured CLIENT_ENTRA_APP_CLIENT_ID.' -ForegroundColor Yellow
+        Write-ValidationSummary -Status 'SKIP_CONFIG' -Message 'Build, tests, and backend smoke passed; frontend runtime smoke skipped because CLIENT_ENTRA_APP_CLIENT_ID is not configured.'
     }
     else {
         Write-Step 'Starting frontend'
         $frontendLog = New-ValidationLogPath -WorkingDirectory $appRoot -Name 'ocr-frontend'
-        $frontendHandle = Start-LoggedProcess -FilePath 'npm' -Arguments @('run', 'start-cre') -WorkingDirectory $appRoot -LogPath $frontendLog -Environment @{ BROWSER = 'none'; PORT = '3102' }
+        $frontendHandle = Start-LoggedProcess -FilePath 'npm' -Arguments @('run', 'start-cre') -WorkingDirectory $appRoot -LogPath $frontendLog -Environment (Merge-EnvironmentTables @($nodeEnvironment, @{ BROWSER = 'none'; PORT = '3102' }))
         $handles += $frontendHandle
         [void](Wait-ForHttpEndpoint -Url 'http://127.0.0.1:3102' -TimeoutSec $TimeoutSec -AllowedStatusCodes @(200) -ProcessHandle $frontendHandle)
 
@@ -91,9 +93,15 @@ try {
             Write-Step 'Running browser smoke'
             Invoke-BrowserSmoke -ToolRoot $toolRoot -Url 'http://127.0.0.1:3102' -SkipInstall:$SkipInstall -Headed:$Headed -TimeoutSec $TimeoutSec -ExpectSelector '#root'
         }
+
+        Write-ValidationSummary -Status 'PASS' -Message 'Build, tests, backend smoke, and frontend runtime smoke checks passed.'
     }
 
     Write-Host 'OCR sample validation completed.' -ForegroundColor Green
+}
+catch {
+    Write-ValidationSummary -Status 'FAIL' -Message $_.Exception.Message
+    throw
 }
 finally {
     if (-not $KeepProcesses) {

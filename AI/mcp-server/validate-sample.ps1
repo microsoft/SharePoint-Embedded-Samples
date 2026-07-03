@@ -14,6 +14,7 @@ $ErrorActionPreference = 'Stop'
 
 $appRoot = $PSScriptRoot
 $envFile = Join-Path $appRoot '.env'
+$nodeEnvironment = Get-ValidationNodeEnvironment
 $runtimeHandle = $null
 
 try {
@@ -23,11 +24,11 @@ try {
 
     if (-not $SkipInstall) {
         Write-Step 'Installing dependencies'
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $appRoot
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $appRoot -Environment $nodeEnvironment
     }
 
     Write-Step 'Building MCP server'
-    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build') -WorkingDirectory $appRoot
+    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build') -WorkingDirectory $appRoot -Environment $nodeEnvironment
 
     if ($SkipTests) {
         Write-Host 'Skipping tests because -SkipTests was specified.' -ForegroundColor Yellow
@@ -38,7 +39,7 @@ try {
 
     if (-not (Test-Path $envFile)) {
         Write-Host 'Skipping runtime smoke check because .env is missing.' -ForegroundColor Yellow
-        Write-Host 'Build validation completed.' -ForegroundColor Green
+        Write-ValidationSummary -Status 'SKIP_CONFIG' -Message 'Build validation passed; runtime smoke skipped because .env is missing.'
         return
     }
 
@@ -49,16 +50,21 @@ try {
 
     Write-Step 'Starting MCP server'
     $logPath = New-ValidationLogPath -WorkingDirectory $appRoot -Name 'mcp-server'
-    $runtimeHandle = Start-LoggedProcess -FilePath 'npm' -Arguments @('run', 'start') -WorkingDirectory $appRoot -LogPath $logPath -Environment $environment
+    $runtimeHandle = Start-LoggedProcess -FilePath 'npm' -Arguments @('run', 'start') -WorkingDirectory $appRoot -LogPath $logPath -Environment (Merge-EnvironmentTables @($nodeEnvironment, $environment))
 
     $healthUrl = "http://localhost:$($environment['PORT'])/health"
-    $healthResponse = Wait-ForHttpEndpoint -Url $healthUrl -TimeoutSec $TimeoutSec -AllowedStatusCodes @(200)
+    $healthResponse = Wait-ForHttpEndpoint -Url $healthUrl -TimeoutSec $TimeoutSec -AllowedStatusCodes @(200) -ProcessHandle $runtimeHandle
     $body = [string]$healthResponse.Content
     if ($body -notmatch '"status"\s*:\s*"ok"') {
         throw "Health endpoint returned an unexpected response: $body"
     }
 
     Write-Host "Runtime smoke check passed at $healthUrl" -ForegroundColor Green
+    Write-ValidationSummary -Status 'PASS' -Message "Build and runtime smoke checks passed at $healthUrl."
+}
+catch {
+    Write-ValidationSummary -Status 'FAIL' -Message $_.Exception.Message
+    throw
 }
 finally {
     if ($null -ne $runtimeHandle -and -not $KeepProcesses) {

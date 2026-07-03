@@ -30,7 +30,7 @@ try {
 
     if (-not (Test-Path $appSettingsPath)) {
         Write-Host 'Skipping runtime smoke check because appsettings.json is missing.' -ForegroundColor Yellow
-        Write-Host 'Build validation completed.' -ForegroundColor Green
+        Write-ValidationSummary -Status 'SKIP_CONFIG' -Message 'Restore and build passed; runtime smoke skipped because appsettings.json is missing.'
         return
     }
 
@@ -40,6 +40,11 @@ try {
     [void](Wait-ForHttpEndpoint -Url 'http://127.0.0.1:5080' -TimeoutSec $TimeoutSec -AllowedStatusCodes @(200, 302) -ProcessHandle $runtimeHandle)
 
     Write-Host 'ASP.NET sample validation completed.' -ForegroundColor Green
+    Write-ValidationSummary -Status 'PASS' -Message 'Restore, build, and runtime smoke checks passed.'
+}
+catch {
+    Write-ValidationSummary -Status 'FAIL' -Message $_.Exception.Message
+    throw
 }
 finally {
     if ($null -ne $runtimeHandle -and -not $KeepProcesses) {

@@ -9,6 +9,25 @@ function Write-Step {
     Write-Host "`n==> $Message" -ForegroundColor Cyan
 }
 
+function Write-ValidationSummary {
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateSet('PASS', 'FAIL', 'SKIP_ENV', 'SKIP_CONFIG')]
+        [string]$Status,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Message
+    )
+
+    $color = switch ($Status) {
+        'PASS' { 'Green' }
+        'FAIL' { 'Red' }
+        default { 'Yellow' }
+    }
+
+    Write-Host "VALIDATION_RESULT: $Status - $Message" -ForegroundColor $color
+}
+
 function Assert-CommandExists {
     param(
         [Parameter(Mandatory = $true)]
@@ -36,6 +55,54 @@ function Resolve-CommandPath {
     }
 
     return $command.Name
+}
+
+function Merge-EnvironmentTables {
+    param(
+        [hashtable[]]$Tables
+    )
+
+    $merged = @{}
+    foreach ($table in $Tables) {
+        if ($null -eq $table) {
+            continue
+        }
+
+        foreach ($key in $table.Keys) {
+            $merged[$key] = $table[$key]
+        }
+    }
+
+    return $merged
+}
+
+function Get-ValidationNodeCommand {
+    $configured = [Environment]::GetEnvironmentVariable('VALIDATION_NODE_COMMAND')
+    if (-not [string]::IsNullOrWhiteSpace($configured)) {
+        return $configured.Trim()
+    }
+
+    return 'node'
+}
+
+function Get-ValidationNodeEnvironment {
+    $resolvedNodePath = Resolve-CommandPath -Name (Get-ValidationNodeCommand)
+    if (-not (Test-Path $resolvedNodePath)) {
+        return @{}
+    }
+
+    $nodeDirectory = Split-Path -Parent $resolvedNodePath
+    if ([string]::IsNullOrWhiteSpace($nodeDirectory)) {
+        return @{}
+    }
+
+    return @{ PATH = "$nodeDirectory;$([Environment]::GetEnvironmentVariable('PATH'))" }
+}
+
+function Get-ValidationNodeVersion {
+    $nodeCommand = Resolve-CommandPath -Name (Get-ValidationNodeCommand)
+    $nodeVersionText = (& $nodeCommand '--version').Trim()
+    return [Version]($nodeVersionText.TrimStart('v'))
 }
 
 function Invoke-ExternalCommand {
@@ -309,6 +376,7 @@ function Ensure-BrowserTooling {
         [switch]$SkipInstall
     )
 
+    $nodeEnvironment = Get-ValidationNodeEnvironment
     $playwrightPath = Join-Path $ToolRoot 'node_modules/playwright'
     if (-not (Test-Path $playwrightPath)) {
         if ($SkipInstall) {
@@ -316,11 +384,11 @@ function Ensure-BrowserTooling {
         }
 
         Write-Step 'Installing shared browser validation tooling'
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $ToolRoot
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $ToolRoot -Environment $nodeEnvironment
     }
 
     Write-Step 'Installing Chromium for Playwright'
-    Invoke-ExternalCommand -FilePath 'npx' -Arguments @('playwright', 'install', 'chromium') -WorkingDirectory $ToolRoot
+    Invoke-ExternalCommand -FilePath 'npx' -Arguments @('playwright', 'install', 'chromium') -WorkingDirectory $ToolRoot -Environment $nodeEnvironment
 }
 
 function Invoke-BrowserSmoke {
@@ -348,6 +416,7 @@ function Invoke-BrowserSmoke {
         [switch]$FailOnConsoleError
     )
 
+    $nodeEnvironment = Get-ValidationNodeEnvironment
     Ensure-BrowserTooling -ToolRoot $ToolRoot -SkipInstall:$SkipInstall
 
     $arguments = @(
@@ -373,5 +442,5 @@ function Invoke-BrowserSmoke {
         $arguments += '--fail-on-console-error'
     }
 
-    Invoke-ExternalCommand -FilePath 'node' -Arguments $arguments -WorkingDirectory $ToolRoot
+    Invoke-ExternalCommand -FilePath (Get-ValidationNodeCommand) -Arguments $arguments -WorkingDirectory $ToolRoot -Environment $nodeEnvironment
 }

@@ -14,6 +14,7 @@ $ErrorActionPreference = 'Stop'
 
 $appRoot = $PSScriptRoot
 $packageRoot = Join-Path $appRoot 'src'
+$nodeEnvironment = Get-ValidationNodeEnvironment
 $runtimeHandle = $null
 
 try {
@@ -23,14 +24,14 @@ try {
 
     if (-not $SkipInstall) {
         Write-Step 'Installing dependencies'
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $packageRoot
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $packageRoot -Environment $nodeEnvironment
     }
 
     Write-Host 'No automated test script is defined for this sample.' -ForegroundColor Yellow
 
     Write-Step 'Starting webhook listener'
     $logPath = New-ValidationLogPath -WorkingDirectory $appRoot -Name 'webhook'
-    $runtimeHandle = Start-LoggedProcess -FilePath 'npm' -Arguments @('run', 'start') -WorkingDirectory $packageRoot -LogPath $logPath -Environment @{ PORT = '3000' }
+    $runtimeHandle = Start-LoggedProcess -FilePath 'npm' -Arguments @('run', 'start') -WorkingDirectory $packageRoot -LogPath $logPath -Environment (Merge-EnvironmentTables @($nodeEnvironment, @{ PORT = '3000' }))
 
     $validationToken = 'sample-validation-token'
     $validationUrl = "http://127.0.0.1:3000/webhook?validationToken=$validationToken"
@@ -71,6 +72,11 @@ try {
     }
 
     Write-Host 'Webhook sample validation completed.' -ForegroundColor Green
+    Write-ValidationSummary -Status 'PASS' -Message 'Webhook listener startup and validation-token echo checks passed.'
+}
+catch {
+    Write-ValidationSummary -Status 'FAIL' -Message $_.Exception.Message
+    throw
 }
 finally {
     if ($null -ne $runtimeHandle -and -not $KeepProcesses) {
