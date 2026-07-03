@@ -17,11 +17,22 @@ $toolRoot = Join-Path $repoRoot 'Tools/sample-validation'
 $appRoot = $PSScriptRoot
 $runtimeHandle = $null
 
+function Test-LegalDocsNodeSupported {
+    $nodeVersionText = (& (Resolve-CommandPath -Name 'node') '--version').Trim()
+    $nodeVersion = [Version]($nodeVersionText.TrimStart('v'))
+    return (($nodeVersion.Major -eq 20 -and $nodeVersion -ge [Version]'20.19.0') -or $nodeVersion -ge [Version]'22.12.0')
+}
+
 try {
     Write-Step 'Preflight checks'
     Assert-CommandExists 'node'
     Assert-CommandExists 'npm'
     Assert-CommandExists 'npx'
+
+    if (-not (Test-LegalDocsNodeSupported)) {
+        Write-Host 'Skipping legal-docs validation because the current Node.js runtime is below Vite 8 requirements (20.19+ or 22.12+).' -ForegroundColor Yellow
+        return
+    }
 
     if (-not $SkipInstall) {
         Write-Step 'Installing dependencies'

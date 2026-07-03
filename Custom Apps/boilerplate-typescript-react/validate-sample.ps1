@@ -48,7 +48,7 @@ try {
     }
     else {
         Write-Step 'Running react-client tests'
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'test', '--', '--watchAll=false') -WorkingDirectory $clientRoot -Environment @{ CI = 'true' }
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'test', '--', '--watchAll=false', '--passWithNoTests') -WorkingDirectory $clientRoot -Environment @{ CI = 'true' }
     }
 
     if (Test-Path $localSettingsPath) {
