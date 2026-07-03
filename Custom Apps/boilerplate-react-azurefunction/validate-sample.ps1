@@ -20,6 +20,7 @@ $functionsRoot = Join-Path $appRoot 'packages/azure-functions'
 $clientEnvPath = Join-Path $clientRoot '.env'
 $localSettingsPath = Join-Path $functionsRoot 'local.settings.json'
 $nodeEnvironment = Get-ValidationNodeEnvironment
+$clientBuildEnvironment = Merge-EnvironmentTables @($nodeEnvironment, @{ CI = '' })
 $handles = @()
 $runtimeSkipReasons = @()
 
@@ -40,7 +41,7 @@ try {
     }
 
     Write-Step 'Building client-app'
-    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build') -WorkingDirectory $clientRoot -Environment $nodeEnvironment
+    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build') -WorkingDirectory $clientRoot -Environment $clientBuildEnvironment
 
     if ($SkipTests) {
         Write-Host 'Skipping client-app tests because -SkipTests was specified.' -ForegroundColor Yellow

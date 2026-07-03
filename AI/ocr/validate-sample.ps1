@@ -46,7 +46,7 @@ try {
 
     if (-not $SkipInstall) {
         Write-Step 'Installing dependencies'
-        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $appRoot -Environment $nodeEnvironment
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install', '--legacy-peer-deps') -WorkingDirectory $appRoot -Environment $nodeEnvironment
     }
 
     Write-Step 'Building backend'

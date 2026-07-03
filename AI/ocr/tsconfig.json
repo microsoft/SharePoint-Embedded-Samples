@@ -11,7 +11,7 @@
     ],
     "jsx": "preserve",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "allowJs": true,
     "skipLibCheck": true,

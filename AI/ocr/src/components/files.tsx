@@ -137,8 +137,14 @@ export const Files = (props: IFilesProps) => {
   };
 
   const onDeleteItemClick = async () => {
+    const selectedRow = selectedRows.values().next().value;
+    if (!selectedRow) {
+      setDeleteDialogOpen(false);
+      return;
+    }
+
     const graphClient = Providers.globalProvider.graph.client;
-    const endpoint = `/drives/${props.container.id}/items/${selectedRows.entries().next().value[0]}`;
+    const endpoint = `/drives/${props.container.id}/items/${selectedRow}`;
     await graphClient.api(endpoint).delete();
     await loadItems(folderId || 'root');
     setDeleteDialogOpen(false);
