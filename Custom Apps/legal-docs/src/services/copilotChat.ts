@@ -27,6 +27,25 @@ export interface CopilotResponse {
   }>;
 }
 
+interface DriveSearchItem {
+  name?: string;
+  size?: number;
+}
+
+interface SearchHitResource {
+  name?: string;
+}
+
+interface SearchHitExtract {
+  text?: string;
+}
+
+interface SearchHit {
+  extracts?: SearchHitExtract[];
+  summary?: string;
+  resource?: SearchHitResource;
+}
+
 // Default launch configuration following SDK patterns
 export const DEFAULT_CHAT_CONFIG: ChatLaunchConfig = {
   header: "Case Assistant",
@@ -259,14 +278,14 @@ async function searchWithDriveFilter(
     }
 
     const data = await response.json();
-    const items = data.value || [];
+    const items = (data.value || []) as DriveSearchItem[];
 
     if (items.length === 0) {
       return await listContainerFiles(accessToken, containerId, containerName, userMessage);
     }
 
     // Format results from drive search
-    const responses: string[] = items.slice(0, 5).map((item: any) => {
+    const responses: string[] = items.slice(0, 5).map((item) => {
       const name = item.name || 'Document';
       const size = item.size ? `(${Math.round(item.size / 1024)} KB)` : '';
       return `• **${name}** ${size}`;
@@ -302,13 +321,13 @@ async function listContainerFiles(
     }
 
     const data = await response.json();
-    const items = data.value || [];
+    const items = (data.value || []) as DriveSearchItem[];
 
     if (items.length === 0) {
       return `The "${containerName}" case doesn't have any documents yet. Upload some files to get started!`;
     }
 
-    const fileList = items.slice(0, 5).map((item: any) => `• ${item.name}`).join("\n");
+    const fileList = items.slice(0, 5).map((item) => `• ${item.name}`).join("\n");
     return `Here are the documents in "${containerName}":\n\n${fileList}\n\nAsk me about any of these documents, or try a more specific search term.`;
   } catch (error) {
     console.error("List files error:", error);
@@ -319,7 +338,7 @@ async function listContainerFiles(
 /**
  * Format search results into a readable response.
  */
-function formatSearchResults(hits: any[], containerName: string): string {
+function formatSearchResults(hits: SearchHit[], containerName: string): string {
   const responses: string[] = [];
 
   for (const hit of hits.slice(0, 5)) {

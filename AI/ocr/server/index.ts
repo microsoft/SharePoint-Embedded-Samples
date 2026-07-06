@@ -1,60 +1,62 @@
-import * as restify from "restify";
+import express, { NextFunction, Request, Response } from "express";
 import { listContainers } from "./listContainers";
 import { createContainer } from "./createContainer";
 import { onReceiptAdded } from "./onReceiptAdded";
 
-const server = restify.createServer();
+const app = express();
 
-server.use(restify.plugins.bodyParser(), restify.plugins.queryParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-server.listen(process.env.port || process.env.PORT || 3001, () => {
-  console.log(`\nAPI server started, ${server.name} listening to ${server.url}`);
-});
-
-server.pre((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', req.header('origin'));
   res.header('Access-Control-Allow-Headers', req.header('Access-Control-Request-Headers'));
   res.header('Access-Control-Allow-Credentials', 'true');
 
   if (req.method === 'OPTIONS') {
-    return res.send(204);
+    return res.sendStatus(204);
   }
 
   next();
 });
 
-server.get('/api/echo', async (req, res, next) => {
+app.get('/api/echo', async (_req: Request, res: Response) => {
   console.log('GET /api/echo');
-  res.send(200, "server is running");
-  next();
+  res.status(200).send("server is running");
 });
 
-server.get('/api/listContainers', async (req, res, next) => {
+app.get('/api/listContainers', async (req: Request, res: Response) => {
   try {
-    const response = await listContainers(req, res);
-    res.send(200, response)
+    await listContainers(req, res);
   } catch (error: any) {
-    res.send(500, { message: `Error in API server: ${error.message}` });
+    if (!res.headersSent) {
+      res.status(500).send({ message: `Error in API server: ${error.message}` });
+    }
   }
-  next();
 });
 
-server.post('/api/createContainer', async (req, res, next) => {
+app.post('/api/createContainer', async (req: Request, res: Response) => {
   try {
-    const response = await createContainer(req, res);
-    res.send(200, response)
+    await createContainer(req, res);
   } catch (error: any) {
-    res.send(500, { message: `Error in API server: ${error.message}` });
+    if (!res.headersSent) {
+      res.status(500).send({ message: `Error in API server: ${error.message}` });
+    }
   }
-  next();
 });
 
-server.post('/api/onReceiptAdded', async (req, res, next) => {
+app.post('/api/onReceiptAdded', async (req: Request, res: Response) => {
   try {
-    const response = await onReceiptAdded(req, res);
-    res.send(200, response)
+    await onReceiptAdded(req, res);
   } catch (error: any) {
-    res.send(500, { message: `Error in API server: ${error.message}` });
+    if (!res.headersSent) {
+      res.status(500).send({ message: `Error in API server: ${error.message}` });
+    }
   }
-  next();
+});
+
+const port = Number(process.env.port || process.env.PORT || 3001);
+
+app.listen(port, () => {
+  console.log(`\nAPI server started, listening on http://127.0.0.1:${port}`);
 });

@@ -13,8 +13,9 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      // Local shim for the SharePoint Embedded Copilot SDK (tgz not installable via npm/bun)
-    
+      // Keep Vite aligned with tsconfig so production builds resolve the local SDK shim.
+      "@microsoft/sharepointembedded-copilotchat-react": path.resolve(__dirname, "./src/lib/sharepointembedded-copilotchat-react/index.tsx"),
+
       // Force all React imports to use the same instance
       "react": path.resolve(__dirname, "./node_modules/react"),
       "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),

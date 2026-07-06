@@ -13,6 +13,7 @@ import { useFilePreview } from '@/hooks/useFilePreview';
 import { Badge } from '@/components/ui/badge';
 import { stripHtmlTags } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { getErrorMessage } from '@/lib/utils';
 import {
   Table,
   TableBody,
@@ -63,12 +64,13 @@ const SearchResults = () => {
         const searchResults = await searchService.searchFiles(token, searchTerm, containerId);
         console.log('Setting search results:', searchResults);
         setResults(searchResults);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Search error:', error);
-        setError(error.message || 'An error occurred while searching');
+        const errorMessage = getErrorMessage(error, 'An error occurred while searching');
+        setError(errorMessage);
         toast({
           title: "Search Error",
-          description: `Failed to search: ${error.message || 'Unknown error'}`,
+          description: `Failed to search: ${errorMessage}`,
           variant: "destructive",
         });
       } finally {
@@ -126,11 +128,11 @@ const SearchResults = () => {
           variant: "destructive",
         });
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error opening Office document:', error);
       toast({
         title: "Error",
-        description: `Failed to open file: ${error.message || 'Unknown error'}`,
+        description: `Failed to open file: ${getErrorMessage(error, 'Unknown error')}`,
         variant: "destructive",
       });
     }
@@ -156,11 +158,11 @@ const SearchResults = () => {
       
       console.log('Calling handleViewFile...');
       await handleViewFile(fileItem);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error previewing document:', error);
       toast({
         title: "Error",
-        description: `Failed to preview file: ${error.message || 'Unknown error'}`,
+        description: `Failed to preview file: ${getErrorMessage(error, 'Unknown error')}`,
         variant: "destructive",
       });
     }

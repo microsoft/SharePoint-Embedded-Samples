@@ -1,0 +1,75 @@
+param(
+    [switch]$SkipInstall,
+    [switch]$SkipTests,
+    [switch]$SkipBrowser,
+    [switch]$KeepProcesses,
+    [switch]$Headed,
+    [int]$TimeoutSec = 90
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+. (Join-Path $PSScriptRoot '../../Tools/powershell/SampleValidation.ps1')
+
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+$toolRoot = Join-Path $repoRoot 'Tools/sample-validation'
+$appRoot = $PSScriptRoot
+$nodeEnvironment = Get-ValidationNodeEnvironment
+$runtimeHandle = $null
+
+function Test-LegalDocsNodeSupported {
+    $nodeVersion = Get-ValidationNodeVersion
+    return (($nodeVersion.Major -eq 20 -and $nodeVersion -ge [Version]'20.19.0') -or $nodeVersion -ge [Version]'22.12.0')
+}
+
+try {
+    Write-Step 'Preflight checks'
+    Assert-CommandExists 'node'
+    Assert-CommandExists 'npm'
+    Assert-CommandExists 'npx'
+
+    if (-not (Test-LegalDocsNodeSupported)) {
+        Write-Host 'Skipping legal-docs validation because the current Node.js runtime is below Vite 8 requirements (20.19+ or 22.12+).' -ForegroundColor Yellow
+        Write-ValidationSummary -Status 'SKIP_ENV' -Message 'Validation skipped because legal-docs requires Node 20.19+ or 22.12+. Set VALIDATION_NODE_COMMAND to a compatible Node executable to run it.'
+        return
+    }
+
+    if (-not $SkipInstall) {
+        Write-Step 'Installing dependencies'
+        Invoke-ExternalCommand -FilePath 'npm' -Arguments @('install') -WorkingDirectory $appRoot -Environment $nodeEnvironment
+    }
+
+    Write-Step 'Building app'
+    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'build') -WorkingDirectory $appRoot -Environment $nodeEnvironment
+
+    Write-Step 'Linting app'
+    Invoke-ExternalCommand -FilePath 'npm' -Arguments @('run', 'lint') -WorkingDirectory $appRoot -Environment $nodeEnvironment
+
+    Write-Host 'No automated test script is defined for this sample.' -ForegroundColor Yellow
+
+    Write-Step 'Starting preview server'
+    $logPath = New-ValidationLogPath -WorkingDirectory $appRoot -Name 'legal-docs'
+    $runtimeHandle = Start-LoggedProcess -FilePath 'npx' -Arguments @('vite', 'preview', '--host', '127.0.0.1', '--port', '4173') -WorkingDirectory $appRoot -LogPath $logPath -Environment $nodeEnvironment
+    [void](Wait-ForHttpEndpoint -Url 'http://127.0.0.1:4173' -TimeoutSec $TimeoutSec -AllowedStatusCodes @(200) -ProcessHandle $runtimeHandle)
+
+    if ($SkipBrowser) {
+        Write-Host 'Skipping browser smoke because -SkipBrowser was specified.' -ForegroundColor Yellow
+    }
+    else {
+        Write-Step 'Running browser smoke'
+        Invoke-BrowserSmoke -ToolRoot $toolRoot -Url 'http://127.0.0.1:4173' -SkipInstall:$SkipInstall -Headed:$Headed -TimeoutSec $TimeoutSec -ExpectSelector '#root'
+    }
+
+    Write-Host 'Legal docs sample validation completed.' -ForegroundColor Green
+    Write-ValidationSummary -Status 'PASS' -Message 'Build, preview startup, and browser smoke checks passed.'
+}
+catch {
+    Write-ValidationSummary -Status 'FAIL' -Message $_.Exception.Message
+    throw
+}
+finally {
+    if ($null -ne $runtimeHandle -and -not $KeepProcesses) {
+        Stop-LoggedProcess -Handle $runtimeHandle
+    }
+}

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { sharePointService } from '../services/sharePointService';
+import { getErrorMessage } from '@/lib/utils';
 
 export const useContainerDetails = (containerId: string | undefined) => {
   const [containerDetails, setContainerDetails] = useState<{ webUrl: string, name: string } | null>(null);
@@ -43,9 +44,9 @@ export const useContainerDetails = (containerId: string | undefined) => {
         const details = await sharePointService.getContainerDetails(token, normalizedContainerId);
         setContainerDetails(details);
         console.log('Container details fetched successfully:', details);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error fetching container details:', error);
-        setError(error.message || 'Failed to fetch container details');
+        setError(getErrorMessage(error, 'Failed to fetch container details'));
         
         // Set fallback values to prevent UI breaking
         setContainerDetails({

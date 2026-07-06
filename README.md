@@ -17,6 +17,22 @@ Runnable applications demonstrating SharePoint Embedded integration patterns.
 
 See [docker.md](./Custom%20Apps/docker.md) for instructions on running the boilerplate apps in VS Code dev containers.
 
+## Sample Validation Scripts
+
+Runnable sample applications now expose a root-level `validate-sample.ps1` script that performs the sample's local build and an app-appropriate smoke check.
+
+Run the script from the sample root in PowerShell, for example:
+
+```powershell
+./validate-sample.ps1
+```
+
+Samples that require local tenant configuration will automatically downgrade to build-only or startup-only validation when their expected `.env`, `local.settings.json`, or `appsettings.json` files are missing.
+
+Each script ends with a standardized summary line such as `VALIDATION_RESULT: PASS`, `VALIDATION_RESULT: SKIP_CONFIG`, or `VALIDATION_RESULT: SKIP_ENV` so the outcome is easy to parse.
+
+If a sample needs a newer Node.js runtime than the machine default, set `VALIDATION_NODE_COMMAND` to a compatible `node.exe` path before running the validator. This is especially useful for Vite-based samples that require a newer Node release than older CRA-based samples.
+
 ## AI
 
 Samples and assets for integrating SharePoint Embedded with AI tools and services.

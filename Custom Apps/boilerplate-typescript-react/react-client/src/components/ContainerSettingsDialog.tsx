@@ -27,16 +27,13 @@ export type IContainerSettingsDialogProps = {
 
 export const ContainerSettingsDialog: React.FunctionComponent<IContainerSettingsDialogProps> = (props: IContainerSettingsDialogProps) => {
     const [container, setContainer] = useState<IContainer>(props.container);
-    const [id, setId] = useState(props.container.id);
     const [displayName, setDisplayName] = useState(props.container.displayName || '');
     const [description, setDescription] = useState(props.container.description || '');
-    const [customProperties, setCustomProperties] = useState(props.container.customProperties || {});
     const [isOpen, setIsOpen] = useState(props.isOpen);
-    const [loaded, setLoaded] = useState(false);
-    const [saving, setSaving] = useState(false);
+    const saving = false;
 
     useEffect(() => {
-        containersApi.get(props.container.id).then(setContainer).then(() => setLoaded(true));
+        containersApi.get(props.container.id).then(setContainer);
     }, [props.container.id]);
 
     const handleDisplayNameChange: InputProps["onChange"] = (event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData): void => {
@@ -58,7 +55,7 @@ export const ContainerSettingsDialog: React.FunctionComponent<IContainerSettings
                         <DialogContent className={styles.dialogContent}>
                             <Label htmlFor={container.id}>Id:</Label>
                             <Input
-                                value={id}
+                                value={container.id}
                                 className={styles.containerSelectorControls} 
                                 disabled
                             />
@@ -85,7 +82,7 @@ export const ContainerSettingsDialog: React.FunctionComponent<IContainerSettings
                             <Button
 
                                 appearance="primary"
-                                disabled={saving || (container.displayName === '')}
+                                disabled={saving || (displayName === '')}
                             >
                                 Create
                             </Button>

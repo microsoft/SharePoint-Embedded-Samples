@@ -10,6 +10,10 @@ import {
   ChatLaunchConfig 
 } from '@microsoft/sharepointembedded-copilotchat-react';
 
+type ChatAuthProviderWithSiteUrl = IChatEmbeddedApiAuthProvider & {
+  siteUrl?: string;
+};
+
 interface CopilotChatContainerProps {
   containerId: string;
   containerName?: string;
@@ -80,7 +84,7 @@ const CopilotChatContainer: React.FC<CopilotChatContainerProps> = ({
       siteUrl: containerWebUrl,
     });
 
-    const provider: IChatEmbeddedApiAuthProvider = {
+    const provider: ChatAuthProviderWithSiteUrl = {
       hostname: safeSharePointHostname,
       getToken: async () => {
         try {
@@ -107,7 +111,7 @@ const CopilotChatContainer: React.FC<CopilotChatContainerProps> = ({
     };
 
     // The SDK requires siteUrl on the auth provider for proper site context
-    (provider as any).siteUrl = containerWebUrl;
+    provider.siteUrl = containerWebUrl;
     
     return provider;
   }, [safeSharePointHostname, siteUrl, getSharePointToken, handleError, isAuthenticated]);

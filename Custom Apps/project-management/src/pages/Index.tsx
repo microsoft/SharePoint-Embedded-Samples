@@ -9,10 +9,17 @@ import { ShieldAlert } from "lucide-react";
 import { sharePointService } from '@/services/sharePointService';
 import { RollupDashboard } from '@/components/dashboard/RollupDashboard';
 import { useApiCalls } from '../context/ApiCallsContext';
+import { getErrorMessage, getErrorStatus } from '@/lib/utils';
+
+interface ProjectListItem {
+  id: string;
+  name?: string;
+  displayName?: string;
+}
 
 const Index = () => {
   const { getAccessToken, user } = useAuth();
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [permissionError, setPermissionError] = useState<boolean>(false);
@@ -51,26 +58,28 @@ const Index = () => {
             response: projectsList,
             status: 200
           });
-        } catch (error: any) {
+        } catch (error) {
           console.error('Error from search API:', error);
+          const errorMessage = getErrorMessage(error, 'Failed to fetch projects');
+          const errorStatus = getErrorStatus(error);
           
           // Track failed API call
           addApiCall({
             ...apiCallData,
-            response: { error: error.message },
-            status: error.status || 500
+            response: { error: errorMessage },
+            status: errorStatus || 500
           });
           
           // Check if it's a permissions error (403)
-          if (error.message && error.message.includes('403')) {
+          if (errorMessage.includes('403')) {
             setPermissionError(true);
           } else {
             throw error; // Re-throw if it's not a permissions error
           }
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error fetching projects:', error);
-        setError(error.message || "Failed to fetch projects");
+        setError(getErrorMessage(error, 'Failed to fetch projects'));
       } finally {
         setLoading(false);
       }

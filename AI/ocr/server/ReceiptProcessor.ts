@@ -7,6 +7,11 @@ import axios, { AxiosRequestConfig } from 'axios';
 export abstract class ReceiptProcessor {
 
     public static async processDrive(driveId: string): Promise<void> {
+        if (!this.hasDocumentAnalysisConfig()) {
+            console.log('Skipping receipt processing because DAC_RESOURCE_ENDPOINT or DAC_RESOURCE_KEY is not configured.');
+            return;
+        }
+
         const changedItems = await GraphProvider.getDriveChanges(driveId);
         for (const changedItem of changedItems) {
             if (changedItem.deleted && changedItem.deleted.state === "deleted") {
@@ -33,12 +38,22 @@ export abstract class ReceiptProcessor {
         return name.split('.')[0];
     }
 
-    private static dac = new DocumentAnalysisClient(
-        `${process.env["DAC_RESOURCE_ENDPOINT"]}`,
-        new AzureKeyCredential(`${process.env["DAC_RESOURCE_KEY"]}`)
-    );
-
     private static readonly SUPPORTED_FILE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'bmp', 'tiff', 'pdf'];
+
+    private static hasDocumentAnalysisConfig(): boolean {
+        return Boolean(process.env["DAC_RESOURCE_ENDPOINT"] && process.env["DAC_RESOURCE_KEY"]);
+    }
+
+    private static getDocumentAnalysisClient(): DocumentAnalysisClient {
+        const endpoint = process.env["DAC_RESOURCE_ENDPOINT"];
+        const key = process.env["DAC_RESOURCE_KEY"];
+
+        if (!endpoint || !key) {
+            throw new Error('DAC_RESOURCE_ENDPOINT and DAC_RESOURCE_KEY must be configured to process receipts.');
+        }
+
+        return new DocumentAnalysisClient(endpoint, new AzureKeyCredential(key));
+    }
 
     private static async getDriveItemStream(url: string): Promise<Readable> {
         const token = GraphProvider.graphAccessToken;
@@ -59,8 +74,9 @@ export abstract class ReceiptProcessor {
     }
 
     private static async analyzeReceiptStream(stream: Readable): Promise<any> {
+        const client = this.getDocumentAnalysisClient();
 
-        const poller = await this.dac.beginAnalyzeDocument("prebuilt-invoice", stream, {
+        const poller = await client.beginAnalyzeDocument("prebuilt-invoice", stream, {
             onProgress: ({ status }) => {
                 console.log(`status: ${status}`);
             },

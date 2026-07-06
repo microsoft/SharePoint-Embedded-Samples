@@ -5,6 +5,7 @@ import { sharePointService } from '../services/sharePointService';
 import { FileItem } from '@/services/sharePointService';
 import { toast } from '@/hooks/use-toast';
 import { useApiCalls } from '../context/ApiCallsContext';
+import { getErrorMessage, getErrorStatus } from '@/lib/utils';
 
 interface BreadcrumbItem {
   id: string;
@@ -92,34 +93,37 @@ export const useFiles = (containerId: string | undefined) => {
           response: enhancedFiles,
           status: 200
         });
-      } catch (apiError: any) {
+      } catch (apiError) {
         console.error('API Error details:', apiError);
+        const apiErrorMessage = getErrorMessage(apiError, 'Failed to fetch files.');
+        const apiErrorStatus = getErrorStatus(apiError);
         
         // Track failed API call
         addApiCall({
           ...apiCallData,
-          response: { error: apiError.message },
-          status: apiError.status || 500
+          response: { error: apiErrorMessage },
+          status: apiErrorStatus || 500
         });
         
         // Provide more specific error messages
         let errorMessage = "Failed to fetch files.";
-        if (apiError.message?.includes('404')) {
+        if (apiErrorMessage.includes('404')) {
           errorMessage = "Container not found. Please check if the project exists and you have access.";
-        } else if (apiError.message?.includes('403')) {
+        } else if (apiErrorMessage.includes('403')) {
           errorMessage = "Access denied. You may not have permission to view files in this container.";
-        } else if (apiError.message?.includes('400')) {
+        } else if (apiErrorMessage.includes('400')) {
           errorMessage = "Invalid request. The container ID format may be incorrect.";
         }
         
         setError(errorMessage);
         throw apiError;
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching files:', error);
+      const errorMessage = getErrorMessage(error, 'Failed to fetch files. This may be due to insufficient permissions or API limitations.');
       
-      if (!error.message?.includes('404') && !error.message?.includes('403') && !error.message?.includes('400')) {
-        setError(error.message || "Failed to fetch files. This may be due to insufficient permissions or API limitations.");
+      if (!errorMessage.includes('404') && !errorMessage.includes('403') && !errorMessage.includes('400')) {
+        setError(errorMessage);
         toast({
           title: "Error",
           description: "Failed to fetch files. Please check console for details.",
@@ -188,16 +192,18 @@ export const useFiles = (containerId: string | undefined) => {
           title: "Success",
           description: "File deleted successfully",
         });
-      } catch (apiError: any) {
+      } catch (apiError) {
+        const apiErrorMessage = getErrorMessage(apiError, 'File deletion failed.');
+        const apiErrorStatus = getErrorStatus(apiError);
         // Track failed API call
         addApiCall({
           ...apiCallData,
-          response: { error: apiError.message },
-          status: apiError.status || 500
+          response: { error: apiErrorMessage },
+          status: apiErrorStatus || 500
         });
         throw apiError;
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error deleting file:', error);
       toast({
         title: "Error",
