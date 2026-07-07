@@ -7,10 +7,9 @@
     <Nullable>enable</Nullable>
     <RootNamespace>SPEAgentWithRetrieval</RootNamespace>
     <!--
-      This project lives at the repo root so `dotnet run` works without passing a
-      project path. Default compile globbing is disabled so it does NOT recursively
-      pull in the sources of the sibling projects (SPEAgentWithRetrieval.Core and
-      WebApiTemp); only the console entry point below is compiled.
+      Default compile globbing is disabled so this console project does NOT recursively
+      pull in the sources of the sibling class library (SPEAgentWithRetrieval.Core), which
+      is consumed via a ProjectReference instead. Only the console entry point below is compiled.
     -->
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
