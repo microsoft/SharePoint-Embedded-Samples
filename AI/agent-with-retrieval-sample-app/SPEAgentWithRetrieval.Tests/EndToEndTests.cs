@@ -81,10 +81,10 @@ public class EndToEndTests
         services.Configure<Microsoft365Options>(configuration.GetSection(Microsoft365Options.SectionName));
         services.Configure<ChatSettingsOptions>(configuration.GetSection(ChatSettingsOptions.SectionName));
 
-        services.AddScoped<ITokenProvider, TokenProvider>();
-        services.AddScoped<IRetrievalService, CopilotRetrievalService>();
-        services.AddScoped<IFoundryService, FoundryService>();
-        services.AddScoped<IChatService, ChatService>();
+        services.AddSingleton<ITokenProvider, TokenProvider>();
+        services.AddSingleton<IRetrievalService, CopilotRetrievalService>();
+        services.AddSingleton<IFoundryService, FoundryService>();
+        services.AddSingleton<IChatService, ChatService>();
 
         services.AddLogging(b => b.AddConsole().SetMinimumLevel(LogLevel.Information));
 

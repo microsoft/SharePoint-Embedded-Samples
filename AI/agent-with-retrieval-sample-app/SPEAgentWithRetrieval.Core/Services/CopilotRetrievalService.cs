@@ -52,7 +52,6 @@ public class CopilotRetrievalService : IRetrievalService
         try
         {
             _logger.LogInformation("Searching for content ({Length} char query)", query.Length);
-            _logger.LogDebug("Search query content: {Query}", query);
 
             if (string.IsNullOrWhiteSpace(_microsoft365Options.ContainerTypeId))
             {
@@ -219,13 +218,14 @@ public class CopilotRetrievalService : IRetrievalService
     }
 }
 
-// Response models for the Copilot Retrieval API
-public class CopilotRetrievalResponse
+// Response models for the Copilot Retrieval API. Internal: used only for JSON deserialization,
+// not part of the Core library's public surface.
+internal class CopilotRetrievalResponse
 {
     public List<RetrievalHit>? RetrievalHits { get; set; }
 }
 
-public class RetrievalHit
+internal class RetrievalHit
 {
     public string? WebUrl { get; set; }
     public List<TextExtract>? Extracts { get; set; }
@@ -233,12 +233,12 @@ public class RetrievalHit
     public ResourceMetadata? ResourceMetadata { get; set; }
 }
 
-public class TextExtract
+internal class TextExtract
 {
     public string? Text { get; set; }
 }
 
-public class ResourceMetadata
+internal class ResourceMetadata
 {
     public string? Title { get; set; }
     public string? Author { get; set; }

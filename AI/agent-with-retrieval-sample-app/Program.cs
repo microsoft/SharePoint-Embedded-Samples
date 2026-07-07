@@ -27,11 +27,12 @@ class Program
                 services.Configure<Microsoft365Options>(configuration.GetSection("Microsoft365"));
                 services.Configure<ChatSettingsOptions>(configuration.GetSection("ChatSettings"));
 
-                // Register services
-                services.AddScoped<ITokenProvider, TokenProvider>();
-                services.AddScoped<IRetrievalService, CopilotRetrievalService>();
-                services.AddScoped<IFoundryService, FoundryService>();
-                services.AddScoped<IChatService, ChatService>();
+                // Register services. Singleton lifetime is appropriate for this single-user
+                // console app (services are resolved from the root provider for the app's lifetime).
+                services.AddSingleton<ITokenProvider, TokenProvider>();
+                services.AddSingleton<IRetrievalService, CopilotRetrievalService>();
+                services.AddSingleton<IFoundryService, FoundryService>();
+                services.AddSingleton<IChatService, ChatService>();
 
                 // Add logging
                 services.AddLogging(builder =>
