@@ -51,8 +51,8 @@ echo "🔄 Updating app registration to support public client flows..."
 # Remove SPA platform and add mobile/desktop platform
 az ad app update --id $OBJECT_ID \
     --public-client-redirect-uris "http://localhost" \
-    --web-redirect-uris \
-    --spa-redirect-uris \
+    --web-redirect-uris '[]' \
+    --spa-redirect-uris '[]' \
     --is-fallback-public-client true
 
 if [ $? -eq 0 ]; then

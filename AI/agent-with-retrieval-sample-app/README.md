@@ -2,7 +2,7 @@
 
 This project implements a chat agent using Azure AI Foundry SDK that retrieves and grounds responses on SharePoint Embedded content through Microsoft 365 Copilot Retrieval API.
 
-This agent uses Azure AI Foundry and Retrieval API to enable contract managers reason with their documents.
+This agent uses Azure AI Foundry and Retrieval API to enable contract managers to reason with their documents.
 
 ## Features
 

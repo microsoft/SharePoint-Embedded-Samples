@@ -76,14 +76,12 @@ public class CopilotRetrievalServiceTests
     }
 
     [Fact]
-    public async Task SearchAsync_WhenContainerTypeIdMissing_ReturnsEmpty_WithoutCallingGraph()
+    public async Task SearchAsync_WhenContainerTypeIdMissing_Throws_WithoutCallingGraph()
     {
         var handler = new StubHttpMessageHandler().EnqueueJson(HttpStatusCode.OK, SuccessJson);
         var service = CreateService(handler, containerTypeId: "");
 
-        var results = await service.SearchAsync("q");
-
-        Assert.Empty(results);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.SearchAsync("q"));
         Assert.Empty(handler.Requests);
     }
 
@@ -102,7 +100,7 @@ public class CopilotRetrievalServiceTests
     }
 
     [Fact]
-    public async Task SearchAsync_WhenThrottlingPersists_ReturnsEmpty_AfterMaxAttempts()
+    public async Task SearchAsync_WhenThrottlingPersists_Throws_AfterMaxAttempts()
     {
         var handler = new StubHttpMessageHandler();
         for (var i = 0; i < 4; i++)
@@ -111,33 +109,27 @@ public class CopilotRetrievalServiceTests
         }
         var service = CreateService(handler);
 
-        var results = await service.SearchAsync("q");
-
-        Assert.Empty(results);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.SearchAsync("q"));
         Assert.Equal(4, handler.Requests.Count); // maxAttempts
     }
 
     [Fact]
-    public async Task SearchAsync_OnNonThrottlingError_ReturnsEmpty_WithoutRetry()
+    public async Task SearchAsync_OnNonThrottlingError_Throws_WithoutRetry()
     {
         var handler = new StubHttpMessageHandler().EnqueueJson(HttpStatusCode.BadRequest, "bad request");
         var service = CreateService(handler);
 
-        var results = await service.SearchAsync("q");
-
-        Assert.Empty(results);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.SearchAsync("q"));
         Assert.Single(handler.Requests);
     }
 
     [Fact]
-    public async Task SearchAsync_OnUnauthorized_ReturnsEmpty()
+    public async Task SearchAsync_OnUnauthorized_Throws()
     {
         var handler = new StubHttpMessageHandler().EnqueueJson(HttpStatusCode.Unauthorized, "unauthorized");
         var service = CreateService(handler);
 
-        var results = await service.SearchAsync("q");
-
-        Assert.Empty(results);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.SearchAsync("q"));
         Assert.Single(handler.Requests);
     }
 

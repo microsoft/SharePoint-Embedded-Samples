@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using SPEAgentWithRetrieval.Core.Models;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SPEAgentWithRetrieval.Core.Services;
 
@@ -139,12 +140,29 @@ public class FoundryService : IFoundryService
             var url = Sanitize(item.Url);
 
             builder.AppendLine($"<reference_document title=\"{title}\" source=\"{source}\" url=\"{url}\">");
-            builder.AppendLine(item.Content);
+            builder.AppendLine(NeutralizeReferenceDelimiters(item.Content));
             builder.AppendLine("</reference_document>");
             builder.AppendLine();
         }
 
         return builder.ToString();
+    }
+
+    // Matches an opening or closing <reference_document ...> delimiter tag in any casing or
+    // spacing (e.g. "</reference_document>", "< / Reference_Document").
+    private static readonly Regex ReferenceDelimiterPattern =
+        new(@"<\s*/?\s*reference_document", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    internal static string NeutralizeReferenceDelimiters(string? content)
+    {
+        if (string.IsNullOrEmpty(content))
+        {
+            return string.Empty;
+        }
+
+        // Retrieved document text is untrusted. Neutralize any reference_document delimiter it
+        // contains so it cannot forge a closing tag and break out of the reference block.
+        return ReferenceDelimiterPattern.Replace(content, "[reference_document]");
     }
 
     internal static string Sanitize(string? value)

@@ -137,13 +137,14 @@ public class CopilotRetrievalService : IRetrievalService
                     }
 
                     _logger.LogError("Retrieval API call failed with status: {StatusCode}, Error: {Error}", response.StatusCode, errorContent);
-                    return new List<RetrievedContent>();
+                    throw new InvalidOperationException(
+                        $"Retrieval API call failed with status {(int)response.StatusCode} ({response.StatusCode}).");
                 }
 
                 if (response == null || !response.IsSuccessStatusCode)
                 {
                     _logger.LogError("Retrieval API call failed after {Attempts} attempts. Last error: {Error}", maxAttempts, errorContent);
-                    return new List<RetrievedContent>();
+                    throw new InvalidOperationException($"Retrieval API call failed after {maxAttempts} attempts.");
                 }
 
                 var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -178,8 +179,11 @@ public class CopilotRetrievalService : IRetrievalService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while retrieving content for query: {Query}", query);
-            return new List<RetrievedContent>();
+            // Surface configuration/auth/API failures to the caller instead of masking them as
+            // "no results", which would let the pipeline generate ungrounded answers. The caller
+            // (ChatService) logs and returns a user-facing error message.
+            _logger.LogError(ex, "Error occurred while retrieving content for query of length {Length}", query.Length);
+            throw;
         }
     }
 
