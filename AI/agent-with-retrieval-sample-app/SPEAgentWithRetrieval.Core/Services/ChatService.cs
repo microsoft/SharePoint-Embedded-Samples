@@ -23,7 +23,8 @@ public class ChatService : IChatService
     {
         try
         {
-            _logger.LogInformation("Processing chat request: {Message}", request.Message);
+            _logger.LogInformation("Processing chat request ({Length} chars)", request.Message.Length);
+            _logger.LogDebug("Chat request content: {Message}", request.Message);
 
             // Step 1: Retrieve relevant content from Microsoft 365
             var retrievedContent = await _retrievalService.SearchAsync(request.Message, cancellationToken);

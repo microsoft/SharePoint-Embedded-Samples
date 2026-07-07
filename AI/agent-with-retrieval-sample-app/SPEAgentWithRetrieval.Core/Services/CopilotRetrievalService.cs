@@ -36,7 +36,8 @@ public class CopilotRetrievalService : IRetrievalService
     {
         try
         {
-            _logger.LogInformation("Searching for query: {Query}", query);
+            _logger.LogInformation("Searching for content ({Length} char query)", query.Length);
+            _logger.LogDebug("Search query content: {Query}", query);
 
             if (string.IsNullOrWhiteSpace(_microsoft365Options.ContainerTypeId))
             {
