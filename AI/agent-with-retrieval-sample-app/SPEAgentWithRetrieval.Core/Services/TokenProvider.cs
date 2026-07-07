@@ -33,54 +33,44 @@ public class TokenProvider : ITokenProvider
         // browser cannot be launched automatically. Prints a URL + code to enter.
         if (_microsoft365Options.UseDeviceCodeAuth)
         {
-            return new DeviceCodeCredential(new DeviceCodeCredentialOptions
-            {
-                TenantId = _microsoft365Options.TenantId,
-                ClientId = _microsoft365Options.ClientId,
-                TokenCachePersistenceOptions = CreateTokenCacheOptions(),
-                DeviceCodeCallback = (code, cancellation) =>
-                {
-                    Console.WriteLine($"\nTo authenticate, please visit: {code.VerificationUri}");
-                    Console.WriteLine($"And enter the code: {code.UserCode}");
-                    Console.WriteLine("Waiting for authentication to complete...");
-                    return Task.CompletedTask;
-                }
-            });
+            return CreateDeviceCodeCredential();
         }
 
-        try
+        // Prefer InteractiveBrowserCredential, but provide a genuine fallback to device code.
+        // A browser failure surfaces during token acquisition (not construction), so wrapping
+        // construction in try/catch would never trigger the fallback. ChainedTokenCredential
+        // instead tries the browser first and transparently falls back to device code when the
+        // browser flow cannot acquire a token (e.g. no browser available in the environment).
+        var interactiveCredential = new InteractiveBrowserCredential(new InteractiveBrowserCredentialOptions
         {
-            // First try InteractiveBrowserCredential
-            return new InteractiveBrowserCredential(new InteractiveBrowserCredentialOptions
+            TenantId = _microsoft365Options.TenantId,
+            ClientId = _microsoft365Options.ClientId,
+            RedirectUri = new Uri("http://localhost"),
+            TokenCachePersistenceOptions = CreateTokenCacheOptions(),
+            BrowserCustomization = new BrowserCustomizationOptions
             {
-                TenantId = _microsoft365Options.TenantId,
-                ClientId = _microsoft365Options.ClientId,
-                RedirectUri = new Uri("http://localhost"),
-                TokenCachePersistenceOptions = CreateTokenCacheOptions(),
-                BrowserCustomization = new BrowserCustomizationOptions
-                {
-                    UseEmbeddedWebView = false
-                }
-            });
-        }
-        catch (Exception)
+                UseEmbeddedWebView = false
+            }
+        });
+
+        return new ChainedTokenCredential(interactiveCredential, CreateDeviceCodeCredential());
+    }
+
+    private DeviceCodeCredential CreateDeviceCodeCredential()
+    {
+        return new DeviceCodeCredential(new DeviceCodeCredentialOptions
         {
-            // Fallback to DeviceCodeCredential if InteractiveBrowserCredential fails
-            Console.WriteLine("Falling back to Device Code authentication...");
-            return new DeviceCodeCredential(new DeviceCodeCredentialOptions
+            TenantId = _microsoft365Options.TenantId,
+            ClientId = _microsoft365Options.ClientId,
+            TokenCachePersistenceOptions = CreateTokenCacheOptions(),
+            DeviceCodeCallback = (code, cancellation) =>
             {
-                TenantId = _microsoft365Options.TenantId,
-                ClientId = _microsoft365Options.ClientId,
-                TokenCachePersistenceOptions = CreateTokenCacheOptions(),
-                DeviceCodeCallback = (code, cancellation) =>
-                {
-                    Console.WriteLine($"\nTo authenticate, please visit: {code.VerificationUri}");
-                    Console.WriteLine($"And enter the code: {code.UserCode}");
-                    Console.WriteLine("Waiting for authentication to complete...");
-                    return Task.CompletedTask;
-                }
-            });
-        }
+                Console.WriteLine($"\nTo authenticate, please visit: {code.VerificationUri}");
+                Console.WriteLine($"And enter the code: {code.UserCode}");
+                Console.WriteLine("Waiting for authentication to complete...");
+                return Task.CompletedTask;
+            }
+        });
     }
 
     private static TokenCachePersistenceOptions CreateTokenCacheOptions()

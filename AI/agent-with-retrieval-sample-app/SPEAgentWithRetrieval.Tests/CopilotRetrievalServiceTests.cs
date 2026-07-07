@@ -136,7 +136,11 @@ public class CopilotRetrievalServiceTests
     [Theory]
     [InlineData(HttpStatusCode.TooManyRequests, "", true)]
     [InlineData(HttpStatusCode.InternalServerError, "{\"code\":\"429\"}", true)]
+    [InlineData(HttpStatusCode.InternalServerError, "{\"code\":429}", true)]
     [InlineData(HttpStatusCode.InternalServerError, "some other error", false)]
+    [InlineData(HttpStatusCode.BadGateway, "{\"error\":{\"code\":\"429\"}}", true)]
+    [InlineData(HttpStatusCode.BadRequest, "{\"code\":\"429\"}", false)] // 4xx mentioning 429 must not retry
+    [InlineData(HttpStatusCode.Unauthorized, "429 somewhere", false)]
     [InlineData(HttpStatusCode.BadRequest, "", false)]
     public void IsThrottling_DetectsThrottleSignals(HttpStatusCode status, string body, bool expected)
     {

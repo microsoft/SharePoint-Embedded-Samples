@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SPEAgentWithRetrieval.Core.Models;
 using System.Text.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
 
 namespace SPEAgentWithRetrieval.Core.Services;
@@ -187,6 +188,10 @@ public class CopilotRetrievalService : IRetrievalService
         }
     }
 
+    // Matches an inner throttling code in an error body, e.g. "code":"429" or "code": 429.
+    private static readonly Regex ThrottleCodePattern =
+        new("\"code\"\\s*:\\s*\"?429\"?", RegexOptions.Compiled);
+
     internal static bool IsThrottling(HttpResponseMessage response, string errorContent)
     {
         if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
@@ -194,8 +199,12 @@ public class CopilotRetrievalService : IRetrievalService
             return true;
         }
 
-        // The SPE datasource wraps throttling as HTTP 500 with an inner "code":"429".
-        return !string.IsNullOrEmpty(errorContent) && errorContent.Contains("\"429\"");
+        // The SPE datasource wraps throttling as an HTTP 5xx whose body carries an inner 429 code.
+        // Restrict body-based detection to server errors and match the specific "code" field so a
+        // 4xx response that merely mentions 429 elsewhere does not trigger spurious retries.
+        return (int)response.StatusCode >= 500
+            && !string.IsNullOrEmpty(errorContent)
+            && ThrottleCodePattern.IsMatch(errorContent);
     }
 
     internal static TimeSpan GetRetryDelay(HttpResponseMessage response, int attempt)
