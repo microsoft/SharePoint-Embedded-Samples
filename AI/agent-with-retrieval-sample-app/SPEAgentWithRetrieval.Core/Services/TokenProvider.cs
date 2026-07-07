@@ -37,11 +37,7 @@ public class TokenProvider : ITokenProvider
             {
                 TenantId = _microsoft365Options.TenantId,
                 ClientId = _microsoft365Options.ClientId,
-                TokenCachePersistenceOptions = new TokenCachePersistenceOptions
-                {
-                    Name = "SPEAgentAuthCache",
-                    UnsafeAllowUnencryptedStorage = true
-                },
+                TokenCachePersistenceOptions = CreateTokenCacheOptions(),
                 DeviceCodeCallback = (code, cancellation) =>
                 {
                     Console.WriteLine($"\nTo authenticate, please visit: {code.VerificationUri}");
@@ -60,11 +56,7 @@ public class TokenProvider : ITokenProvider
                 TenantId = _microsoft365Options.TenantId,
                 ClientId = _microsoft365Options.ClientId,
                 RedirectUri = new Uri("http://localhost"),
-                TokenCachePersistenceOptions = new TokenCachePersistenceOptions
-                {
-                    Name = "SPEAgentAuthCache",
-                    UnsafeAllowUnencryptedStorage = true // For development only
-                },
+                TokenCachePersistenceOptions = CreateTokenCacheOptions(),
                 BrowserCustomization = new BrowserCustomizationOptions
                 {
                     UseEmbeddedWebView = false
@@ -79,11 +71,7 @@ public class TokenProvider : ITokenProvider
             {
                 TenantId = _microsoft365Options.TenantId,
                 ClientId = _microsoft365Options.ClientId,
-                TokenCachePersistenceOptions = new TokenCachePersistenceOptions
-                {
-                    Name = "SPEAgentAuthCache",
-                    UnsafeAllowUnencryptedStorage = true
-                },
+                TokenCachePersistenceOptions = CreateTokenCacheOptions(),
                 DeviceCodeCallback = (code, cancellation) =>
                 {
                     Console.WriteLine($"\nTo authenticate, please visit: {code.VerificationUri}");
@@ -93,6 +81,17 @@ public class TokenProvider : ITokenProvider
                 }
             });
         }
+    }
+
+    private static TokenCachePersistenceOptions CreateTokenCacheOptions()
+    {
+        // The MSAL token cache is always persisted using the OS-level encrypted
+        // secret store (DPAPI on Windows, Keychain on macOS, libsecret on Linux).
+        // Unencrypted on-disk storage is intentionally never enabled.
+        return new TokenCachePersistenceOptions
+        {
+            Name = "SPEAgentAuthCache"
+        };
     }
 
     public async Task<string> GetTokenAsync(CancellationToken cancellationToken = default)

@@ -18,7 +18,6 @@ public class Microsoft365Options
     public bool UseUserAuthentication { get; set; } = true;
     public bool UseDeviceCodeAuth { get; set; } = false;
     public string[] Scopes { get; set; } = { "https://graph.microsoft.com/FileStorageContainer.Selected" };
-    public bool AllowAnonymousRequests { get; set; } = false; // For development only - allows requests without authentication
 }
 
 public class ChatSettingsOptions

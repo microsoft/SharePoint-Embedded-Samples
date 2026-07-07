@@ -46,9 +46,9 @@ class Program
         var chatService = host.Services.GetRequiredService<IChatService>();
         var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
-        logger.LogInformation("Azure AI Chat Agent with SharePoint RAG started");
+        logger.LogInformation("Azure AI Chat Agent with SharePoint Embedded RAG started");
         
-        System.Console.WriteLine("=== Azure AI Chat Agent with SharePoint RAG ===");
+        System.Console.WriteLine("=== Azure AI Chat Agent with SharePoint Embedded RAG ===");
         System.Console.WriteLine("Ask questions about your Microsoft 365 content!");
         System.Console.WriteLine("Type 'exit' or 'quit' to end the conversation.");
         System.Console.WriteLine("Type 'clear' to clear the console.");
@@ -74,7 +74,7 @@ class Program
             if (userInput.Equals("clear", StringComparison.OrdinalIgnoreCase))
             {
                 System.Console.Clear();
-                System.Console.WriteLine("=== Azure AI Chat Agent with SharePoint RAG ===");
+                System.Console.WriteLine("=== Azure AI Chat Agent with SharePoint Embedded RAG ===");
                 continue;
             }
 

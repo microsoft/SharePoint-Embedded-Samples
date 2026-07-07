@@ -26,7 +26,7 @@ This agent uses Azure AI Foundry and Retrieval API to enable contract managers r
 
 ```bash
 git clone <your-repo-url>
-cd SPEAgentWithRetrieval
+cd SharePoint-Embedded-Samples/AI/agent-with-retrieval-sample-app
 ```
 
 ### 2. Create the App Registration (Public Client)
@@ -230,13 +230,19 @@ The application is structured around the following components:
 For convenience, this repository includes automation scripts to fix common Azure AD app registration issues:
 
 ### Bash Script (macOS/Linux)
+
+Pass your app registration's client ID and tenant ID as arguments:
+
 ```bash
-./fix-azure-app-registration.sh
+./fix-azure-app-registration.sh <CLIENT_ID> <TENANT_ID>
 ```
 
 ### PowerShell Script (Windows/Cross-platform)
+
+Pass your app registration's client ID and tenant ID explicitly:
+
 ```powershell
-./fix-azure-app-registration.ps1
+./fix-azure-app-registration.ps1 -ClientId <CLIENT_ID> -TenantId <TENANT_ID>
 ```
 
 These scripts will automatically:
