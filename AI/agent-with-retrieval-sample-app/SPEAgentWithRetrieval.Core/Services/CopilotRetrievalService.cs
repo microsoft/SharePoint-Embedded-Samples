@@ -13,8 +13,9 @@ public class CopilotRetrievalService : IRetrievalService
 
     // Shared HttpClient instance reused across requests to avoid socket exhaustion
     // and to benefit from connection pooling.
-    private static readonly HttpClient HttpClient = new();
+    private static readonly HttpClient SharedHttpClient = new();
 
+    private readonly HttpClient _httpClient;
     private readonly Microsoft365Options _microsoft365Options;
     private readonly ChatSettingsOptions _chatSettings;
     private readonly ILogger<CopilotRetrievalService> _logger;
@@ -25,11 +26,24 @@ public class CopilotRetrievalService : IRetrievalService
         IOptions<ChatSettingsOptions> chatSettings,
         ITokenProvider tokenProvider,
         ILogger<CopilotRetrievalService> logger)
+        : this(microsoft365Options, chatSettings, tokenProvider, logger, SharedHttpClient)
+    {
+    }
+
+    // Test-friendly constructor that allows injecting an HttpClient (e.g. one backed by
+    // a stub message handler). Production code uses the shared client via the constructor above.
+    internal CopilotRetrievalService(
+        IOptions<Microsoft365Options> microsoft365Options,
+        IOptions<ChatSettingsOptions> chatSettings,
+        ITokenProvider tokenProvider,
+        ILogger<CopilotRetrievalService> logger,
+        HttpClient httpClient)
     {
         _microsoft365Options = microsoft365Options.Value;
         _chatSettings = chatSettings.Value;
         _logger = logger;
         _tokenProvider = tokenProvider;
+        _httpClient = httpClient;
     }
 
     public async Task<List<RetrievedContent>> SearchAsync(string query, CancellationToken cancellationToken = default)
@@ -97,7 +111,7 @@ public class CopilotRetrievalService : IRetrievalService
                     };
                     httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                    response = await HttpClient.SendAsync(httpRequestMessage, cancellationToken);
+                    response = await _httpClient.SendAsync(httpRequestMessage, cancellationToken);
 
                     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
@@ -169,7 +183,7 @@ public class CopilotRetrievalService : IRetrievalService
         }
     }
 
-    private static bool IsThrottling(HttpResponseMessage response, string errorContent)
+    internal static bool IsThrottling(HttpResponseMessage response, string errorContent)
     {
         if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
         {
@@ -180,7 +194,7 @@ public class CopilotRetrievalService : IRetrievalService
         return !string.IsNullOrEmpty(errorContent) && errorContent.Contains("\"429\"");
     }
 
-    private static TimeSpan GetRetryDelay(HttpResponseMessage response, int attempt)
+    internal static TimeSpan GetRetryDelay(HttpResponseMessage response, int attempt)
     {
         if (response.Headers.RetryAfter?.Delta is TimeSpan delta && delta > TimeSpan.Zero)
         {

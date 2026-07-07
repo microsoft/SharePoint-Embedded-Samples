@@ -111,6 +111,37 @@ dotnet run
 3. **Ask Questions**: Type questions about your container's content
 4. **View Sources**: Responses include source document citations
 
+## Testing
+
+The solution includes an xUnit test project (`SPEAgentWithRetrieval.Tests`) with fast, offline unit tests plus an opt-in live end-to-end test.
+
+### Unit tests
+
+Run all unit tests (the live E2E test is skipped automatically):
+
+```bash
+dotnet test
+```
+
+Coverage includes:
+- **`ChatService`** – orchestration of retrieval + synthesis, and graceful error handling.
+- **`CopilotRetrievalService`** – request shaping, response parsing, `401`/error handling, and throttling retry/backoff (using a stubbed `HttpMessageHandler`, no network calls).
+- **`FoundryService`** – reasoning-model detection and the prompt-injection defenses (untrusted content is wrapped in `<reference_document>` tags and metadata is sanitized).
+- **`TokenProvider`** – external-token short-circuit.
+
+### End-to-end test
+
+`EndToEndTests` drives the full pipeline against the **live** Copilot Retrieval API and Azure AI Foundry. It is skipped unless `SPE_RUN_E2E=1` is set, because it requires a Copilot-licensed signed-in user, Azure credentials (e.g. `az login`), and valid configuration.
+
+```powershell
+$env:SPE_RUN_E2E = "1"
+$env:SPE_E2E_APPSETTINGS = "..\appsettings.json"   # optional: reuse the app's settings file
+$env:SPE_E2E_QUERY = "Summarize the documents available to me."  # optional
+dotnet test --filter Category=E2E
+```
+
+The test asserts the pipeline returns a non-empty answer without falling back to an error message. Configuration may be supplied via the JSON file above and/or environment variables (e.g. `Microsoft365__ContainerTypeId`).
+
 ## Architecture
 
 ### Overview
