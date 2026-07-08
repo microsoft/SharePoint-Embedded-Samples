@@ -11,7 +11,7 @@ Runnable applications demonstrating SharePoint Embedded integration patterns.
 | [boilerplate-react-azurefunction](./Custom%20Apps/boilerplate-react-azurefunction) | React + Azure Functions | Reference boilerplate: SPA with an Azure Functions OBO proxy |
 | [boilerplate-aspnet-webservice](./Custom%20Apps/boilerplate-aspnet-webservice) | C# / ASP.NET Core | Reference boilerplate: server-side MVC app with tenant onboarding |
 | [boilerplate-typescript-react](./Custom%20Apps/boilerplate-typescript-react) | TypeScript + React + Azure Functions | TypeScript variant of the React boilerplate |
-| [legal-docs](./Custom%20Apps/legal-docs) | React + Fluent UI + Copilot SDK | Legal case management with AI-assisted document review |
+| [legal-docs](./Custom%20Apps/legal-docs) | React + Fluent UI | Legal case management sample |
 | [project-management](./Custom%20Apps/project-management) | React + Vite + Tailwind + shadcn-ui | Project collaboration app |
 | [webhook](./Custom%20Apps/webhook) | Node.js | Minimal Graph API change notification listener |
 

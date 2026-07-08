@@ -16,7 +16,6 @@
     "@fluentui/react": "^8.112.9",
     "@fluentui/react-icons": "^2.0.220",
     "@hookform/resolvers": "^3.9.0",
-    "@microsoft/sharepointembedded-copilotchat-react": "https://download.microsoft.com/download/e2d6b1ec-7168-4787-b8de-4a9862f10744/microsoft-sharepointembedded-copilotchat-react-1.0.8.tgz",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",

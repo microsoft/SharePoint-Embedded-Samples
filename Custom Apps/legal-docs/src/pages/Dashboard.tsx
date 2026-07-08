@@ -26,7 +26,6 @@ import FlyoutButtons from "@/components/FlyoutButtons";
 import CaseSummaryPanel from "@/components/panels/CaseSummaryPanel";
 import ToolsPanel from "@/components/panels/ToolsPanel";
 import ReportsPanel from "@/components/panels/ReportsPanel";
-import CopilotPanel from "@/components/panels/CopilotPanel";
 import { PanelType } from "@/components/FlyoutButtons";
 
 // Button column width
@@ -282,7 +281,6 @@ export default function Dashboard() {
         <FlyoutButtons 
           activePanel={activePanel} 
           onPanelToggle={handlePanelToggle}
-          showCopilot={!!selectedContainer}
         />
 
         {/* Flyout Panels */}
@@ -318,23 +316,6 @@ export default function Dashboard() {
         >
           <ReportsPanel />
         </FlyoutPanel>
-
-        {/* Copilot Panel */}
-        {selectedContainer && (
-          <FlyoutPanel
-            title="AI Assistant"
-            isOpen={activePanel === "copilot"}
-            onClose={() => handlePanelClose("copilot")}
-            isPinned={pinnedPanels.has("copilot")}
-            onPinToggle={() => handlePinToggle("copilot")}
-            onWidthChange={handlePanelWidthChange}
-          >
-            <CopilotPanel 
-              containerId={selectedContainer.id}
-              containerName={selectedContainer.displayName}
-            />
-          </FlyoutPanel>
-        )}
       </div>
     </div>
   );

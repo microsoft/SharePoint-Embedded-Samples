@@ -19,9 +19,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@microsoft/sharepointembedded-copilotchat-react": [
-        "./src/lib/sharepointembedded-copilotchat-react/index.tsx"
       ]
     },
     "skipLibCheck": true,

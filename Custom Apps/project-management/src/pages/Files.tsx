@@ -2,7 +2,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { AlertCircle, FolderPlus, Upload, MessageSquare, FilePlus } from 'lucide-react';
+import { AlertCircle, FolderPlus, Upload, FilePlus } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { 
@@ -24,14 +24,12 @@ import FolderNavigation from '@/components/files/FolderNavigation';
 import FilePreviewDialog from '@/components/files/FilePreviewDialog';
 import FileUploadProgress from '@/components/files/FileUploadProgress';
 import CreateOfficeFileDialog from '@/components/files/CreateOfficeFileDialog';
-import CopilotChat from '@/components/CopilotChat';
 import { useFiles } from '@/hooks/useFiles';
 import { useContainerDetails } from '@/hooks/useContainerDetails';
 import { useFilePreview } from '@/hooks/useFilePreview';
 import { useAuth } from '@/context/AuthContext';
 import { sharePointService } from '@/services/sharePointService';
 import { toast } from '@/hooks/use-toast';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 const Files = () => {
   const { containerId } = useParams<{ containerId: string }>();
@@ -42,8 +40,6 @@ const Files = () => {
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [isOfficeFileDialogOpen, setIsOfficeFileDialogOpen] = useState(false);
-  const [isCopilotOpen, setIsCopilotOpen] = useState(false);
-  const [copilotSize, setCopilotSize] = useState(30);
   
   const {
     files,
@@ -208,18 +204,6 @@ const Files = () => {
     });
   };
 
-  // Handle resize event from the resizable panel
-  const handleResize = (sizes: number[]) => {
-    if (sizes.length > 0) {
-      setCopilotSize(100 - sizes[0]);
-    }
-  };
-
-  // Toggle the Copilot panel
-  const toggleCopilot = () => {
-    setIsCopilotOpen(!isCopilotOpen);
-  };
-
   // Get project name with proper loading and error handling
   const getProjectDisplayName = () => {
     if (detailsLoading) {
@@ -300,18 +284,6 @@ const Files = () => {
               />
             </label>
           </Button>
-          
-          {/* Copilot Chat Button */}
-          {containerId && (
-            <Button 
-              variant="outline" 
-              className="gap-2"
-              onClick={toggleCopilot}
-            >
-              <MessageSquare size={16} />
-              <span>{isCopilotOpen ? "Hide Copilot" : "Show Copilot"}</span>
-            </Button>
-          )}
         </div>
       </div>
       
@@ -344,58 +316,16 @@ const Files = () => {
         />
       )}
 
-      {/* Main content with resizable panels */}
-      <div className="h-[calc(100vh-250px)]">
-        <ResizablePanelGroup direction="horizontal" onLayout={handleResize}>
-          {/* File List panel - always visible */}
-          <ResizablePanel defaultSize={isCopilotOpen ? 70 : 100} minSize={30}>
-            <div className="h-full overflow-auto pr-4">
-              <FileList 
-                files={getSortedItems()}
-                loading={loading}
-                onFolderClick={(item) => handleFolderClick(item.id, item.name)}
-                onFileClick={handleViewFile}
-                onViewFile={handleViewFile}
-                onDeleteFile={handleDeleteFile}
-                containerId={containerId ? normalizeContainerId(containerId) : ''}
-              />
-            </div>
-          </ResizablePanel>
-          
-          {/* Copilot panel - only visible when opened */}
-          {isCopilotOpen && (
-            <>
-              <ResizableHandle withHandle className="bg-muted hover:bg-muted-foreground/20 transition-colors" />
-              
-              <ResizablePanel defaultSize={30} minSize={20} className="h-full">
-                <div className="flex flex-col h-full border-l">
-                  <div className="p-4 border-b flex justify-between items-center">
-                    <div>
-                      <h2 className="text-lg font-semibold">SharePoint AI Copilot</h2>
-                      <p className="text-sm text-muted-foreground">
-                        {containerDetails?.name || 'AI Assistant'}
-                      </p>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setIsCopilotOpen(false)}
-                    >
-                      Close
-                    </Button>
-                  </div>
-    
-                  {/* CopilotChat with full height to ensure prompt is visible */}
-                  {containerId && (
-                    <div className="flex-1 overflow-hidden">
-                      <CopilotChat containerId={containerId} className="h-full" />
-                    </div>
-                  )}
-                </div>
-              </ResizablePanel>
-            </>
-          )}
-        </ResizablePanelGroup>
+      <div className="h-[calc(100vh-250px)] overflow-auto">
+        <FileList 
+          files={getSortedItems()}
+          loading={loading}
+          onFolderClick={(item) => handleFolderClick(item.id, item.name)}
+          onFileClick={handleViewFile}
+          onViewFile={handleViewFile}
+          onDeleteFile={handleDeleteFile}
+          containerId={containerId ? normalizeContainerId(containerId) : ''}
+        />
       </div>
       
       <FilePreviewDialog

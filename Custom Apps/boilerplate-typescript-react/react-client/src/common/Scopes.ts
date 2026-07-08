@@ -31,10 +31,3 @@ export const SAMPLE_API_SCOPES = SAMPLE_API_CONTAINER_MANAGE
     ? [SAMPLE_API_CONTAINER_MANAGE]
     : undefined;
 
-// sharepoint scopes
-export const SP_CONTAINER_SELECTED = `${Constants.SP_ROOT_SITE_URL}/Container.Selected`;
-
-// embedded chat scopes
-export const CHAT_SCOPES = [
-    SP_CONTAINER_SELECTED
-];

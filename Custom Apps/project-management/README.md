@@ -44,10 +44,7 @@ Start using the application by updating the configuration with your SharePoint E
     tenantId: "<TENANT_ID>", // Replace with your tenant ID
     containerTypeId: "<CONTAINER_TYPE_ID>", // Replace with your container type ID
 
-# Line 11:  Update your domain to authenticate properly
-    sharePointHostname: "https://<Domain>.sharepoint.com",
-
-# Line 16: Update the Client ID 
+# In the msalConfig.auth block: Update the Client ID
     clientId: "<CLIENT_ID>", // Same as above
 ```
 
