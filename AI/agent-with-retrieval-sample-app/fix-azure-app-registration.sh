@@ -32,7 +32,7 @@ fi
 
 # Login to Azure
 echo "🔐 Logging in to Azure..."
-az login --tenant $TENANT_ID
+az login --tenant "$TENANT_ID"
 
 # Get the app registration object ID
 echo "📋 Getting app registration details..."
