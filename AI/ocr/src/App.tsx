@@ -60,6 +60,7 @@ function App() {
             },
         });
 
+        await msalInstance.initialize();
         msalInstance.acquireTokenSilent(containerScopes)
             .then(response => {
                 console.log('tokenResponse', JSON.stringify(response));

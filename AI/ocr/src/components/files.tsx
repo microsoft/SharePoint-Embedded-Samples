@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useRef
 } from 'react';
+import 'isomorphic-fetch';
 import { Providers } from "@microsoft/mgt-element";
 import {
   AddRegular, ArrowUploadRegular,
@@ -30,8 +31,6 @@ import {
   DriveItem
 } from "@microsoft/microsoft-graph-types-beta";
 import { IContainer } from "./../common/IContainer";
-require('isomorphic-fetch');
-
 interface IFilesProps {
   container: IContainer;
 }
@@ -39,7 +38,7 @@ interface IFilesProps {
 interface IDriveItemExtended extends DriveItem {
   isFolder: boolean;
   modifiedByName: string;
-  iconElement: JSX.Element;
+  iconElement: React.ReactElement;
   downloadUrl: string;
 }
 
