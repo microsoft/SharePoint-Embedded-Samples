@@ -22,9 +22,9 @@ export const GRAPH_SCOPES = [
     ...GRAPH_OPENID_CONNECT_BASIC
 ];
 
-// CCA/OBO mode: custom API scope (only used when REACT_APP_AZURE_SERVER_APP_ID is set)
-export const SAMPLE_API_CONTAINER_MANAGE = Constants.REACT_APP_AZURE_SERVER_APP_ID
-    ? `api://${Constants.REACT_APP_AZURE_SERVER_APP_ID}/Container.Manage`
+// CCA/OBO mode: custom API scope (only used when VITE_AZURE_SERVER_APP_ID is set)
+export const SAMPLE_API_CONTAINER_MANAGE = Constants.AZURE_SERVER_APP_ID
+    ? `api://${Constants.AZURE_SERVER_APP_ID}/Container.Manage`
     : undefined;
 
 export const SAMPLE_API_SCOPES = SAMPLE_API_CONTAINER_MANAGE

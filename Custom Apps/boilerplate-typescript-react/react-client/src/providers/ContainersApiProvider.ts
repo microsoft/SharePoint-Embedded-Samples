@@ -4,7 +4,7 @@ import * as Scopes from '../common/Scopes';
 import { GraphAuthProvider } from './GraphAuthProvider';
 
 export class ContainersApiProvider {
-    public readonly apiUrl: string = process.env.REACT_APP_SAMPLE_API_URL || 'http://localhost:7071/api';
+    public readonly apiUrl: string = import.meta.env.VITE_SAMPLE_API_URL || 'http://localhost:7071/api';
 
     public static readonly instance: ContainersApiProvider = new ContainersApiProvider();
     private _authProvider: { getToken: () => Promise<string> };
