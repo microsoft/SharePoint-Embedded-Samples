@@ -47,7 +47,8 @@ try {
     }
     else {
         Write-Step 'Running browser smoke'
-        Invoke-BrowserSmoke -ToolRoot $toolRoot -Url 'http://127.0.0.1:4173' -SkipInstall:$SkipInstall -Headed:$Headed -TimeoutSec $TimeoutSec -ExpectSelector '#root'
+        $screenshotPath = New-ValidationArtifactPath -WorkingDirectory $appRoot -Kind 'screenshots' -Name 'project-management' -Extension 'png'
+        Invoke-BrowserSmoke -ToolRoot $toolRoot -Url 'http://127.0.0.1:4173' -SkipInstall:$SkipInstall -Headed:$Headed -TimeoutSec $TimeoutSec -ExpectSelector '#root' -ScreenshotPath $screenshotPath
     }
 
     Write-Host 'Project management sample validation completed.' -ForegroundColor Green
