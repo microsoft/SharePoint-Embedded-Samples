@@ -1,8 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { GRAPH_SCOPE_FILES_READ_WRITE_ALL, GRAPH_SCOPE_USER_READ  } from './utils/constants';
 
 import { Providers } from '@microsoft/mgt-element';
@@ -17,11 +16,11 @@ Set required Microsoft Graph scopes in global provider
 */
 
 Providers.globalProvider = new Msal2Provider({
-  clientId: process.env.REACT_APP_CLIENT_ID,
-  authority: `https://login.microsoftonline.com/${process.env.REACT_APP_TENANT_ID}`,
+  clientId: import.meta.env.VITE_CLIENT_ID,
+  authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID}`,
   scopes: ["openid", "profile", "offline_access", "User.Read.All", "Files.ReadWrite.All", "Sites.Read.All", "FileStorageContainer.Selected"]
   
 });
-ReactDOM.render(<App />, document.getElementById('root'));
+createRoot(document.getElementById('root')).render(<App />);
 
-reportWebVitals();
+

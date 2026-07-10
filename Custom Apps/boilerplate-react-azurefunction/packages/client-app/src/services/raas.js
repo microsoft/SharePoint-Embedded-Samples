@@ -1,7 +1,6 @@
 import { Providers, ProviderState } from '@microsoft/mgt-element';
-import { InteractionRequiredAuthError } from '@azure/msal-browser';
+import { InteractionRequiredAuthError, PublicClientApplication } from '@azure/msal-browser';
 import { remoteFunctionHost, localFunctionHost } from '../utils/constants';
-const msal = require('@azure/msal-browser');
 
 
 export default class RaaS {
@@ -157,8 +156,8 @@ export default class RaaS {
   async getApiAccessToken() {
     const msalConfig = {
       auth: {
-        clientId: process.env.REACT_APP_CLIENT_ID,
-        authority: `https://login.microsoftonline.com/${process.env.REACT_APP_TENANT_ID}/`
+        clientId: import.meta.env.VITE_CLIENT_ID,
+        authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID}/`
       },
       cache: {
         cacheLocation: "localStorage", // This configures where  cache will be stored
@@ -167,13 +166,14 @@ export default class RaaS {
     }
     const scopes = {
       scopes: [
-        `api://${process.env.REACT_APP_CLIENT_ID}/Container.Manage`
+        `api://${import.meta.env.VITE_CLIENT_ID}/Container.Manage`
       ],
       prompt: "select_account",
       redirectUri: "/"
     }
 
-    const pca = new msal.PublicClientApplication(msalConfig);
+    const pca = new PublicClientApplication(msalConfig);
+    await pca.initialize();
     let tokenResponse;
 
     try {
@@ -193,3 +193,5 @@ export default class RaaS {
     }
   }
 }
+
+

@@ -27,8 +27,7 @@ import {
   Modal
 } from '@fluentui/react';
 import { getFileTypeIconProps, FileIconType } from '@fluentui/react-file-type-icons';
-import { Search } from '@fluentui/react-icons';
-import Permissions from './permissions.js';
+import Permissions from './permissions.jsx';
 
 const classNames = mergeStyleSets({
   fileIconHeaderIcon: {
@@ -978,3 +977,5 @@ export default class Files extends React.Component {
     );
   }
 }
+
+
