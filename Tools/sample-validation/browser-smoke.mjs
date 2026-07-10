@@ -33,6 +33,7 @@ const waitMs = Number(args['wait-ms'] ?? '1500');
 const expectSelector = args['expect-selector'] ?? 'body';
 const expectText = args['expect-text'];
 const clickSelector = args['click-selector'];
+const screenshotPath = typeof args.screenshot === 'string' ? args.screenshot : undefined;
 const headed = Boolean(args.headed);
 const failOnConsoleError = Boolean(args['fail-on-console-error']);
 
@@ -79,6 +80,14 @@ try {
   const bodyText = (await page.locator('body').innerText()).trim();
   if (bodyText.length === 0) {
     throw new Error('The page rendered an empty body.');
+  }
+
+  if (screenshotPath) {
+    const { dirname } = await import('node:path');
+    const { mkdirSync } = await import('node:fs');
+    mkdirSync(dirname(screenshotPath), { recursive: true });
+    await page.screenshot({ path: screenshotPath, fullPage: true });
+    console.log(`Saved screenshot to ${screenshotPath}`);
   }
 
   if (pageErrors.length > 0) {

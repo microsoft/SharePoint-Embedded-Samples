@@ -438,6 +438,8 @@ function Invoke-BrowserSmoke {
 
         [string]$ClickSelector,
 
+        [string]$ScreenshotPath,
+
         [switch]$FailOnConsoleError
     )
 
@@ -463,9 +465,149 @@ function Invoke-BrowserSmoke {
     if ($ClickSelector) {
         $arguments += @('--click-selector', $ClickSelector)
     }
+    if ($ScreenshotPath) {
+        $arguments += @('--screenshot', $ScreenshotPath)
+    }
     if ($FailOnConsoleError) {
         $arguments += '--fail-on-console-error'
     }
 
     Invoke-ExternalCommand -FilePath (Get-ValidationNodeCommand) -Arguments $arguments -WorkingDirectory $ToolRoot -Environment $nodeEnvironment
+}
+
+function New-ValidationArtifactPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$WorkingDirectory,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet('screenshots', 'http')]
+        [string]$Kind,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Name,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Extension
+    )
+
+    $artifactRoot = Join-Path (Join-Path $WorkingDirectory '.validation') $Kind
+    if (-not (Test-Path $artifactRoot)) {
+        New-Item -ItemType Directory -Path $artifactRoot -Force | Out-Null
+    }
+
+    $timestamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
+    return Join-Path $artifactRoot "$Name-$timestamp.$Extension"
+}
+
+function Save-HttpArtifact {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ArtifactPath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Url,
+
+        [string]$Method = 'GET',
+
+        [hashtable]$Headers = @{},
+
+        [string]$Body,
+
+        [int[]]$AllowedStatusCodes = @(200),
+
+        [int]$TimeoutSec = 15
+    )
+
+    $artifactDirectory = Split-Path -Parent $ArtifactPath
+    if (-not (Test-Path $artifactDirectory)) {
+        New-Item -ItemType Directory -Path $artifactDirectory -Force | Out-Null
+    }
+
+    $requestArguments = @{
+        Uri                = $Url
+        Method             = $Method
+        TimeoutSec         = $TimeoutSec
+        MaximumRedirection = 0
+        ErrorAction        = 'Stop'
+    }
+    if ($Headers.Count -gt 0) {
+        $requestArguments['Headers'] = $Headers
+    }
+    if ($PSBoundParameters.ContainsKey('Body') -and $null -ne $Body) {
+        $requestArguments['Body'] = $Body
+    }
+    if ((Get-Command Invoke-WebRequest).Parameters.ContainsKey('UseBasicParsing')) {
+        $requestArguments['UseBasicParsing'] = $true
+    }
+
+    $statusCode = $null
+    $statusDescription = $null
+    $responseHeaders = @{}
+    $responseBody = ''
+    $errorMessage = $null
+
+    try {
+        $response = Invoke-WebRequest @requestArguments
+        $statusCode = [int]$response.StatusCode
+        $statusDescription = [string]$response.StatusDescription
+        $responseHeaders = $response.Headers
+        $responseBody = [string]$response.Content
+    }
+    catch {
+        $responseProperty = $_.Exception.PSObject.Properties['Response']
+        $response = if ($null -ne $responseProperty) { $responseProperty.Value } else { $null }
+        if ($null -ne $response) {
+            try { $statusCode = [int]$response.StatusCode.value__ } catch { $statusCode = $null }
+            try { $statusDescription = [string]$response.StatusCode } catch { }
+            try {
+                $stream = $response.GetResponseStream()
+                $reader = New-Object System.IO.StreamReader($stream)
+                $responseBody = $reader.ReadToEnd()
+                $reader.Close()
+            }
+            catch { }
+        }
+        $errorMessage = $_.Exception.Message
+    }
+
+    $builder = New-Object System.Text.StringBuilder
+    [void]$builder.AppendLine("### HTTP Validation Artifact")
+    [void]$builder.AppendLine("Timestamp: $(Get-Date -Format 'o')")
+    [void]$builder.AppendLine('')
+    [void]$builder.AppendLine('--- REQUEST ---')
+    [void]$builder.AppendLine("$Method $Url")
+    foreach ($key in $Headers.Keys) {
+        [void]$builder.AppendLine("$key`: $($Headers[$key])")
+    }
+    if ($PSBoundParameters.ContainsKey('Body') -and $null -ne $Body) {
+        [void]$builder.AppendLine('')
+        [void]$builder.AppendLine($Body)
+    }
+    [void]$builder.AppendLine('')
+    [void]$builder.AppendLine('--- RESPONSE ---')
+    if ($null -ne $statusCode) {
+        [void]$builder.AppendLine("Status: $statusCode $statusDescription")
+    }
+    else {
+        [void]$builder.AppendLine('Status: (no response)')
+    }
+    foreach ($key in $responseHeaders.Keys) {
+        [void]$builder.AppendLine("$key`: $($responseHeaders[$key])")
+    }
+    [void]$builder.AppendLine('')
+    [void]$builder.AppendLine($responseBody)
+    if ($null -ne $errorMessage) {
+        [void]$builder.AppendLine('')
+        [void]$builder.AppendLine("Note: $errorMessage")
+    }
+
+    Set-Content -Path $ArtifactPath -Value $builder.ToString() -Encoding UTF8
+
+    if ($null -eq $statusCode -or ($AllowedStatusCodes -notcontains [int]$statusCode)) {
+        throw "HTTP artifact for '$Url' returned status '$statusCode' (allowed: $($AllowedStatusCodes -join ', ')). Saved transcript to $ArtifactPath."
+    }
+
+    Write-Host "Saved HTTP artifact to $ArtifactPath (status $statusCode)" -ForegroundColor Green
+    return $ArtifactPath
 }
