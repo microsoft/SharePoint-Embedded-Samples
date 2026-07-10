@@ -21,4 +21,4 @@ npm install
 npm run start
 ```
 
-Requires Node.js v18 or v20 LTS and Azure Functions Core Tools v4.
+Requires Node.js v22 LTS and Azure Functions Core Tools v4. The React client uses Vite (migrated from Create React App); `npm run start` launches the Vite dev server and `npm run build-cre` / `npm run preview-cre` build and preview the production bundle.

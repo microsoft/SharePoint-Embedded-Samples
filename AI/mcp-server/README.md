@@ -27,7 +27,7 @@ Before you start you will need:
 - An **Azure Entra ID App Registration** (instructions below)
 - A **SharePoint Embedded Container Type** registered in your tenant
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) installed and logged in (`az login`)
-- [Node.js 20+](https://nodejs.org) for local development
+- [Node.js 22+](https://nodejs.org) for local development
 
 ---
 
