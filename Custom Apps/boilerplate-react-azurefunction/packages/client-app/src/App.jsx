@@ -4,9 +4,7 @@ import { Login } from '@microsoft/mgt-react';
 import { Stack, Text } from '@fluentui/react';
 import './App.css';
 import Containers from './components/containers';
-import { InteractionRequiredAuthError } from '@azure/msal-browser'
-
-const msal = require('@azure/msal-browser');
+import { InteractionRequiredAuthError, PublicClientApplication } from '@azure/msal-browser';
 
 function useIsSignedIn() {
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -48,8 +46,8 @@ function App() {
   async function promptForContainerConsent(event) {
     const msalConfig = {
       auth: {
-        clientId: process.env.REACT_APP_CLIENT_ID,
-        authority: `https://login.microsoftonline.com/${process.env.REACT_APP_TENANT_ID}/`,
+        clientId: import.meta.env.VITE_CLIENT_ID,
+        authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID}/`,
       },
       cache: {
         cacheLocation: 'localStorage',
@@ -62,7 +60,8 @@ function App() {
       redirectUri: '/'
     };
 
-    const pca = new msal.PublicClientApplication(msalConfig);
+    const pca = new PublicClientApplication(msalConfig);
+    await pca.initialize();
     let containerTokenResponse;
 
     // Consent FileStorageContainer.Selected scope
@@ -114,3 +113,4 @@ function App() {
 }
 
 export default App;
+

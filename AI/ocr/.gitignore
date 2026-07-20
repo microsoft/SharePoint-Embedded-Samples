@@ -10,6 +10,7 @@
 
 # production
 /build
+/dist
 **/.dist/*.js
 **/.dist/**/*.js
 

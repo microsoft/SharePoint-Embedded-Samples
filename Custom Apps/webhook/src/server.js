@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
 const axios = require('axios');
 
 const app = express();
@@ -8,7 +7,7 @@ const port = process.env.PORT || 3000;
 const clientState = process.env.CLIENT_STATE;
 const graphToken = process.env.GRAPH_TOKEN; // Add this to your .env file
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Webhook endpoint
 app.post('/webhook', async (req, res) => {

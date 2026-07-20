@@ -71,6 +71,10 @@ try {
         throw 'Webhook validation token echo check did not succeed.'
     }
 
+    Write-Step 'Capturing HTTP validation artifact'
+    $artifactPath = New-ValidationArtifactPath -WorkingDirectory $appRoot -Kind 'http' -Name 'webhook-validation-token' -Extension 'http.txt'
+    Save-HttpArtifact -ArtifactPath $artifactPath -Url $validationUrl -Method 'POST' -Headers @{ 'Content-Type' = 'application/json' } -Body '{}' -AllowedStatusCodes @(200) | Out-Null
+
     Write-Host 'Webhook sample validation completed.' -ForegroundColor Green
     Write-ValidationSummary -Status 'PASS' -Message 'Webhook listener startup and validation-token echo checks passed.'
 }

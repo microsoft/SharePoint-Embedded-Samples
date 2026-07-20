@@ -21,7 +21,7 @@ Before proceeding you will need:
 - [App Auth Model](#app-auth-model)
 
 ## App Overview
-This sample app is built in Javascript using React.js for the UI and Azure Functions as the back-end for hosting endpoints to SharePoint Embedded APIs. The UI portion as well as the file management logic (utilizing Microsoft Graph APIs) of the app lives in `/packages/client-app` and the Azure Functions live in `/packages/azure-functions`.
+This sample app is built in JavaScript using React 19 and Vite for the UI and Azure Functions as the back-end for hosting endpoints to SharePoint Embedded APIs. The UI portion as well as the file management logic (utilizing Microsoft Graph APIs) of the app lives in `/packages/client-app` and the authoritative Azure Functions JavaScript implementation lives in `/packages/azure-functions` as function folders with `function.json` and `index.js`. The legacy `RaaSSampleFunctionApi.csproj` targets `net461` and is retained for follow-up migration only.
 
 ## App Quick Start
 The quickest way to get to our sample app running is to: 
@@ -30,8 +30,8 @@ The quickest way to get to our sample app running is to:
 - Install [Azure functions core tools](https://www.npmjs.com/package/azure-functions-core-tools). This is necessary in order to run Azure Functions locally.
 - Update the provided `.env_template` file in `\Samples\raas-spa-azurefunction\packages\client-app` folder, updating the following fields to match your own application details: 
   ```js
-  REACT_APP_CLIENT_ID = 'Insert client ID from provided config here'
-  REACT_APP_TENANT_ID = 'Insert tenant id from provided config here'
+  VITE_CLIENT_ID = 'Insert client ID from provided config here'
+  VITE_TENANT_ID = 'Insert tenant id from provided config here'
   ```
   and rename the file to `.env` from `.env_template`. **Failure to rename the file will prevent the app from functioning correctly.**
   
@@ -55,7 +55,7 @@ The quickest way to get to our sample app running is to:
   ```
  and rename the file to `local.settings.json` from `local.settings_template.json`. **Again, failure to rename the file will prevent the app from functioning correctly.**
  
-- Make sure that you are using the latest version of [node](https://nodejs.org/en/download/) and npm. 
+- Make sure that you are using a current Node.js and npm version. The client app has been migrated from Create React App to Vite. 
 - Make sure the Azure Function Workspace is [initialized](#initialize-azure-functions-workspace)
 - Open a new terminal or command prompt and run `npm run start` in the `\Samples\raas-spa-azurefunction` folder to run the client app
   
@@ -90,7 +90,7 @@ In order to be able to run and debug Azure Functions within VS Code, you may nee
 
 ## Download Node.js and npm
 
-1. Download Node.js (version 18.14.2 LTS is compatible) from the official website: https://nodejs.org/en/download/
+1. Download a current Node.js LTS or newer version from the official website: https://nodejs.org/en/download/
 2. Install Node.js on your system following the instructions provided with the download.
 3. Verify that Node.js and npm is installed by opening a terminal or command prompt and entering the following command:
 ```sh
@@ -129,7 +129,7 @@ We need to now populate our `.env` file and `local.settings.json` file in the `/
 
 Starting with `.env_template` in `\packages\client-app>`:
 ```js
-REACT_APP_CLIENT_ID = 'Insert client ID from provided config here'
+VITE_CLIENT_ID = 'Insert client ID from provided config here'
 ```
 
 and rename the file to `.env` from `.env_template`. **Failure to rename the file will prevent the app from functioning correctly.**
@@ -205,7 +205,7 @@ async createContainer(displayName, description) {
 Once `npm install` successfully completes and you have the Azure Function app running locally on `localhost:7071`, open a new terminal or command prompt to run the client app in the `\Samples\raas-spa-azurefunction` folder:
 
 ```sh
-npm run start-app
+npm run start
 ```
 or:
 ```sh
@@ -221,14 +221,14 @@ In order to interact with SharePoint Embedded and Graph APIs in our sample appli
 
 ```js
 Providers.globalProvider = new Msal2Provider({
-  clientId: process.env.REACT_APP_CLIENT_ID,
+  clientId: import.meta.env.VITE_CLIENT_ID,
   scopes: ["openid", "profile", "offline_access", "User.Read.All", "Files.ReadWrite.All", "Sites.Read.All", "FileStorageContainer.Selected"]
 });
 ```
 
-This defines a new instance of the [Msal2Provider class](https://learn.microsoft.com/en-us/graph/toolkit/providers/msal2), which is a provider for the Microsoft Authentication Library (MSAL) version 2. The provider is being created with the following configuration options:
+This defines a new instance of the [Msal2Provider class](https://learn.microsoft.com/en-us/graph/toolkit/providers/msal2), which is a provider for the Microsoft Authentication Library (MSAL) browser provider. The provider is being created with the following configuration options:
 
-- `clientId`: The value of the `REACT_APP_CLIENT_ID` environment variable (which we set above) is being passed as the clientId. This is the identifier for the client application that wants to authenticate and request access to resources.
+- `clientId`: The value of the `VITE_CLIENT_ID` environment variable (which we set above) is being passed as the clientId. This is the identifier for the client application that wants to authenticate and request access to resources.
 
 - `scopes`: An array of strings specifying the permissions that the application requests from the Microsoft identity platform. For example, "User.Read.All" grants permission to read all user profiles in Microsoft 365 or Azure Active Directory, while "Files.ReadWrite.All" grants permission to read and write files in Microsoft 365 or SharePoint.
 
@@ -271,7 +271,7 @@ async function promptForContainerConsent(event) {
     //... [full code omitted for brevity]
     const msalConfig = {
       auth: {
-        clientId: process.env.REACT_APP_CLIENT_ID,
+        clientId: import.meta.env.VITE_CLIENT_ID,
         authority: 'https://login.microsoftonline.com/<tenant-id>/',
       },
       cache: {
@@ -423,7 +423,7 @@ in `\packages\client-app\src\services\raas.js`
   async getApiAccessToken() {
     const msalConfig = {
       auth: {
-        clientId: process.env.REACT_APP_CLIENT_ID,
+        clientId: import.meta.env.VITE_CLIENT_ID,
         authority: 'https://login.microsoftonline.com/<tenant-id>/'
       },
       cache: {
@@ -433,7 +433,7 @@ in `\packages\client-app\src\services\raas.js`
     }
     const scopes = {
       scopes: [
-        `api://${process.env.REACT_APP_CLIENT_ID}/Container.Manage`
+        `api://${import.meta.env.VITE_CLIENT_ID}/Container.Manage`
       ],
       prompt: "select_account",
       redirectUri: "/"
@@ -499,3 +499,4 @@ A: Run the following command in an Admin Powershell window then try again
 ```ps 
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ``` 
+

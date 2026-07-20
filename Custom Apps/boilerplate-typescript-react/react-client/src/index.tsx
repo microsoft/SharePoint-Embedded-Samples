@@ -24,7 +24,7 @@ initializeFileTypeIcons();
 initializeIcons();
 
 const provider = new Msal2Provider({
-  clientId: (Constants.REACT_APP_AZURE_SERVER_APP_ID || Constants.AZURE_CLIENT_ID)!,
+  clientId: (Constants.AZURE_SERVER_APP_ID || Constants.AZURE_CLIENT_ID)!,
   authority: Constants.AUTH_AUTHORITY,
   scopes: Scopes.GRAPH_SCOPES,
   redirectUri: window.location.origin,

@@ -39,6 +39,10 @@ try {
     $runtimeHandle = Start-LoggedProcess -FilePath 'dotnet' -Arguments @('run', '--urls', 'http://127.0.0.1:5080') -WorkingDirectory $appRoot -LogPath $logPath
     [void](Wait-ForHttpEndpoint -Url 'http://127.0.0.1:5080' -TimeoutSec $TimeoutSec -AllowedStatusCodes @(200, 302) -ProcessHandle $runtimeHandle)
 
+    Write-Step 'Capturing HTTP validation artifact'
+    $artifactPath = New-ValidationArtifactPath -WorkingDirectory $appRoot -Kind 'http' -Name 'aspnet-landing' -Extension 'http.txt'
+    Save-HttpArtifact -ArtifactPath $artifactPath -Url 'http://127.0.0.1:5080' -Method 'GET' -AllowedStatusCodes @(200, 302) | Out-Null
+
     Write-Host 'ASP.NET sample validation completed.' -ForegroundColor Green
     Write-ValidationSummary -Status 'PASS' -Message 'Restore, build, and runtime smoke checks passed.'
 }

@@ -21,7 +21,7 @@ To create a webhook for SharePoint Embedded, follow these general steps:
 To get started, there are a few things that need to be configured:
 
 ## Node.js
-The examples in this project use node.js to monitor a specific port.
+The examples in this project use node.js to monitor a specific port. Node.js 22 LTS or later is required (the sample uses Express 5).
 
 ## Graph API Permissions
 The following graph API permissions should be added to your app registration with delegated permissions.

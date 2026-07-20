@@ -164,7 +164,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
         setPreviewFile(undefined);
     }
 
-    const getItemIcon = (driveItem: IDriveItem): JSX.Element => {
+    const getItemIcon = (driveItem: IDriveItem): React.JSX.Element => {
         if (driveItem.folder) {
             return <Folder24Filled primaryFill='#FFCE3D' />;
         }
@@ -179,7 +179,7 @@ export const ContainerBrowser: React.FunctionComponent = () => {
         }
     }
 
-    const getItemName = (driveItem: IDriveItem): JSX.Element => {
+    const getItemName = (driveItem: IDriveItem): React.JSX.Element => {
         if (driveItem.isOfficeDocument) {
             return <Link
                 style={{ fontSize: '12px' }}

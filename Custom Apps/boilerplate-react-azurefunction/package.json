@@ -11,6 +11,8 @@
     "lerna": "^6.3.0"
   },
   "dependencies": {
-    "@fluentui/react-icons": "^2.0.192"
+    "@fluentui/react-icons": "^2.0.192",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

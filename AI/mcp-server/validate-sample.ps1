@@ -59,6 +59,10 @@ try {
         throw "Health endpoint returned an unexpected response: $body"
     }
 
+    Write-Step 'Capturing HTTP validation artifact'
+    $artifactPath = New-ValidationArtifactPath -WorkingDirectory $appRoot -Kind 'http' -Name 'mcp-server-health' -Extension 'http.txt'
+    Save-HttpArtifact -ArtifactPath $artifactPath -Url $healthUrl -Method 'GET' -AllowedStatusCodes @(200) | Out-Null
+
     Write-Host "Runtime smoke check passed at $healthUrl" -ForegroundColor Green
     Write-ValidationSummary -Status 'PASS' -Message "Build and runtime smoke checks passed at $healthUrl."
 }
