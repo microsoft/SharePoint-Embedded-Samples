@@ -61,6 +61,7 @@ function App() {
     };
 
     const pca = new PublicClientApplication(msalConfig);
+    await pca.initialize();
     let containerTokenResponse;
 
     // Consent FileStorageContainer.Selected scope
@@ -112,5 +113,4 @@ function App() {
 }
 
 export default App;
-
 
