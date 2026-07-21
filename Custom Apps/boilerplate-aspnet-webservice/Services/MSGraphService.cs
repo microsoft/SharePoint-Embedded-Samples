@@ -163,7 +163,7 @@ namespace Demo.Services
         public async Task<ContainerPermissionModel> UpdateContainerPermission(string accessToken, string containerId, string permissionId, string role)
         {
             HttpClient client = GetHttpClient(accessToken, "application/json");
-            var json = $@"{{ ""roles"":[""{role}""]}}";
+            var json = JsonConvert.SerializeObject(new { roles = new[] { role } });
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await client.PatchAsync($"{GraphContainersEndpoint}/{containerId}/permissions/{permissionId}", content);
 

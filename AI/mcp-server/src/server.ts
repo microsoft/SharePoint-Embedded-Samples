@@ -3,6 +3,7 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import express, { type Request, type Response, type NextFunction } from 'express';
 import { randomUUID } from 'node:crypto';
+import rateLimit from 'express-rate-limit';
 import type { GraphClient } from './graph.js';
 import type { AppConfig } from './config.js';
 import { registerContainerTools } from './tools/containers.js';
@@ -79,6 +80,14 @@ export function buildApp(graph: GraphClient, config: AppConfig): express.Applica
     }
     next();
   }
+
+  // ── Rate limiting ─────────────────────────────────────────────────────────────
+  const messagesLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
 
   // ── Health ────────────────────────────────────────────────────────────────────
   app.get('/health', (_req, res) => {
@@ -251,7 +260,7 @@ export function buildApp(graph: GraphClient, config: AppConfig): express.Applica
     }
   });
 
-  app.post('/messages', requireBearerToken, async (req: Request, res: Response) => {
+  app.post('/messages', messagesLimiter, requireBearerToken, async (req: Request, res: Response) => {
     const sessionId = req.query['sessionId'] as string | undefined;
     if (!sessionId) { res.status(400).json({ error: 'Missing sessionId' }); return; }
     const transport = sseTransports.get(sessionId);
