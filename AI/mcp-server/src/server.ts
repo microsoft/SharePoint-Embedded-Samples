@@ -82,7 +82,7 @@ export function buildApp(graph: GraphClient, config: AppConfig): express.Applica
   }
 
   // ── Rate limiting ─────────────────────────────────────────────────────────────
-  const authLimiter = rateLimit({
+  const messagesLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // limit each IP to 100 requests per windowMs
     standardHeaders: true,
@@ -260,7 +260,7 @@ export function buildApp(graph: GraphClient, config: AppConfig): express.Applica
     }
   });
 
-  app.post('/messages', authLimiter, requireBearerToken, async (req: Request, res: Response) => {
+  app.post('/messages', messagesLimiter, requireBearerToken, async (req: Request, res: Response) => {
     const sessionId = req.query['sessionId'] as string | undefined;
     if (!sessionId) { res.status(400).json({ error: 'Missing sessionId' }); return; }
     const transport = sseTransports.get(sessionId);

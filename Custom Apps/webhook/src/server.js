@@ -33,8 +33,8 @@ app.post('/webhook', async (req, res) => {
     if (graphToken) {
       // Validate the resource path to prevent path traversal or unexpected endpoints.
       // Only allow alphanumeric characters, hyphens, underscores, and forward slashes.
-      const safeResourcePattern = /^[A-Za-z0-9_\-./]+$/;
-      if (!resource || !safeResourcePattern.test(resource) || resource.includes('..')) {
+      const safeResourcePattern = /^[A-Za-z0-9_\-/]+$/;
+      if (!resource || !safeResourcePattern.test(resource)) {
         console.warn('⚠️ Skipping metadata fetch — invalid resource path:', resource);
         continue;
       }
