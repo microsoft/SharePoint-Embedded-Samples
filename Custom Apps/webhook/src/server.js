@@ -31,6 +31,13 @@ app.post('/webhook', async (req, res) => {
     const resource = notification.resource; // e.g., drives/{drive-id}/items/{item-id}
 
     if (graphToken) {
+      // Validate the resource path to prevent path traversal or unexpected endpoints.
+      // Only allow alphanumeric characters, hyphens, underscores, and forward slashes.
+      const safeResourcePattern = /^[A-Za-z0-9_\-./]+$/;
+      if (!resource || !safeResourcePattern.test(resource) || resource.includes('..')) {
+        console.warn('⚠️ Skipping metadata fetch — invalid resource path:', resource);
+        continue;
+      }
       try {
         const response = await axios.get(`https://graph.microsoft.com/v1.0/${resource}`, {
           headers: {
