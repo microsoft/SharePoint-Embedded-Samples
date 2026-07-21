@@ -9,11 +9,16 @@
   },
   "dependencies": {
     "axios": "^1.18.1",
-    "dotenv": "^16.6.1",
-    "express": "^5.1.0"
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
   },
   "devDependencies": {
     "localtunnel": "^2.0.2"
+  },
+  "overrides": {
+    "localtunnel": {
+      "axios": "^1.9.0"
+    }
   },
   "engines": {
     "node": ">=22"

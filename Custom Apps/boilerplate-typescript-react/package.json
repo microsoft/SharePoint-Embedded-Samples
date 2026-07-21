@@ -7,6 +7,9 @@
         "start-client": "cd react-client && npm install && npm run start"
     },
     "devDependencies": {
-        "concurrently": "^9.0.1"
+        "concurrently": "^10.0.3"
+    },
+    "overrides": {
+        "shell-quote": ">=1.9.0"
     }
 }

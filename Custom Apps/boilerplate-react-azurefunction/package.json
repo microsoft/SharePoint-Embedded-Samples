@@ -8,11 +8,17 @@
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^6.3.0"
+    "lerna": "^9.0.7"
   },
   "dependencies": {
-    "@fluentui/react-icons": "^2.0.192",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@fluentui/react-icons": "^2.0.333",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "overrides": {
+    "tar": ">=7.5.19",
+    "js-yaml": ">=4.3.0",
+    "axios": ">=1.18.0",
+    "brace-expansion": ">=5.0.7"
   }
 }
