@@ -7,10 +7,10 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@azure/msal-node": "^5.3.0",
-    "@microsoft/microsoft-graph-client": "^3.0.4",
+    "@azure/msal-node": "^5.4.1",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "isomorphic-fetch": "^3.0.0",
     "jsonwebtoken": "^9.0.3",
-    "jwks-rsa": "^3.2.0"
+    "jwks-rsa": "^4.1.0"
   }
 }
