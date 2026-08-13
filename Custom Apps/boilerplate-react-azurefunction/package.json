@@ -11,14 +11,19 @@
     "lerna": "^9.0.7"
   },
   "dependencies": {
-    "@fluentui/react-icons": "^2.0.333",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "@fluentui/react-icons": "^2.0.334",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "overrides": {
-    "tar": ">=7.5.19",
-    "js-yaml": ">=4.3.0",
+    "tar": "7.5.22",
+    "js-yaml": "5.2.3",
     "axios": ">=1.18.0",
-    "brace-expansion": ">=5.0.7"
+    "brace-expansion": "5.0.9",
+    "@microsoft/mgt-components": {
+      "dompurify": "3.4.13"
+    },
+    "ip-address": "10.4.0",
+    "undici": "8.10.0"
   }
 }

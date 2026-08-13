@@ -3,21 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@azure/msal-browser": "^5.17.1",
+    "@azure/msal-browser": "^5.18.0",
     "@fluentui/react": "^8.125.7",
-    "@fluentui/react-components": "^9.74.4",
+    "@fluentui/react-components": "^9.74.5",
     "@fluentui/react-file-type-icons": "^8.18.1",
-    "@fluentui/react-icons": "^2.0.333",
+    "@fluentui/react-icons": "^2.0.334",
     "@microsoft/mgt-element": "^4.6.1",
     "@microsoft/mgt-msal2-provider": "^4.6.1",
     "@microsoft/mgt-react": "^4.6.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@types/node": "^26.1.1",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.1",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2",
     "socket.io-client": "^4.8.3",
     "typescript": "^7.0.2",
     "web-vitals": "^5.3.0"
@@ -32,7 +32,12 @@
     "@microsoft/microsoft-graph-types": "2.43.1",
     "env-cmd": "11.0.0",
     "npm-run-all": "4.1.5",
-    "@vitejs/plugin-react": "^6.0.3",
-    "vite": "^8.1.5"
+    "@vitejs/plugin-react": "^6.0.5",
+    "vite": "^8.2.1"
+  },
+  "overrides": {
+    "brace-expansion": ">=5.0.9",
+    "dompurify": ">=3.4.13",
+    "nanoid": ">=6.0.1"
   }
 }
