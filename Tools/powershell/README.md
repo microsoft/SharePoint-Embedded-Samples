@@ -7,6 +7,9 @@ Admin scripts for provisioning SharePoint Embedded resources.
 | `RegisterContainer.ps1` | Registers a Container Type in a SharePoint tenant |
 | `CreateContainer.ps1` | Creates a Container instance for a registered Container Type |
 | `SampleValidation.ps1` | Shared helpers dot-sourced by each sample's `validate-sample.ps1` |
+| `Invoke-RepositoryValidation.ps1` | Runs every sample validator and creates a consolidated evidence report |
+| `Sanitize-ValidationArtifacts.ps1` | Redacts text evidence and prepares reviewed artifacts for PR upload |
+| `Publish-ValidationArtifacts.ps1` | Uploads reviewed screenshots and posts sanitized evidence to a PR |
 
 ## Sample validation harness
 
@@ -27,6 +30,25 @@ It emits a final `VALIDATION_RESULT: PASS | FAIL | SKIP_CONFIG - <detail>` line.
 - `New-ValidationArtifactPath -Kind screenshots|http` generates timestamped artifact paths.
 
 Everything under `.validation/` is git-ignored and is **never committed**; these artifacts are published only in the pull request description.
+
+Before opening a pull request, agents must run:
+
+```pwsh
+pwsh -NoProfile -File Tools/powershell/Invoke-RepositoryValidation.ps1
+```
+
+This creates a consolidated report and sanitized evidence under
+`.validation/sanitized/<timestamp>/`. Publish only that sanitized directory.
+Screenshots must be visually inspected before upload because secrets in image
+pixels cannot be redacted automatically.
+
+After inspecting the screenshots, publish the evidence with:
+
+```pwsh
+pwsh -NoProfile -File Tools/powershell/Publish-ValidationArtifacts.ps1 `
+  -PullRequest <pull-request-url-or-number> `
+  -ScreenshotsReviewed
+```
 
 ## Prerequisites
 

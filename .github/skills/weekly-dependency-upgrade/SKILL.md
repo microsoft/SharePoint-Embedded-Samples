@@ -61,17 +61,17 @@ If the inventory discovers another runnable sample with a
 
 ## Validation procedure
 
-Run every updated sample's `validate-sample.ps1` from the repository root with
-PowerShell 7. Do not pass `-SkipBrowser` unless browser tooling is genuinely
-unavailable. Capture the full output from each invocation under:
+Use the repository-wide validation and sanitization skill in
+`.github/skills/sample-validation-evidence/SKILL.md`. Run:
 
-```text
-.validation/weekly/<sample-name>/validation.log
+```pwsh
+pwsh -NoProfile -File Tools/powershell/Invoke-RepositoryValidation.ps1
 ```
 
-The validators write process logs, HTTP transcripts, and screenshots below each
-sample's `.validation` directory. Preserve those files until the workflow's
-artifact upload step completes.
+Do not pass `-SkipBrowser` unless browser tooling is genuinely unavailable. The
+orchestrator captures all validator output and produces sanitized evidence under
+`.validation/sanitized/`. Preserve those files until the workflow's artifact
+upload and pull request publication complete.
 
 Interpret `VALIDATION_RESULT` exactly:
 
@@ -135,4 +135,6 @@ If changes are available:
   available safe output.
 
 Exclude `.validation` evidence from the code patch. It is transient workflow
-evidence and is uploaded by the workflow after the agent finishes.
+evidence. Upload only `.validation/sanitized/` files through the workflow and
+attach the sanitized report and visually reviewed screenshots to the pull
+request.

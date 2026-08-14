@@ -28,6 +28,7 @@ tools:
     mode: cli
 skills:
   - .github/skills/weekly-dependency-upgrade
+  - .github/skills/sample-validation-evidence
 post-steps:
   - name: Upload dependency validation artifacts
     if: always()
@@ -35,8 +36,7 @@ post-steps:
     with:
       name: dependency-validation-artifacts
       path: |
-        .validation/**
-        **/.validation/**
+        .validation/sanitized/**
       if-no-files-found: warn
       include-hidden-files: true
       retention-days: 30
@@ -71,9 +71,11 @@ dependency update iteration.
 The source branch for a pull request must be named
 `automation/weekly-dependency-upgrades-YYYY-MM-DD`, using the current UTC date.
 The pull request must target `main`, be ready for review, and contain concrete
-validation evidence for every updated sample. Include the current workflow run
-URL and tell reviewers to download the `dependency-validation-artifacts`
-artifact for complete logs, HTTP transcripts, and full-resolution screenshots.
+sanitized validation evidence for every updated sample. Include the useful
+content from `.validation/sanitized/<timestamp>/validation-evidence.md`, the
+current workflow run URL, and instructions to download the
+`dependency-validation-artifacts` artifact for complete sanitized logs, HTTP
+transcripts, and visually reviewed full-resolution screenshots.
 
 If there are no compatible updates, call `noop`. If an updated sample fails
 validation, do not create a pull request; create one issue containing the failed
