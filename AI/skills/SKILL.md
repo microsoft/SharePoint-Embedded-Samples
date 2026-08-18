@@ -33,7 +33,7 @@ cd skills/full-setup
 ## Prerequisites
 
 - Azure CLI (`az --version`)
-- PowerShell 5.1+ or 7+
+- Latest stable PowerShell (`pwsh` / PowerShell 7+)
 - **Application Administrator** role on the tenant (sufficient to create the Entra app registration and consent to the delegated SPE permissions during interactive sign-in). Global Administrator also works but is not required.
 
 ## Auth Architecture

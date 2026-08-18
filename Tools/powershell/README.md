@@ -52,6 +52,7 @@ pwsh -NoProfile -File Tools/powershell/Publish-ValidationArtifacts.ps1 `
 
 ## Prerequisites
 
-- PowerShell 5.1 or later
+- Latest stable PowerShell (`pwsh` / PowerShell 7+)
+- .NET requirements must use .NET (formerly .NET Core); .NET Framework is not supported
 - An M365 tenant with SharePoint Embedded enabled
 - An app registration in Azure Entra ID with the appropriate permissions
