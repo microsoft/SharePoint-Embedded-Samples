@@ -1,3 +1,5 @@
+#requires -Version 7.0
+
 param(
     [Parameter(Mandatory = $true)]
     [string]$PullRequest,
@@ -17,6 +19,20 @@ $ErrorActionPreference = 'Stop'
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $sanitizedRoot = [System.IO.Path]::GetFullPath((Join-Path $repositoryRoot '.validation/sanitized'))
 
+function Test-PathIsInDirectory {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][string]$Directory
+    )
+
+    $comparison = if ($IsWindows) { [System.StringComparison]::OrdinalIgnoreCase } else { [System.StringComparison]::Ordinal }
+    $fullPath = [System.IO.Path]::GetFullPath($Path).TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+    $fullDirectory = [System.IO.Path]::GetFullPath($Directory).TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+
+    return $fullPath.Equals($fullDirectory, $comparison) -or
+        $fullPath.StartsWith($fullDirectory + [System.IO.Path]::DirectorySeparatorChar, $comparison)
+}
+
 if ([string]::IsNullOrWhiteSpace($ArtifactDirectory)) {
     $latestArtifactDirectory = Get-ChildItem -Path $sanitizedRoot -Directory -ErrorAction SilentlyContinue |
         Sort-Object -Property LastWriteTimeUtc -Descending |
@@ -28,7 +44,7 @@ if ([string]::IsNullOrWhiteSpace($ArtifactDirectory)) {
 }
 
 $artifactPath = (Resolve-Path $ArtifactDirectory).Path
-if (-not $artifactPath.StartsWith($sanitizedRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+if (-not (Test-PathIsInDirectory -Path $artifactPath -Directory $sanitizedRoot)) {
     throw "ArtifactDirectory must be under '$sanitizedRoot'. Raw validation artifacts cannot be published."
 }
 

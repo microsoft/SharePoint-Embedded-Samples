@@ -1,7 +1,10 @@
+#requires -Version 7.0
+
 param(
     [string]$RepositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path,
     [string]$OutputDirectory,
-    [switch]$ExcludeScreenshots
+    [switch]$ExcludeScreenshots,
+    [DateTime]$ChangedAfterUtc
 )
 
 Set-StrictMode -Version Latest
@@ -13,9 +16,23 @@ if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
     $OutputDirectory = Join-Path $repositoryRootPath ".validation/sanitized/$timestamp"
 }
 
+function Test-PathIsInDirectory {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][string]$Directory
+    )
+
+    $comparison = if ($IsWindows) { [System.StringComparison]::OrdinalIgnoreCase } else { [System.StringComparison]::Ordinal }
+    $fullPath = [System.IO.Path]::GetFullPath($Path).TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+    $fullDirectory = [System.IO.Path]::GetFullPath($Directory).TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+
+    return $fullPath.Equals($fullDirectory, $comparison) -or
+        $fullPath.StartsWith($fullDirectory + [System.IO.Path]::DirectorySeparatorChar, $comparison)
+}
+
 $outputPath = [System.IO.Path]::GetFullPath($OutputDirectory)
 $allowedOutputRoot = [System.IO.Path]::GetFullPath((Join-Path $repositoryRootPath '.validation/sanitized'))
-if (-not $outputPath.StartsWith($allowedOutputRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+if (-not (Test-PathIsInDirectory -Path $outputPath -Directory $allowedOutputRoot)) {
     throw "OutputDirectory must be under '$allowedOutputRoot'."
 }
 
@@ -75,12 +92,15 @@ $textExtensions = @('.json', '.log', '.md', '.txt')
 $manifestEntries = New-Object System.Collections.Generic.List[object]
 $validationDirectories = Get-ChildItem -Path $repositoryRootPath -Directory -Filter '.validation' -Recurse -Force |
     Where-Object {
-        -not $_.FullName.StartsWith($allowedOutputRoot, [System.StringComparison]::OrdinalIgnoreCase)
+        -not (Test-PathIsInDirectory -Path $_.FullName -Directory $allowedOutputRoot)
     }
 
 foreach ($validationDirectory in $validationDirectories) {
     foreach ($sourceFile in Get-ChildItem -Path $validationDirectory.FullName -File -Recurse -Force) {
-        if ($sourceFile.FullName.StartsWith($allowedOutputRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        if (Test-PathIsInDirectory -Path $sourceFile.FullName -Directory $allowedOutputRoot) {
+            continue
+        }
+        if ($PSBoundParameters.ContainsKey('ChangedAfterUtc') -and $sourceFile.LastWriteTimeUtc -lt $ChangedAfterUtc) {
             continue
         }
 

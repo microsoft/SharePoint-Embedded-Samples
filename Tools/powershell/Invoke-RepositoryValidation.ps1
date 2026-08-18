@@ -1,3 +1,5 @@
+#requires -Version 7.0
+
 param(
     [switch]$SkipInstall,
     [switch]$SkipTests,
@@ -11,6 +13,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+$runStartedAtUtc = (Get-Date).ToUniversalTime().AddSeconds(-1)
 $runTimestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $runRoot = Join-Path $repositoryRoot ".validation/repository/$runTimestamp"
 New-Item -ItemType Directory -Path $runRoot -Force | Out-Null
@@ -41,7 +44,7 @@ foreach ($discoveredScript in $discoveredScripts) {
     }
 }
 
-$powerShellCommand = if (Get-Command 'pwsh' -ErrorAction SilentlyContinue) { 'pwsh' } else { 'powershell' }
+$powerShellCommand = 'pwsh'
 $results = New-Object System.Collections.Generic.List[object]
 
 foreach ($relativeScript in $sampleScripts) {
@@ -110,6 +113,7 @@ $reportLines | Set-Content -LiteralPath $reportPath -Encoding UTF8
 $sanitizerPath = Join-Path $PSScriptRoot 'Sanitize-ValidationArtifacts.ps1'
 $sanitizerArguments = @{
     RepositoryRoot = $repositoryRoot
+    ChangedAfterUtc = $runStartedAtUtc
 }
 if ($ExcludeScreenshots) {
     $sanitizerArguments['ExcludeScreenshots'] = $true
