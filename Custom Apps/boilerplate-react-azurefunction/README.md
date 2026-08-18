@@ -21,7 +21,7 @@ Before proceeding you will need:
 - [App Auth Model](#app-auth-model)
 
 ## App Overview
-This sample app is built in JavaScript using React 19 and Vite for the UI and Azure Functions as the back-end for hosting endpoints to SharePoint Embedded APIs. The UI portion as well as the file management logic (utilizing Microsoft Graph APIs) of the app lives in `/packages/client-app` and the authoritative Azure Functions JavaScript implementation lives in `/packages/azure-functions` as function folders with `function.json` and `index.js`. The legacy `RaaSSampleFunctionApi.csproj` targets `net461` and is retained for follow-up migration only.
+This sample app is built in JavaScript using React 19 and Vite for the UI and Azure Functions as the back-end for hosting endpoints to SharePoint Embedded APIs. The UI portion as well as the file management logic (utilizing Microsoft Graph APIs) of the app lives in `/packages/client-app` and the authoritative Azure Functions JavaScript implementation lives in `/packages/azure-functions` as function folders with `function.json` and `index.js`. The legacy `RaaSSampleFunctionApi.csproj` targets `net461`, is not part of the supported local validation or runtime path, and remains only as unmigrated legacy source; .NET Framework is not supported for new work.
 
 ## App Quick Start
 The quickest way to get to our sample app running is to: 

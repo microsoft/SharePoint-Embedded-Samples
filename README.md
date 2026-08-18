@@ -21,7 +21,7 @@ See [docker.md](./Custom%20Apps/docker.md) for instructions on running the boile
 
 Runnable sample applications now expose a root-level `validate-sample.ps1` script that performs the sample's local build and an app-appropriate smoke check.
 
-Run the script from the sample root in PowerShell, for example:
+Run the script from the sample root with the latest stable PowerShell (`pwsh`), for example:
 
 ```powershell
 ./validate-sample.ps1
