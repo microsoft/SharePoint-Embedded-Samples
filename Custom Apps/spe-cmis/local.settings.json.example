@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AZURE_CLIENT_ID": "<your Entra app (client) ID>",
+    "AZURE_CLIENT_SECRET": "<your Entra app client secret>"
+  }
+}

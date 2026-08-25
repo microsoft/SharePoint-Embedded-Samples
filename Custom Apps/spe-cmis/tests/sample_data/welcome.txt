@@ -1,0 +1,8 @@
+Welcome to the SPE CMIS Adapter sample data!
+
+This is a small, synthetic set of files used by cmis_client.py to demonstrate
+uploading a folder tree (files + nested folders) into a SharePoint Embedded
+container through the CMIS Browser Binding API.
+
+Feel free to replace these files with your own test content, or point
+CMIS_SAMPLE_DATA_FOLDER (see .env.example) at a different directory entirely.

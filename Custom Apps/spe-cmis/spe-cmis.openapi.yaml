@@ -1,0 +1,748 @@
+openapi: 3.0.3
+info:
+  title: spe-cmis Adapter Service
+  description: |
+    CMIS 1.1 Browser Binding–compatible adapter service exposing CMIS repositories
+    backed by SharePoint Embedded (SPE).
+
+    Architectural model:
+      • Tenant is derived from authentication context
+      • Container Type represents a logical CMIS server instance
+      • Each SPE Container maps 1:1 to a CMIS Repository
+
+    Endpoints or actions tagged with `x-mvp: false` are NOT part of the initial MVP
+    and may return a CMIS-compliant "notSupported" error until implemented.
+
+    TODO (Spec Finalization Checklist):
+      [x] Container Type included in server path (before /cmis/browser)
+      [x] Explicit repositoryId contract documented
+      [x] Repository discovery paging & filtering defined
+      [x] Capability flags formalized per repository
+      [x] CMIS-compliant error response schemas defined
+  version: 0.3.0
+
+servers:
+  - url: https://api.example.com/storage/fileStorage/containerTypes/{containerTypeId}/cmis/browser
+    variables:
+      containerTypeId:
+        description: SharePoint Embedded Container Type ID. Each container type is exposed as a distinct logical CMIS server.
+        default: default
+
+security:
+  - basicAuth: []
+  - oauth2: []
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+          tokenUrl: https://login.microsoftonline.com/common/oauth2/v2.0/token
+          scopes:
+            access_as_user: >-
+              Access the CMIS adapter as the signed-in user. This is the only
+              delegated scope actually exposed by the server's Entra app
+              registration (see docs/SETUP_AZURE.md, "Expose an API") - the
+              adapter does not implement separate read/write/admin scopes.
+
+  schemas:
+    # -----------------------------
+    # Core CMIS Domain Models
+    # -----------------------------
+
+    RepositoryInfo:
+      type: object
+      description: |
+        Describes a CMIS repository per CMIS 1.1 Browser Binding spec.
+        In this service, a repository maps 1:1 to a SharePoint Embedded Container.
+      required:
+        - repositoryId
+        - repositoryName
+        - repositoryDescription
+        - vendorName
+        - productName
+        - productVersion
+        - rootFolderId
+        - capabilities
+        - cmisVersionSupported
+      properties:
+        repositoryId:
+          type: string
+          description: Opaque identifier representing an SPE Container
+        repositoryName:
+          type: string
+        repositoryDescription:
+          type: string
+        vendorName:
+          type: string
+          example: Microsoft
+        productName:
+          type: string
+          example: SharePoint Embedded CMIS Adapter
+        productVersion:
+          type: string
+          example: "1.0.0"
+        rootFolderId:
+          type: string
+        rootFolderUrl:
+          type: string
+          description: URL to access the root folder via Browser Binding
+        latestChangeLogToken:
+          type: string
+          nullable: true
+        cmisVersionSupported:
+          type: string
+          example: "1.1"
+        thinClientURI:
+          type: string
+          nullable: true
+        changesIncomplete:
+          type: boolean
+        changesOnType:
+          type: array
+          items:
+            type: string
+            enum: [cmis:document, cmis:folder, cmis:policy, cmis:item]
+        principalIdAnonymous:
+          type: string
+        principalIdAnyone:
+          type: string
+        extendedFeatures:
+          type: array
+          items:
+            type: object
+        capabilities:
+          $ref: '#/components/schemas/RepositoryCapabilities'
+        aclCapabilities:
+          $ref: '#/components/schemas/AclCapabilities'
+
+    RepositoryCapabilities:
+      type: object
+      description: CMIS capability flags advertised per repository (per CMIS 1.1 spec section 2.1.1)
+      properties:
+        capabilityContentStreamUpdatability:
+          type: string
+          enum: [none, anytime, pwconly]
+        capabilityChanges:
+          type: string
+          enum: [none, objectidsonly, properties, all]
+        capabilityRenditions:
+          type: string
+          enum: [none, read]
+        capabilityGetDescendants:
+          type: boolean
+        capabilityGetFolderTree:
+          type: boolean
+        capabilityMultifiling:
+          type: boolean
+        capabilityUnfiling:
+          type: boolean
+        capabilityVersionSpecificFiling:
+          type: boolean
+        capabilityPWCSearchable:
+          type: boolean
+        capabilityPWCUpdatable:
+          type: boolean
+        capabilityAllVersionsSearchable:
+          type: boolean
+        capabilityOrderBy:
+          type: string
+          enum: [none, common, custom]
+        capabilityQuery:
+          type: string
+          enum: [none, metadataonly, fulltextonly, bothseparate, bothcombined]
+        capabilityJoin:
+          type: string
+          enum: [none, inneronly, innerandouter]
+        capabilityACL:
+          type: string
+          enum: [none, discover, manage]
+        capabilityCreatablePropertyTypes:
+          type: object
+          properties:
+            canCreate:
+              type: array
+              items:
+                type: string
+        capabilityNewTypeSettableAttributes:
+          type: object
+          properties:
+            id:
+              type: boolean
+            localName:
+              type: boolean
+            localNamespace:
+              type: boolean
+            displayName:
+              type: boolean
+            queryName:
+              type: boolean
+            description:
+              type: boolean
+            creatable:
+              type: boolean
+            fileable:
+              type: boolean
+            queryable:
+              type: boolean
+            fulltextIndexed:
+              type: boolean
+            includedInSupertypeQuery:
+              type: boolean
+            controllablePolicy:
+              type: boolean
+            controllableACL:
+              type: boolean
+
+    AclCapabilities:
+      type: object
+      description: ACL capabilities per CMIS 1.1 spec
+      properties:
+        supportedPermissions:
+          type: string
+          enum: [basic, repository, both]
+        propagation:
+          type: string
+          enum: [repositorydetermined, objectonly, propagate]
+        permissions:
+          type: array
+          items:
+            type: object
+            properties:
+              permission:
+                type: string
+              description:
+                type: string
+        permissionMapping:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              permission:
+                type: array
+                items:
+                  type: string
+
+    PropertyData:
+      type: object
+      description: CMIS property value in Browser Binding format
+      properties:
+        id:
+          type: string
+        localName:
+          type: string
+        displayName:
+          type: string
+        queryName:
+          type: string
+        type:
+          type: string
+          enum: [string, boolean, integer, decimal, datetime, id, html, uri]
+        cardinality:
+          type: string
+          enum: [single, multi]
+        value:
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+            - type: array
+              items: {}
+
+    SuccinctProperties:
+      type: object
+      description: |
+        Succinct property representation used in Browser Binding.
+        Keys are property IDs, values are the property values directly.
+      additionalProperties: true
+
+    ObjectData:
+      type: object
+      description: CMIS object representation in Browser Binding format
+      properties:
+        succinctProperties:
+          $ref: '#/components/schemas/SuccinctProperties'
+        properties:
+          type: object
+          description: Full property representation (when succinct=false)
+          additionalProperties:
+            $ref: '#/components/schemas/PropertyData'
+        allowableActions:
+          type: object
+          additionalProperties:
+            type: boolean
+        relationships:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectData'
+        renditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rendition'
+        exactACL:
+          type: boolean
+        acl:
+          $ref: '#/components/schemas/Acl'
+
+    Rendition:
+      type: object
+      properties:
+        streamId:
+          type: string
+        mimeType:
+          type: string
+        length:
+          type: integer
+        kind:
+          type: string
+        title:
+          type: string
+        height:
+          type: integer
+        width:
+          type: integer
+        renditionDocumentId:
+          type: string
+
+    ObjectList:
+      type: object
+      description: List of CMIS objects with paging info
+      properties:
+        objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectInList'
+        hasMoreItems:
+          type: boolean
+        numItems:
+          type: integer
+
+    ObjectInList:
+      type: object
+      description: >-
+        Per CMIS 1.1 Browser Binding spec, each entry in an object list is
+        wrapped in an 'object' key rather than being the ObjectData itself.
+      properties:
+        object:
+          $ref: '#/components/schemas/ObjectData'
+
+    Acl:
+      type: object
+      properties:
+        aces:
+          type: array
+          items:
+            type: object
+            properties:
+              principal:
+                type: object
+                properties:
+                  principalId:
+                    type: string
+              permissions:
+                type: array
+                items:
+                  type: string
+              isDirect:
+                type: boolean
+
+    # -----------------------------
+    # CMIS Error Model
+    # -----------------------------
+
+    CmisError:
+      type: object
+      required: [exception]
+      properties:
+        exception:
+          type: string
+          description: >-
+            Matches CmisExceptionType values as actually returned by the
+            server (unprefixed) - NOT the 'cmis:' prefixed identifiers used
+            for CMIS properties/types elsewhere in this document.
+          enum:
+            - constraint
+            - contentAlreadyExists
+            - filterNotValid
+            - invalidArgument
+            - nameConstraintViolation
+            - notSupported
+            - objectNotFound
+            - permissionDenied
+            - runtime
+            - storage
+            - streamNotSupported
+            - updateConflict
+            - versioning
+        message:
+          type: string
+
+paths:
+  /:
+    get:
+      summary: Get repositories
+      description: |
+        Returns repositories (containers) visible to the caller within the
+        specified Container Type. Per CMIS 1.1 Browser Binding spec section 5.2.1.
+      tags: [repository]
+      parameters:
+        - name: skipCount
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+        - name: maxItems
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+        - name: filter
+          in: query
+          description: Optional server-side filter (e.g., by name prefix)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Repository list
+          content:
+            application/json:
+              schema:
+                type: object
+                description: |
+                  CMIS Browser Binding repository list (per spec section 5.2.1).
+                  Each key is a repositoryId, value is the RepositoryInfo.
+                additionalProperties:
+                  $ref: '#/components/schemas/RepositoryInfo'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmisError'
+
+  /{repositoryId}:
+    parameters:
+      - name: repositoryId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get repository info
+      description: Per CMIS 1.1 Browser Binding spec section 5.2.2
+      tags: [repository]
+      responses:
+        '200':
+          description: Repository info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepositoryInfo'
+        '404':
+          description: Repository not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmisError'
+
+    post:
+      summary: Repository-level CMIS actions
+      description: |
+        Executes repository-level CMIS actions via form POST.
+        Per CMIS 1.1 Browser Binding spec section 5.4.
+      tags: [repository]
+      parameters:
+        - name: cmisselector
+          in: query
+          description: Selector for GET-style operations via POST
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                cmisaction:
+                  type: string
+                  enum:
+                    - query
+                    - createType
+                    - updateType
+                    - deleteType
+      responses:
+        '200':
+          description: CMIS action response
+        '501':
+          description: Feature not implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmisError'
+
+  /{repositoryId}/root:
+    parameters:
+      - name: repositoryId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get root folder or navigate by path
+      description: |
+        Access the root folder or navigate to objects by path.
+        Per CMIS 1.1 Browser Binding spec section 5.3.1.
+        Use cmisselector to specify what data to return.
+      tags: [navigation]
+      parameters:
+        - name: cmisselector
+          in: query
+          description: What to return (object, children, descendants, parents, etc.)
+          schema:
+            type: string
+            enum: [object, children, descendants, parents, parent, checkedout, folder, content, versions, policies, acl, allowableActions, properties, relationships, renditions, typeChildren, typeDescendants, typeDefinition]
+        - name: filter
+          in: query
+          description: Comma-separated list of property IDs to return
+          schema:
+            type: string
+        - name: includeAllowableActions
+          in: query
+          schema:
+            type: boolean
+        - name: includeRelationships
+          in: query
+          schema:
+            type: string
+            enum: [none, source, target, both]
+        - name: renditionFilter
+          in: query
+          schema:
+            type: string
+        - name: includePolicyIds
+          in: query
+          schema:
+            type: boolean
+        - name: includeACL
+          in: query
+          description: >-
+            Note: query parameter names are case-sensitive in Azure
+            Functions - the implemented parameter is `includeACL`.
+          schema:
+            type: boolean
+        - name: succinct
+          in: query
+          description: If true, return succinct property representation
+          schema:
+            type: boolean
+        - name: maxItems
+          in: query
+          schema:
+            type: integer
+        - name: skipCount
+          in: query
+          schema:
+            type: integer
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          description: Depth for descendants (-1 for all)
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Object data or children list depending on cmisselector
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ObjectData'
+                  - $ref: '#/components/schemas/ObjectList'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmisError'
+
+    post:
+      summary: Object-level CMIS actions on root folder
+      description: |
+        Executes CMIS actions on the root folder (create document, folder, etc.).
+        Per CMIS 1.1 Browser Binding spec section 5.4.
+      tags: [navigation]
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cmisaction:
+                  type: string
+                  enum:
+                    - createDocument
+                    - createDocumentFromSource
+                    - createFolder
+                    - createPolicy
+                    - createItem
+                    - updateProperties
+                    - bulkUpdate
+                    - move
+                    - delete
+                    - deleteTree
+                    - setContent
+                    - appendContent
+                    - deleteContent
+                    - checkOut
+                    - cancelCheckOut
+                    - checkIn
+                    - applyPolicy
+                    - removePolicy
+                    - applyACL
+                    - addObjectToFolder
+                    - removeObjectFromFolder
+                propertyId:
+                  type: array
+                  items:
+                    type: string
+                propertyValue:
+                  type: array
+                  items:
+                    type: string
+                content:
+                  type: string
+                  format: binary
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                cmisaction:
+                  type: string
+      responses:
+        '200':
+          description: CMIS action result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectData'
+        '201':
+          description: Object created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectData'
+        '501':
+          description: Feature not implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmisError'
+
+  /{repositoryId}/root/{path}:
+    parameters:
+      - name: repositoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: path
+        required: true
+        description: Path relative to root folder (e.g., "folder1/folder2/document.pdf")
+        schema:
+          type: string
+    get:
+      summary: Get object by path
+      description: |
+        Access an object by its path relative to the root folder.
+        Per CMIS 1.1 Browser Binding spec section 5.3.1.
+      tags: [navigation]
+      parameters:
+        - name: cmisselector
+          in: query
+          schema:
+            type: string
+            enum: [object, children, descendants, parents, parent, folder, content, versions, policies, acl, allowableActions, properties, relationships, renditions]
+        - name: filter
+          in: query
+          schema:
+            type: string
+        - name: includeAllowableActions
+          in: query
+          schema:
+            type: boolean
+        - name: includeRelationships
+          in: query
+          schema:
+            type: string
+            enum: [none, source, target, both]
+        - name: succinct
+          in: query
+          schema:
+            type: boolean
+        - name: maxItems
+          in: query
+          schema:
+            type: integer
+        - name: skipCount
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Object data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectData'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmisError'
+
+    post:
+      summary: Object-level CMIS actions by path
+      tags: [navigation]
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cmisaction:
+                  type: string
+                content:
+                  type: string
+                  format: binary
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                cmisaction:
+                  type: string
+      responses:
+        '200':
+          description: CMIS action result
+        '501':
+          description: Feature not implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmisError'

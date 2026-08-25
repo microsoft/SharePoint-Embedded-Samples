@@ -14,6 +14,7 @@ Runnable applications demonstrating SharePoint Embedded integration patterns.
 | [legal-docs](./Custom%20Apps/legal-docs) | React + Fluent UI | Legal case management sample |
 | [project-management](./Custom%20Apps/project-management) | React + Vite + Tailwind + shadcn-ui | Project collaboration app |
 | [webhook](./Custom%20Apps/webhook) | Node.js | Minimal Graph API change notification listener |
+| [spe-cmis](./Custom%20Apps/spe-cmis) | TypeScript + Azure Functions | CMIS 1.1 Browser Binding adapter that exposes SharePoint Embedded containers as CMIS repositories for legacy ECM clients |
 
 See [docker.md](./Custom%20Apps/docker.md) for instructions on running the boilerplate apps in VS Code dev containers.
 

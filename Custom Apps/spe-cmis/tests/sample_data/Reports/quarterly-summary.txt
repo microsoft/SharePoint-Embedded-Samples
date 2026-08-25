@@ -1,0 +1,9 @@
+Quarterly Summary (sample placeholder)
+
+Q1: 100 widgets shipped
+Q2: 120 widgets shipped
+Q3: 95 widgets shipped
+Q4: 140 widgets shipped
+
+This is placeholder content used only to demonstrate uploading files into a
+nested folder via the CMIS Browser Binding createFolder/createDocument actions.

@@ -1,0 +1,25 @@
+{
+  "name": "spe-cmis",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "clean": "rimraf dist",
+    "prestart": "npm run clean && npm run build",
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/functions": "^4.0.0",
+    "@azure/msal-node": "^5.0.3",
+    "@microsoft/microsoft-graph-client": "^3.0.7"
+  },
+  "devDependencies": {
+    "@microsoft/microsoft-graph-types": "^2.43.1",
+    "@types/node": "^20.x",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.0.0"
+  },
+  "main": "dist/src/{index.js,functions/*.js}"
+}
