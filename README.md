@@ -8,6 +8,7 @@ Runnable applications demonstrating SharePoint Embedded integration patterns.
 
 | Sample | Stack | Description |
 |--------|-------|-------------|
+| [spe-playground](./Custom%20Apps/spe-playground) | HTML + JavaScript | Browser-local synthetic onboarding playground and an in-place build guide; no tenant connection |
 | [boilerplate-react-azurefunction](./Custom%20Apps/boilerplate-react-azurefunction) | React + Azure Functions | Reference boilerplate: SPA with an Azure Functions OBO proxy |
 | [boilerplate-aspnet-webservice](./Custom%20Apps/boilerplate-aspnet-webservice) | C# / ASP.NET Core | Reference boilerplate: server-side MVC app with tenant onboarding |
 | [boilerplate-typescript-react](./Custom%20Apps/boilerplate-typescript-react) | TypeScript + React + Azure Functions | TypeScript variant of the React boilerplate |
